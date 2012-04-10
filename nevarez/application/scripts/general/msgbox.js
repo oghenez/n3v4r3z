@@ -14,5 +14,18 @@ var msb = {
 				  window.location = obj.href;
 		  }
 		});
+	},
+	
+	info: function(msg, obj, callback){
+		$.msgbox(msg, {
+		  type: "info"
+		}, function(result) {
+		  if (result) {
+			  if($.isFunction(callback))
+				  callback.call(this, obj);
+			  /*else
+				  window.location = obj.href;*/
+		  }
+		});
 	}
 };

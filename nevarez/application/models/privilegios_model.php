@@ -1,5 +1,13 @@
 <?php
 class privilegios_model extends CI_Model{
+	/**
+	 * los url_accion q se asignen seran excluidos de la validacion y la funcion
+	 * tienePrivilegioDe regresara un true como si el usuario si tiene ese privilegio,
+	 * Esta enfocado para cuendo se utilice Ajax
+	 * @var unknown_type
+	 */
+	public $excepcion_privilegio = array();
+	
 	
 	function __construct(){
 		parent::__construct();
@@ -109,12 +117,12 @@ class privilegios_model extends CI_Model{
 	 * @param unknown_type $url_accion
 	 * @param unknown_type $js
 	 */
-	public function getLinkPrivSm($url_accion, $id_obj, $js=''){
+	public function getLinkPrivSm($url_accion, $id_obj, $js='', $attrs=''){
 		$txt = '';
 		$priv = $this->tienePrivilegioDe('', $url_accion, true);
 		if(is_object($priv)){
 			$js = $js!=''? ' onclick="'.$js.'"': '';
-			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.'?id='.$id_obj).'" class="linksm"'.$js.'>
+			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.'?id='.$id_obj).'" class="linksm"'.$js.$attrs.'>
 				<img src="'.base_url('application/images/privilegios/'.$priv->url_icono).'" width="10" height="10"> '.$priv->nombre.'</a> <br>';
 		}
 		return $txt;
@@ -130,6 +138,8 @@ class privilegios_model extends CI_Model{
 		$band = false;
 		$url_accion = str_replace('index/', '', $url_accion);
 		
+		$excluir = array_search($url_accion, $this->excepcion_privilegio);
+		
 		$sql = $id_privilegio!=''? "p.id_privilegio = '".$id_privilegio."'": "lower(url_accion) = lower('".$url_accion."')";
 		$res = $this->db
 			->select('p.id_privilegio, p.nombre, p.url_accion, p.mostrar_menu, p.url_icono')
@@ -143,6 +153,8 @@ class privilegios_model extends CI_Model{
 				return $res->row();
 			$band = true;
 		}
+		if($excluir !== false)
+			return true;
 		return $band;
 	}
 	
@@ -245,7 +257,8 @@ class privilegios_model extends CI_Model{
 			
 			if($data1->num > 0){
 				if($firs){
-					$txt .= str_replace(array('<ul>','</ul>'), '', $this->generaMenuPrivilegio($data->id_privilegio, false));
+					//$txt .= str_replace(array('<ul>','</ul>'), '', $this->generaMenuPrivilegio($data->id_privilegio, false));
+					$txt .= $this->generaMenuPrivilegio($data->id_privilegio, false);
 				}else{
 					$txt .= '
 					<li><img src="'.base_url('application/images/privilegios/'.$data->url_icono).'" alt="'.$data->nombre.'" width="16" height="16">

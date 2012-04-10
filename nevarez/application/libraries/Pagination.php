@@ -205,7 +205,7 @@ class CI_Pagination {
 		if  ($this->first_link !== FALSE AND $this->cur_page > ($this->num_links + 1))
 		{
 			//$first_url = ($this->first_url == '') ? $this->base_url : $this->first_url;
-			$href = ($this->javascript!='')? $this->javascript: (($this->first_url == '') ? $this->base_url : $this->first_url);
+			$href = ($this->javascript!='')? str_replace('{pag}', '0', $this->javascript): (($this->first_url == '') ? $this->base_url : $this->first_url);
 			$output .= $this->first_tag_open.'<a '.$pre_anchor_class.$anchor_class.'href="'.$href.'">'.$this->first_link.'</a>'.$this->first_tag_close;
 		}
 
@@ -224,7 +224,7 @@ class CI_Pagination {
 				else
 				{
 					$i = ($i == 0) ? '' : $this->prefix.$i.$this->suffix;
-					$href = ($this->javascript!='')? $this->javascript: $this->base_url.$i;
+					$href = ($this->javascript!='')? str_replace('{pag}', $i, $this->javascript): $this->base_url.$i;
 					$output .= $this->prev_tag_open.'<a '.$pre_anchor_class.$anchor_class.'href="'.$href.'" rel="'.($i+1).'">'.$this->prev_link.'</a>'.$this->prev_tag_close;
 				}
 			}
@@ -255,7 +255,7 @@ class CI_Pagination {
 						else
 						{
 							$n = ($n == '') ? '' : $this->prefix.$n.$this->suffix;
-							$href = ($this->javascript!='')? $this->javascript: $this->base_url.$n;
+							$href = ($this->javascript!='')? str_replace('{pag}', $n, $this->javascript): $this->base_url.$n;
 							$output .= $this->num_tag_open.'<a '.$pre_anchor_class.$anchor_class.'href="'.$href.'" rel="'.($loop).'">'.$loop.'</a>'.$this->num_tag_close;
 						}
 					}
@@ -266,7 +266,7 @@ class CI_Pagination {
 		// Render the "next" link
 		if ($this->next_link !== FALSE AND $this->cur_page < $num_pages)
 		{
-			$href = ($this->javascript!='')? $this->javascript: ($this->base_url.$this->prefix.($this->cur_page * $this->per_page).$this->suffix);
+			$href = ($this->javascript!='')? str_replace('{pag}', ($this->cur_page * $this->per_page), $this->javascript): ($this->base_url.$this->prefix.($this->cur_page * $this->per_page).$this->suffix);
 			$output .= $this->next_tag_open.'<a '.$pre_anchor_class."next ".$anchor_class.'href="'.$href.'" rel="'.($this->cur_page+1).'">'.$this->next_link.'</a>'.$this->next_tag_close;
 		}
 
@@ -274,7 +274,7 @@ class CI_Pagination {
 		if ($this->last_link !== FALSE AND ($this->cur_page + $this->num_links) < $num_pages)
 		{
 			$i = (($num_pages * $this->per_page) - $this->per_page);
-			$href = ($this->javascript!='')? $this->javascript: ($this->base_url.$this->prefix.$i.$this->suffix);
+			$href = ($this->javascript!='')? str_replace('{pag}', $i, $this->javascript): ($this->base_url.$this->prefix.$i.$this->suffix);
 			$output .= $this->last_tag_open.'<a '.$pre_anchor_class.$anchor_class.'href="'.$href.'" rel="'.($num_pages).'">'.$this->last_link.'</a>'.$this->last_tag_close;
 		}
 

@@ -50,8 +50,8 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'programa';
-$db['default']['password'] = 'sophia_indie';
-$db['default']['database'] = 'redfire';
+$db['default']['password'] = '12345';//sophia_indie
+$db['default']['database'] = 'nevarez';
 $db['default']['dbdriver'] = 'postgre';
 $db['default']['port']	   = '5432';
 $db['default']['dbprefix'] = '';

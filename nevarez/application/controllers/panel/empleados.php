@@ -45,7 +45,7 @@ class empleados extends MY_Controller {
 		$this->load->library('pagination');
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
-		$params['opcmenu_active'] = 1; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Recursos Humanos'; //activa la opcion del menu
 		$params['seo'] = array(
 			'titulo' => 'Administrar empleados'
 		);
@@ -77,7 +77,7 @@ class empleados extends MY_Controller {
 		$params['seo'] = array(
 			'titulo' => 'Agregar empleado'
 		);
-		$params['opcmenu_active'] = 1; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Recursos Humanos'; //activa la opcion del menu
 		$this->configAddModEmpl('add');
 		
 		if($this->form_validation->run() == FALSE){
@@ -119,7 +119,7 @@ class empleados extends MY_Controller {
 		$params['seo'] = array(
 			'titulo' => 'Modificar empleado'
 		);
-		$params['opcmenu_active'] = 1; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Recursos Humanos'; //activa la opcion del menu
 		
 		if(isset($_GET['id']{0})){
 			$this->configAddModEmpl('update');
@@ -151,14 +151,14 @@ class empleados extends MY_Controller {
 	}
 	
 	/**
-	 * Elimina un privilegio de la bd
+	 * Descontrata a un trabajador, cambia el status a no_contratado
 	 */
-	public function eliminar(){
+	public function descontratar(){
 		if(isset($_GET['id']{0})){
-			$respons = $this->empleados_model->deletePrivilegio();
+			$respons = $this->empleados_model->descontratarEmpleado();
 			
 			if($respons[0])
-				redirect(base_url('panel/privilegios/?msg=5'));
+				redirect(base_url('panel/empleados/?msg=8'));
 		}else
 			$params['frm_errors'] = $this->showMsgs(1);
 	}
@@ -171,17 +171,56 @@ class empleados extends MY_Controller {
 	 * Agrega un nuevo contacto a un empleado utilizando Ajax
 	 */
 	public function agregar_contacto(){
-		if(isset($_GET['id'])){
-			$params['msg'] = $this->empleados_model->addContacto($_GET['id']);
-			if($params['msg'][0]){
-				$res = $this->db
-					->select('*')
-					->from('empleados_contacto')
-					->where("id_contacto = '".$params['msg'][2]."'")
-				->get();
-				$params['info'] = $res->row();
-				$params['msg'] = $this->showMsgs(6);
-			}	
+		if(isset($_GET['id']{0})){
+			$this->load->library('form_validation');
+			$rules[] = array('field'	=> 'dcnombre',
+					'label'		=> 'Contacto Nombre',
+					'rules'		=> 'required|max_length[120]');
+			$rules[] = array('field'	=> 'dcdomicilio',
+					'label'		=> 'Contacto Domicilio',
+					'rules'		=> 'max_length[200]');
+			$rules[] = array('field'	=> 'dcmunicipio',
+					'label'		=> 'Contacto Municipio',
+					'rules'		=> 'max_length[40]');
+			$rules[] = array('field'	=> 'dcestado',
+					'label'		=> 'Contacto Estado',
+					'rules'		=> 'max_length[40]');
+			$rules[] = array('field'	=> 'dctelefono',
+					'label'		=> 'Contacto Teléfono',
+					'rules'		=> 'required|max_length[15]');
+			$rules[] = array('field'	=> 'dccelular',
+					'label'		=> 'Contacto Celular',
+					'rules'		=> 'max_length[20]');
+			$this->form_validation->set_rules($rules);
+			
+			if($this->form_validation->run() == FALSE){
+				$params['msg'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+			}else{
+				$params['msg'] = $this->empleados_model->addContacto($_GET['id']);
+				if($params['msg'][0]){
+					$res = $this->db
+						->select('*')
+						->from('empleados_contacto')
+						->where("id_contacto = '".$params['msg'][2]."'")
+					->get();
+					$params['info'] = $res->row();
+					$params['msg'] = $this->showMsgs(6);
+				}
+			}
+		}else
+			$params['msg'] = $this->showMsgs(1);
+		
+		echo json_encode($params);
+	}
+	
+	/**
+	 * Elimina un contacto del empleado utilizando Ajax
+	 */
+	public function eliminar_contacto(){
+		if(isset($_GET['id']{0})){
+			$params['msg'] = $this->empleados_model->deleteContacto($_GET['id']);
+			if($params['msg'][0])
+				$params['msg'] = $this->showMsgs(7);
 		}else
 			$params['msg'] = $this->showMsgs(1);
 		
@@ -241,7 +280,7 @@ class empleados extends MY_Controller {
 					'rules'		=> 'max_length[20]'),
 			array('field'	=> 'demail',
 					'label'		=> 'Email',
-					'rules'		=> 'max_length[70]'),
+					'rules'		=> 'valid_email|max_length[70]'),
 			array('field'	=> 'dfecha_nacimiento',
 					'label'		=> 'Fecha nacimiento',
 					'rules'		=> 'max_length[10]|callback_isValidDate'),
@@ -355,6 +394,14 @@ class empleados extends MY_Controller {
 			break;
 			case 6:
 				$txt = 'El contacto se agrego correctamente.';
+				$icono = 'ok';
+			break;
+			case 7:
+				$txt = 'El contacto se elimino correctamente.';
+				$icono = 'ok';
+			break;
+			case 8:
+				$txt = 'El empleado se descontrato correctamente.';
 				$icono = 'ok';
 			break;
 		}

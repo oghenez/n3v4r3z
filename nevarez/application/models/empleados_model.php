@@ -219,6 +219,14 @@ class empleados_model extends privilegios_model{
 	}
 	
 	/**
+	 * Descontrata a un empleado, cambia su status a no_contratado
+	 */
+	public function descontratarEmpleado(){
+		$this->db->update('empleados', array('status' => 'no_contratado'), "id_empleado = '".$_GET['id']."'");
+		return array(true, '');
+	}
+	
+	/**
 	 * Agrega contactos al empleado
 	 * @param unknown_type $id_empleado
 	 */
@@ -238,6 +246,11 @@ class empleados_model extends privilegios_model{
 		);
 		$this->db->insert('empleados_contacto', $data);
 		return array(true, 'Se agregó el contacto correctamente.', $id_conta);
+	}
+	
+	public function deleteContacto($id_contacto){
+		$this->db->delete('empleados_contacto', "id_contacto = '".$id_contacto."'");
+		return array(true, '');
 	}
 	
 	

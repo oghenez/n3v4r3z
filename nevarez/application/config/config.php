@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/redfire/';
+$config['base_url']	= 'http://localhost/nevarez/';
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +118,7 @@ function __autoload($class_name) {
 			"core/",
 			"core/system/",
 			"libraries/",
+			'libraries/fpdf/',
 			"models/"
 	);
 

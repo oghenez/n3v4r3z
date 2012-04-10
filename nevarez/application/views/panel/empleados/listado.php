@@ -35,8 +35,8 @@
 					<p class="corner-bottom8">
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('empleados/modificar/', $emplea->id_empleado); 
-						echo $this->empleados_model->getLinkPrivSm('empleados/desactivar/', $emplea->id_empleado, 
-								"msb.confirm('Estas seguro de desactivar el empleado?', this); return false;");
+						echo $this->empleados_model->getLinkPrivSm('empleados/descontratar/', $emplea->id_empleado, 
+								"msb.confirm('Estas seguro de descontratar el empleado?', this); return false;");
 						?>
 					</p>
 				</div>
