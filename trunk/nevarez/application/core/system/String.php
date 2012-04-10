@@ -3,6 +3,16 @@
 class String{
 	
 	/**
+	 * Da formato numerico a una cadena
+	 * @param unknown_type $number
+	 * @param unknown_type $decimales
+	 * @param unknown_type $sigini
+	 */
+	public static function formatoNumero($number, $decimales=2, $sigini='$'){
+		return $sigini.number_format($number, $decimales, '.', ',');
+	}
+	
+	/**
 	 * Obtiene las variables get y las prepara para los links
 	 * @param unknown_type $quit
 	 */
@@ -54,6 +64,22 @@ class String{
 	 */
 	public static function quitComillas($txt){
 		return str_replace("'","’", str_replace('"','”',$txt));
+	}
+	
+	/**
+	 * Crear textos con solo caracteres Ascii, sin espacion
+	 * para usar en urls
+	 * @param unknown_type $str
+	 * @param unknown_type $delimiter
+	 * @return mixed
+	 */
+	public static function toAscii($str, $delimiter='-') {
+		$clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+		$clean = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $clean);
+		$clean = strtolower(trim($clean, '-'));
+		$clean = preg_replace("/[\/_|+ -]+/", $delimiter, $clean);
+	
+		return $clean;
 	}
 }
 ?>

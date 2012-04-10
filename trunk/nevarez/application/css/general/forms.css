@@ -42,6 +42,26 @@
 	font-weight: bold;
 	color:#666;
 }
+.frm_addmod textarea{
+	font-size:1.1em;
+	color:#333;
+	border:1px #bbb solid;
+	resize: none;
+}
+.frm_addmod fieldset{
+	margin: 0;
+	padding: 0;
+	border:1px #aaa solid;
+}
+.frm_addmod legend{
+	font-size: .8em;
+	font-weight: bold;
+	color:#444;
+}
+.frm_addmod .ej-info{
+	font-size: .7em;
+	color:#bbb;
+}
 .frmsec-left{ margin-bottom: 20px;}
 .frmsec-right{
 	text-align: center;

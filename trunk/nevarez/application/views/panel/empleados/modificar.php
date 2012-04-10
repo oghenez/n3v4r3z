@@ -154,9 +154,14 @@
 								<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 								<div class="submenul">
 									<p class="corner-bottom8">
-										<?php echo $this->empleados_model->getLinkPrivSm('empleados/eliminar_contacto/', 
+										<?php 
+										$priv_ec = $this->empleados_model->getLinkPrivSm('empleados/eliminar_contacto/', 
 												$conta->id_contacto,
-												"msb.confirm('Estas seguro de eliminar el contacto?', this, eliminaContacto); return false;"); ?>
+												"msb.confirm('Estas seguro de eliminar el contacto?', this, eliminaContacto); return false;");
+										echo $priv_ec;
+										//para el js, indica q tiene ese permiso
+										$priv_ec = $priv_ec != ''? '<span id="priv_eliminar_contacto" style="display: none;"></span>': '';
+										?>
 									</p>
 								</div>
 							</td>
@@ -168,7 +173,10 @@
 							<td colspan="7">
 								<?php echo $this->empleados_model->getLinkPrivSm('empleados/agregar_contacto/', 
 									$empleado['info']->id_empleado,
-									"addContacto('tbl_contactos', this); return false;"); ?>
+									"addContacto('tbl_contactos', this); return false;");
+
+									echo (isset($priv_ec)? $priv_ec: '');
+								?>
 							</td>
 						</tr>
 					</table>
@@ -214,9 +222,6 @@
 
 
 <!-- Bloque de alertas -->
-<?php if(isset($frm_errors)){
-	if($frm_errors['msg'] != ''){ 
-?>
 <div id="container" style="display:none">
 	<div id="withIcon">
 		<a class="ui-notify-close ui-notify-cross" href="#">x</a>
@@ -226,6 +231,9 @@
 		<div class="clear"></div>
 	</div>
 </div>
+<?php if(isset($frm_errors)){
+	if($frm_errors['msg'] != ''){ 
+?>
 <script type="text/javascript" charset="UTF-8">
 $(function(){
 	create("withIcon", {

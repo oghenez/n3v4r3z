@@ -61,7 +61,11 @@ ul.treeview{
 #contentAll{
 	padding: 4px;
 }
-
+.titulo.ajus{
+	font-size: 1.1em;
+	padding: 0;
+	border-bottom: 1px #ccc solid;
+}
 
 
 
@@ -96,6 +100,18 @@ ul.treeview{
 	width: 98%;
 }
 
+
+/**** Loader Ajax ****/
+#ajax-loader{
+	position: absolute;
+	top: -1px;
+	right: 23%;
+	padding: 10px 5px 10px 40px;
+	color: #333;
+	font-weight: bold;
+	background: #F9EDBE url(../../application/images/loader.gif) no-repeat 5px center;
+	border:1px #F0C36D solid;
+}
 
 
 /**** ELEMENTOS ****/
@@ -207,17 +223,28 @@ img{
 .b-r{ border-right:1px #ccc solid; }
 .b-t{ border-top:1px #ccc solid; }
 .b-b{ border-bottom:1px #ccc solid; }
+.b-all{ border:1px #ccc solid; }
 
-.w50{ width:49.5%; }
 .w20{ width:20%; }
 .w25{ width:25%; }
 .w30{ width:30%; }
+.w40{ width:40%; }
+.w45{ width:45%; }
+.w50{ width:49.5%; }
+.w55{ width:55%; }
+.w60{ width:59.5%; }
 .w70{ width:69%; }
 .w75{ width:74%; }
 .w80{ width:79%; }
 .w90{ width:90%; }
+.w100{ width:99%; }
 
 .p5-tb{padding:5px 0;}
+.p0-all{ padding: 0;}
+
+.m0-all{ margin: 0;}
+.m10-all{ margin: 10px;}
+.m10-b{ margin-bottom: 10px;}
 
 .no-border{
 	border: none;

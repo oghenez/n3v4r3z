@@ -6,6 +6,9 @@
 	padding: 0;
 	font-size: .8em;
 }
+.tblListados.m0-tb{
+	margin:0px auto;
+}
 .tblListados tr.header, .tblListados tr.foot{
 	color:#333;
 	font-weight: bold;

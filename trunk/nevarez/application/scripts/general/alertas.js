@@ -10,7 +10,7 @@ $(function(){
 	//Se asigna eventos del menu izq y el treeview
 	$("#menu_left").accordion({
 		autoHeight: false,
-		active: opcmenu_active
+		active: buscarMenuActive()
 	});
 	$("ul.treeview").treeview({
 		collapsed: false,
@@ -18,10 +18,11 @@ $(function(){
 		persist: "location"
 	});
 	
-	$("table td.tdsmenu").on('mouseenter', function(){
+	//Asigna eventos para las opciones de las tablas
+	$(document).on('mouseenter', 'table td.tdsmenu', function(){
 		$(".submenul", this).show();
 	});
-	$("table td.tdsmenu").on('mouseleave', function(){
+	$(document).on('mouseleave', "table td.tdsmenu", function(){
 		$(".submenul", this).hide();
 	});
 });
@@ -31,3 +32,32 @@ $(function(){
 function create( template, vars, opts ){
 	return $container.notify("create", template, vars, opts);
 }
+
+
+/**
+ * Busca la opcion del menu para ponerla activa
+ * @returns {Number}
+ */
+function buscarMenuActive(){
+	var conta=0, sel=0;
+	$("#menu_left h3 a").each(function(){
+		if($(this).text() == opcmenu_active){
+			sel = conta;
+		}
+		conta++;
+	});
+	return sel;
+}
+
+
+/**
+ * Obj para crear un loader cuando se use Ajax
+ */
+var loader = {
+	create: function(){
+		$("body").append('<div id="ajax-loader" class="corner-bottom8">Cargando...</div>');
+	},
+	close: function(){
+		$("#ajax-loader").remove();
+	}
+};

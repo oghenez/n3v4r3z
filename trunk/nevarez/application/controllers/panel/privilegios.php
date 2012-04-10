@@ -45,6 +45,7 @@ class privilegios extends MY_Controller {
 		$this->load->library('pagination');
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Privilegios'; //activa la opcion del menu
 		$params['seo'] = array(
 			'titulo' => 'Administrar privilegios'
 		);
@@ -69,6 +70,7 @@ class privilegios extends MY_Controller {
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Privilegios'; //activa la opcion del menu
 		$params['seo'] = array(
 			'titulo' => 'Agregar privilegio'
 		);
@@ -102,6 +104,7 @@ class privilegios extends MY_Controller {
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Privilegios'; //activa la opcion del menu
 		$params['seo'] = array(
 			'titulo' => 'Modificar privilegio'
 		);

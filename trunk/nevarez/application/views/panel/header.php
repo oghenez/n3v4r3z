@@ -12,7 +12,7 @@
 ?>
 <script type="text/javascript" charset="UTF-8">
 	var base_url = "<?php echo base_url();?>",
-	opcmenu_active = <?php echo isset($opcmenu_active)? $opcmenu_active: 0;?>;
+	opcmenu_active = '<?php echo isset($opcmenu_active)? $opcmenu_active: 0;?>';
 </script>
 </head>
 <body>
