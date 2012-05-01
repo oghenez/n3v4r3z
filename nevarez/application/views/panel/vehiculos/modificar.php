@@ -18,28 +18,27 @@
 <body>
 <div>
 	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
-	<form action="<?= base_url('panel/vehiculo/modificar');?>" method="post">
+	<form action="<?= base_url('panel/vehiculo/modificar/?'.String::getVarsLink(array('msg')));?>" method="post">
 		<div class="frmsec-left w90 f-l">
 			<p class="f-l w50">
 				<label for="fnombre">*Nombre</label><br>
-				<input type="text" name="fnombre" id="fnombre" value="<?= set_value('fnombre') ?>" size="40" autofocus>
+				<input type="text" name="fnombre" id="fnombre" value="<?= (isset($vehiculo[0]->nombre)? $vehiculo[0]->nombre: ''); ?>" size="40" maxlength="40" autofocus>
 			</p>
 			<p class="f-l w50">
 				<label for="fplacas">*Placas</label><br>
-				<input type="text" name="fplacas" id="fplacas" value="<?= set_value('fplacas') ?>" size="40">
-			</p>
-			<p class="f-l w50">
-				<label for="fcolor">Color</label><br>
-				<input type="text" name="fcolor" id="fcolor" value="<?= set_value('fcolor') ?>" size="40">
+				<input type="text" name="fplacas" id="fplacas" value="<?= (isset($vehiculo[0]->placas)? $vehiculo[0]->placas: '') ?>" size="40" maxlength="40">
 			</p>
 			<p class="f-l w50">
 				<label for="fmodelo">Modelo</label><br>
-				<input type="text" name="fmodelo" id="fmodelo" value="<?= set_value('fmodelo') ?>" size="40">
+				<input type="text" name="fmodelo" id="fmodelo" value="<?= (isset($vehiculo[0]->modelo)? $vehiculo[0]->modelo: '') ?>" size="40" maxlength="10">
+			</p>
+			<p class="f-l w50">
+				<label for="fnumserie">Número de Serie</label><br>
+				<input type=text name="fnumserie" id="fnumserie" value="<?= (isset($vehiculo[0]->numero_serie)? $vehiculo[0]->numero_serie: '') ?>" size="40" maxlength="20">
 			</p>
 			<p class="f-l w100">
-				<label for="fano">Año</label><br>
-				<input type=text name="fano" id="fano" value="<?= set_value('fano') ?>" size="30">
-				
+				<label for="fcolor">Color</label><br>
+				<input type="text" name="fcolor" id="fcolor" value="<?= (isset($vehiculo[0]->color)? $vehiculo[0]->color: '') ?>" size="40" maxlength="10">
 				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 			</p>
 		</div>
@@ -66,6 +65,12 @@ $(function(){
 		title: '<?php echo $frm_errors['title']; ?>', 
 		text: '<?php echo $frm_errors['msg']; ?>', 
 		icon: '<?php echo base_url('application/images/alertas/'.$frm_errors['ico'].'.png'); ?>' });
+
+		<?php 
+			if(isset($load)){
+				echo 'window.setTimeout(parent.getListadoVehiculos, 1200);';
+			}
+		?>
 });
 </script>
 <?php }

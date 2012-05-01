@@ -3,6 +3,12 @@
 
 class vehiculo extends MY_Controller {
 	
+	/**
+	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
+	 * @var unknown_type
+	 */
+	private $excepcion_privilegio = array('vehiculo/ajaxVehiculos/');
+	
 	public function _remap($method){
 		$this->carabiner->css(array(
 				array('libs/jquery-ui.css', 'screen'),
@@ -19,7 +25,9 @@ class vehiculo extends MY_Controller {
 		));
 		
 		$this->load->model("empleados_model");
+		$this->load->model("vehiculos_model");
 		if($this->empleados_model->checkSession()){
+			$this->empleados_model->excepcion_privilegio = $this->excepcion_privilegio;
 			$this->info_empleado = $this->empleados_model->getInfoEmpleado($_SESSION['id_empleado'], true);
 			if($this->empleados_model->tienePrivilegioDe('', get_class($this).'/'.$method.'/')){
 				$this->{$method}();
@@ -29,7 +37,7 @@ class vehiculo extends MY_Controller {
 			redirect(base_url('panel/home'));
 	}
 	
-	public function index(){
+	private function index(){
 		$this->carabiner->css(array(
 					array('libs/jquery.msgbox.css','screen'),
 					array('libs/jquery.superbox.css','screen'),
@@ -46,17 +54,24 @@ class vehiculo extends MY_Controller {
 		
 		$params['info_empleado']	= $this->info_empleado['info'];
 		$params['opcmenu_active'] = 'Vehiculos'; //activa la opcion del menu
-		$params['seo']	= array('titulo' => 'Vehículos');
+		$params['seo']	= array('titulo' => 'Administrar Vehículos');
 		
-		$params['empleados'] = $this->empleados_model->getEmpleados();
+		$params['datos_v'] = array('vehiculos' => $this->vehiculos_model->getVehiculos());
+		$params['lista_vehiculos'] = $this->load->view('panel/vehiculos/listado',$params,true);
+		
+		if(isset($_GET['msg']))
+		{
+			$msg = ($_GET['msg']==2) ? 'El Vehículo no existe' : '';
+			$params['frm_errors']	= $this->showMsgs($_GET['msg'],$msg);
+		}
 		
 		$this->load->view('panel/header',$params);
 		$this->load->view('panel/general/menu',$params);
-		$this->load->view('panel/vehiculo/listado',$params);
+		$this->load->view('panel/vehiculos/admin',$params);
 		$this->load->view('panel/footer',$params);
 	}
 	
-	public function agregar(){
+	private function agregar(){
 		$this->carabiner->css(array(
 				array('libs/jquery.msgbox.css','screen'),
 				array('general/forms.css','screen'),
@@ -80,9 +95,11 @@ class vehiculo extends MY_Controller {
 		}
 		else
 		{
-// 			$model_resp	= $this->vehiculos_model->addVehiculo();
-// 			if($model_resp[0])
+			$model_resp	= $this->vehiculos_model->addVehiculo();
+			if($model_resp[0])
 				redirect(base_url('panel/vehiculo/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
+			else
+				$params['frm_errors'] = $this->showMsgs(2,'Ya existe el Vehículo','Alerta !');
 		}
 
 		if(isset($_GET['msg']{0}))
@@ -90,7 +107,7 @@ class vehiculo extends MY_Controller {
 		
 		$this->load->view('panel/header',$params);
 		$this->load->view('panel/general/menu',$params);
-		$this->load->view('panel/vehiculo/agregar',$params);
+		$this->load->view('panel/vehiculos/agregar',$params);
 		$this->load->view('panel/footer',$params);
 	}
 	
@@ -106,11 +123,39 @@ class vehiculo extends MY_Controller {
 				array('general/msgbox.js')
 		));
 		
+		$this->configAddVehiculo();
 		
+		if($this->form_validation->run() == FALSE)
+		{
+			$params['frm_errors']	= $this->showMsgs(2,preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+		}
+		else
+		{
+			$model_resp	= $this->vehiculos_model->editVehiculo($_GET['id']);
+			if($model_resp[0])
+				$params['load']			= true;
+				$params['frm_errors']	= $this->showMsgs(3);
+
+		}
 		
 		$params['seo']['titulo']	= 'Modificar Vehículo';
+		$params['vehiculo']			= $this->vehiculos_model->getVehiculos($_GET['id']);
 		
-		$this->load->view('panel/vehiculo/modificar',$params);
+		if(isset($_GET['msg']{0}))
+			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		
+		$this->load->view('panel/vehiculos/modificar',$params);
+	}
+	
+	private function eliminar(){
+		if(isset($_GET['id']))
+		{
+			$result_model = $this->vehiculos_model->delVehiculo($_GET['id']);
+			if($result_model[0])
+				redirect(base_url('panel/vehiculo/?&msg=5'));
+			else
+				redirect(base_url('panel/vehiculo/?&msg=2'));
+		}
 	}
 	
 	private function configAddVehiculo(){
@@ -119,21 +164,26 @@ class vehiculo extends MY_Controller {
 		$rules = array(
 						array('field'	=> 'fnombre',
 								'label'	=> 'Nombre',
-							  	'rules'	=> 'required|max_lenght[100]'),
+							  	'rules'	=> 'required|max_lenght[40]'),
 						array('field'	=> 'fplacas',
 								'label'	=> 'Placas',
-								'rules'	=> 'required|max_lenght[100]'),
-						array('field'	=> 'fcolor',
-								'label'	=> 'Color',
-								'rules'	=> 'max_lenght[20]'),
+								'rules'	=> 'required|max_lenght[40]'),
 						array('field'	=> 'fmodelo',
 								'label'	=> 'Modelo',
 								'rules'	=> 'max_lenght[20]'),
-						array('field'	=> 'fano',
-								'label'	=> 'Año',
-								'rules'	=> 'numeric')
+						array('field'	=> 'fnumserie',
+								'label'	=> 'Numero de Serie',
+								'rules'	=> 'max_lenght[10]'),
+						array('field'	=> 'fcolor',
+								'label'	=> 'Color',
+								'rules'	=> 'max_lenght[10]')
 				);
 		$this->form_validation->set_rules($rules);
+	}
+	
+	private function ajaxVehiculos(){
+		$params['datos_v'] = array('vehiculos' => $this->vehiculos_model->getVehiculos());
+		$this->load->view('panel/vehiculos/listado',$params);
 	}
 	
 	/**

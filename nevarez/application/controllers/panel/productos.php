@@ -106,7 +106,10 @@ class productos extends MY_Controller {
 					'rules'	=> 'required|max_length[60]'),
 			array('field'	=> 'dcodigo',
 					'label'	=> 'Código',
-					'rules'	=> 'required|max_length[8]|callback_val_codigo'));
+					'rules'	=> 'required|max_length[8]|callback_val_codigo'),
+			array('field'	=> 'dtipo',
+					'label'	=> 'Asignado a',
+					'rules'	=> 'required'));
 		$this->form_validation->set_rules($rules);
 		if($this->form_validation->run() == FALSE){
 			$params['frm_errors'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()), 'Familias!');
@@ -147,7 +150,10 @@ class productos extends MY_Controller {
 						'rules'	=> 'required|max_length[60]'),
 				array('field'	=> 'dcodigo',
 						'label'	=> 'Código',
-						'rules'	=> 'required|max_length[8]|callback_val_codigo'));
+						'rules'	=> 'required|max_length[8]|callback_val_codigo'),
+				array('field'	=> 'dtipo',
+						'label'	=> 'Asignado a',
+						'rules'	=> 'required'));
 			$this->form_validation->set_rules($rules);
 			if($this->form_validation->run() == FALSE){
 				$params['frm_errors'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()), 'Familias!');

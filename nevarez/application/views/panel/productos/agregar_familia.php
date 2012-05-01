@@ -30,6 +30,18 @@
 				<input type="text" name="dnombre" id="dnombre" value="<?php echo set_value('dnombre'); ?>" size="40" maxlength="60">
 			</p>
 			
+			<p>
+					<label for="dtipo">*Asignado a</label> <br>
+					<select name="dtipo" id="dtipo">
+						<option value="avion" <?php echo set_select('dtipo', 'avion'); ?>>Avión</option>
+						<option value="trabajador" <?php echo set_select('dtipo', 'trabajador'); ?>>Trabajador</option>
+						<option value="vehiculo" <?php echo set_select('dtipo', 'vehiculo'); ?>>Vehículo</option>
+						<option value="venta" <?php echo set_select('dtipo', 'venta'); ?>>Venta</option>
+						<option value="ninguno" <?php echo set_select('dtipo', 'ninguno'); ?>>Ninguno</option>
+					</select>
+			</p>
+			
+			
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 	</form>
 </div>

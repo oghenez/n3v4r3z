@@ -4,11 +4,13 @@
 		<label for="fnombre">Nombre:</label> 
 		<input type="text" name="fnombre" id="fnombre" value="<?php echo set_value_get('fnombre'); ?>" autofocus>
 		
-		<label for="fstatus">Estado:</label>
-		<select name="fstatus" id="fstatus">
+		<?php 
+			/*<label for="fstatus">Estado:</label>
+			<select name="fstatus" id="fstatus">
 			<option value="ac" <?php echo set_select_get('fstatus', 'ac'); ?>>Activos</option>
-			<option value="e" <?php echo set_select_get('fstatus', 'e'); ?>>Eliminados</option>
-		</select>
+				<option value="e" <?php echo set_select_get('fstatus', 'e'); ?>>Eliminados</option>
+			</select>*/
+		?>
 		
 		<input type="submit" name="enviar" value="Enviar" class="btn-blue corner-all">
 	</form>

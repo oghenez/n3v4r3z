@@ -29,7 +29,7 @@ class productos_model extends CI_Model{
 	 */
 	public function getInfoFamilia($id){
 		$res = $this->db->query("
-			SELECT id_familia, codigo, nombre
+			SELECT id_familia, codigo, nombre, tipo
 			FROM productos_familias
 			WHERE id_familia = '".$id."' AND status = 'ac'
 			LIMIT 1
@@ -52,7 +52,8 @@ class productos_model extends CI_Model{
 		$data = array(
 			'id_familia' => BDUtil::getId(),
 			'codigo' => $this->input->post('dcodigo'),
-			'nombre' => $this->input->post('dnombre')
+			'nombre' => $this->input->post('dnombre'),
+			'tipo'	=> $this->input->post('dtipo')
 		);
 		$this->db->insert('productos_familias', $data);
 		return array(true, '');
@@ -67,7 +68,8 @@ class productos_model extends CI_Model{
 	
 		$data = array(
 			'codigo' => $this->input->post('dcodigo'),
-			'nombre' => $this->input->post('dnombre')
+			'nombre' => $this->input->post('dnombre'),
+			'tipo'	=> $this->input->post('dtipo')
 		);
 		$this->db->update('productos_familias', $data, "id_familia = '".$_GET['id']."'");
 		
@@ -201,19 +203,19 @@ class productos_model extends CI_Model{
 		$this->db->insert('productos', $data);
 		
 		//Productos consumo
-		if($tipo == 'consumo'){
-			$data_pro = array();
-			foreach($this->input->post('dpcids') as $key => $id){
-				$data_pro[] = array(
-					'id_producto' => $id_producto,
-					'id_producto_c' => $id,
-					'cantidad' => ($_POST['dpccantidad'][$key]!=''? $_POST['dpccantidad'][$key]: 0)
-				);
-			}
+// 		if($tipo == 'consumo'){
+// 			$data_pro = array();
+// 			foreach($this->input->post('dpcids') as $key => $id){
+// 				$data_pro[] = array(
+// 					'id_producto' => $id_producto,
+// 					'id_producto_c' => $id,
+// 					'cantidad' => ($_POST['dpccantidad'][$key]!=''? $_POST['dpccantidad'][$key]: 0)
+// 				);
+// 			}
 				
-			if(count($data_pro) > 0)
-				$this->db->insert_batch('productos_consumos', $data_pro);
-		}
+// 			if(count($data_pro) > 0)
+// 				$this->db->insert_batch('productos_consumos', $data_pro);
+// 		}
 		
 		return array(true, '');
 	}
@@ -244,20 +246,20 @@ class productos_model extends CI_Model{
 		$this->db->update('productos', $data, "id_producto = '".$_GET['id']."'");
 	
 		//Productos consumo
-		if($tipo == 'consumo'){
-			$this->db->delete('productos_consumos', "id_producto = '".$_GET['id']."'");
-			$data_pro = array();
-			foreach($this->input->post('dpcids') as $key => $id){
-				$data_pro[] = array(
-						'id_producto' => $_GET['id'],
-						'id_producto_c' => $id,
-						'cantidad' => ($_POST['dpccantidad'][$key]!=''? $_POST['dpccantidad'][$key]: 0)
-				);
-			}
+// 		if($tipo == 'consumo'){
+// 			$this->db->delete('productos_consumos', "id_producto = '".$_GET['id']."'");
+// 			$data_pro = array();
+// 			foreach($this->input->post('dpcids') as $key => $id){
+// 				$data_pro[] = array(
+// 						'id_producto' => $_GET['id'],
+// 						'id_producto_c' => $id,
+// 						'cantidad' => ($_POST['dpccantidad'][$key]!=''? $_POST['dpccantidad'][$key]: 0)
+// 				);
+// 			}
 	
-			if(count($data_pro) > 0)
-				$this->db->insert_batch('productos_consumos', $data_pro);
-		}
+// 			if(count($data_pro) > 0)
+// 				$this->db->insert_batch('productos_consumos', $data_pro);
+// 		}
 	
 		return array(true, '');
 	}

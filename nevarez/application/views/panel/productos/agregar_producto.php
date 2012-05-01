@@ -60,51 +60,6 @@
 			</p>
 			<div class="clear"></div>
 			
-			<fieldset class="w40 f-l">
-				<legend>Productos registrados</legend>
-				<span style="display:block; text-align:center; margin: 4px 0;">
-					<input type="search" id="buscar_pr" class="b-all corner-all" size="30" placeholder="Buscar...">
-				</span>
-				<table class="tblListados corner-top8 m0-tb">
-					<tr class="header btn-gray">
-						<td>Nombre</td>
-					</tr>
-				</table>
-				<div id="tbl_productos_r" style="height: 200px;overflow-y:auto;">
-				<?php 
-				if(isset($tabla_productos_r))
-					echo $tabla_productos_r;
-				?>
-				</div>
-			</fieldset>
-			
-			<fieldset class="w55 f-r">
-				<legend>Productos que consume</legend>
-				<table class="tblListados corner-top8 m0-tb">
-					<tr class="header btn-gray">
-						<td class="w80">Nombre</td>
-						<td class="w20">Cantidad</td>
-					</tr>
-				</table>
-				<div id="" style="height: 200px;overflow-y:auto;">
-					<table id="tbl-pl" class="tblListados corner-bottom8 m0-tb">
-					<?php 
-					if(is_array($this->input->post('dpcids'))){
-						foreach($this->input->post('dpcids') as $key => $id){ ?>
-						<tr id="tr-pl<?php echo str_replace('.', '-', $id); ?>" class="tr-produclista">
-							<td class="w80"><?php echo $_POST['dpcnombres'][$key]; ?>
-								<input type="hidden" name="dpcnombres[]" value="<?php echo $_POST['dpcnombres'][$key]; ?>">
-								<input type="hidden" name="dpcids[]" value="<?php echo $id; ?>"></td>
-							<td class="w20"><input type="text" name="dpccantidad[]" value="<?php echo $_POST['dpccantidad'][$key]; ?>" size="5"></td>
-						</tr>
-					<?php } 
-					} ?>
-					</table>
-				</div>
-			</fieldset>
-			<a class="btnaddpro">>></a>
-			<a class="btnquitpro"><<</a>
-			
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 	</form>
 </div>

@@ -174,7 +174,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	{
 		$band = true;
 		$sql = $this->_prep_query($sql);
-		if(preg_match("/insert|update|delete/i", $sql)){
+		if(preg_match("/^(insert|update|delete) /i", $sql)){
 			if(pg_query($this->conn_id, "INSERT INTO actualizaciones (sql) VALUES ('".addslashes($sql)."')"))
 				$band = true;
 		}

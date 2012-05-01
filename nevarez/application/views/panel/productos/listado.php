@@ -2,7 +2,7 @@
 <div id="contentAll" class="f-l">
 	
 	<div id="prodic_familias" class="w50 f-l">
-		<?php echo str_replace('<br>', '', $this->empleados_model->getLinkPrivSm('productos/agregar_familia/', 0, '', ' rel="superbox[iframe][450x250]"')); ?>
+		<?php echo str_replace('<br>', '', $this->empleados_model->getLinkPrivSm('productos/agregar_familia/', 0, '', ' rel="superbox[iframe][450x280]"')); ?>
 		<div id="conte_tabla">
 		<?php
 			//imprimimos la tabla de familias
