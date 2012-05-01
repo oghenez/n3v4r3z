@@ -30,6 +30,17 @@
 				<input type="text" name="dnombre" id="dnombre" value="<?php echo (isset($info_familia[0]->nombre)? $info_familia[0]->nombre: ''); ?>" size="40" maxlength="60">
 			</p>
 			
+			<p>
+					<label for="dtipo">*Asignado a</label> <br>
+					<select name="dtipo" id="dtipo">
+						<option value="avion" <?php echo set_select('dtipo','avion',false,(isset($info_familia[0]->tipo)? $info_familia[0]->tipo: '')); ?>>Avión</option>
+						<option value="trabajador" <?php echo set_select('dtipo','trabajador',false,(isset($info_familia[0]->tipo)? $info_familia[0]->tipo: '')); ?>>Trabajador</option>
+						<option value="vehiculo" <?php echo set_select('dtipo','vehiculo',false,(isset($info_familia[0]->tipo)? $info_familia[0]->tipo: '')); ?>>Vehículo</option>
+						<option value="venta" <?php echo set_select('dtipo','venta',false,(isset($info_familia[0]->tipo)? $info_familia[0]->tipo: '')); ?>>Venta</option>
+						<option value="ninguno" <?php echo set_select('dtipo','ninguno',false,(isset($info_familia[0]->tipo)? $info_familia[0]->tipo: '')); ?>>Ninguno</option>
+					</select>
+			</p>
+			
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 	</form>
 </div>

@@ -17,7 +17,7 @@
 				<p class="corner-bottom8">
 					<?php 
 					echo $this->empleados_model->getLinkPrivSm('productos/modificar/', $produc->id_producto.'&familia='.$_GET['id'], 
-							'', ' rel="superbox[iframe][800x530]"'); 
+							'', ' rel="superbox[iframe][800x280]"'); 
 					echo $this->empleados_model->getLinkPrivSm('productos/desactivar/', $produc->id_producto, 
 							"msb.confirm('Estas seguro de Eliminar el Producto?', this, deleteProducto); return false;");
 					?>

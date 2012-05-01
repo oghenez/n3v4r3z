@@ -354,3 +354,29 @@ a._keyEvent=!1;return K},_generateMonthYearHeader:function(a,b,c,d,e,f,g,h){var 
  * Depends:
  *	jquery.effects.core.js
  */(function(a,b){a.effects.transfer=function(b){return this.queue(function(){var c=a(this),d=a(b.options.to),e=d.offset(),f={top:e.top,left:e.left,height:d.innerHeight(),width:d.innerWidth()},g=c.offset(),h=a('<div class="ui-effects-transfer"></div>').appendTo(document.body).addClass(b.options.className).css({top:g.top,left:g.left,height:c.innerHeight(),width:c.innerWidth(),position:"absolute"}).animate(f,b.duration,b.options.easing,function(){h.remove(),b.callback&&b.callback.apply(c[0],arguments),c.dequeue()})})}})(jQuery);
+ 
+ 
+ 
+ /* Inicialización en español para la extensión 'UI date picker' para jQuery. */
+ /* Traducido por Vester (xvester@gmail.com). */
+ jQuery(function($){
+ 	$.datepicker.regional['es'] = {
+ 		closeText: 'Cerrar',
+ 		prevText: '&#x3c;Ant',
+ 		nextText: 'Sig&#x3e;',
+ 		currentText: 'Hoy',
+ 		monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+ 		'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+ 		monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun',
+ 		'Jul','Ago','Sep','Oct','Nov','Dic'],
+ 		dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+ 		dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+ 		dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;'],
+ 		weekHeader: 'Sm',
+ 		dateFormat: 'dd/mm/yy',
+ 		firstDay: 1,
+ 		isRTL: false,
+ 		showMonthAfterYear: false,
+ 		yearSuffix: ''};
+ 	$.datepicker.setDefaults($.datepicker.regional['es']);
+ });

@@ -1,6 +1,6 @@
 <?php
 
-class proveedores_model extends privilegios_model{
+class proveedores_model extends CI_Model{
 	
 	function __construct(){
 		parent::__construct();
@@ -162,11 +162,13 @@ class proveedores_model extends privilegios_model{
 			'id_contacto' => $id_conta,
 			'id_proveedor' => $id_proveedor,
 			'nombre' => $this->input->post('dcnombre'),
-			'domicilio' => $this->input->post('dcdomicilio'),
-			'municipio' => $this->input->post('dcmunicipio'),
-			'estado' => $this->input->post('dcestado'),
+			'puesto' => $this->input->post('dcpuesto'),
 			'telefono' => $this->input->post('dctelefono'),
-			'celular' => $this->input->post('dccelular')
+			'extension' => $this->input->post('dcextension'),
+			'celular' => $this->input->post('dccelular'),
+			'nextel' => $this->input->post('dcnextel'),
+			'nextel_id' => $this->input->post('dcnextel_id'),
+			'fax' => $this->input->post('dcfax')
 		);
 		$this->db->insert('proveedores_contacto', $data);
 		return array(true, 'Se agregó el contacto correctamente.', $id_conta);
@@ -178,6 +180,33 @@ class proveedores_model extends privilegios_model{
 	public function deleteContacto($id_contacto){
 		$this->db->delete('proveedores_contacto', "id_contacto = '".$id_contacto."'");
 		return array(true, '');
+	}
+	
+	
+	/**
+	 * Obtiene el listado de proveedores para usar ajax
+	 */
+	public function getProveedoresAjax(){
+		$sql = '';
+		$res = $this->db->query("
+				SELECT id_proveedor, nombre, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito
+				FROM proveedores
+				WHERE status = 'ac' AND tipo='pr' AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
+				ORDER BY nombre ASC");
+	
+		$response = array();
+		if($res->num_rows() > 0){
+			foreach($res->result() as $itm){
+				$response[] = array(
+					'id' => $itm->id_proveedor,
+					'label' => $itm->nombre,
+					'value' => $itm->nombre,
+					'item' => $itm,
+				);
+			}
+		}
+	
+		return $response;
 	}
 	
 }

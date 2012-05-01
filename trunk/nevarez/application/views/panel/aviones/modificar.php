@@ -1,31 +1,22 @@
 <div id="contentAll" class="f-l">
-	<form action="<?= base_url('panel/vehiculo/agregar');?>" method="post" class="frm_addmod">
+	<form action="<?= base_url('panel/aviones/modificar/?'.String::getVarsLink(array('msg')));?>" method="post" class="frm_addmod">
 		<div class="frmsec-left w60 f-l">
 			<p class="f-l w50">
-				<label for="fnombre">*Nombre</label><br>
-				<input type="text" name="fnombre" id="fnombre" value="<?= set_value('fnombre') ?>" size="30" autofocus>
-			</p>
-			<p class="f-l w50">
-				<label for="fplacas">*Placas</label><br>
-				<input type="text" name="fplacas" id="fplacas" value="<?= set_value('fplacas') ?>" size="30">
-			</p>
-			<p class="f-l w50">
-				<label for="fcolor">Color</label><br>
-				<input type="text" name="fcolor" id="fcolor" value="<?= set_value('fcolor') ?>" size="30">
+				<label for="fmatricula">*Matricula</label><br>
+				<input type="text" name="fmatricula" id="fnombre" value="<?= (isset($aviones[0]->matricula)? $aviones[0]->matricula: ''); ?>" size="30" autofocus maxlength="20">
 			</p>
 			<p class="f-l w50">
 				<label for="fmodelo">Modelo</label><br>
-				<input type="text" name="fmodelo" id="fmodelo" value="<?= set_value('fmodelo') ?>" size="30">
+				<input type="text" name="fmodelo" id="fmodelo" value="<?= (isset($aviones[0]->modelo)? $aviones[0]->modelo: ''); ?>" size="30" maxlength="10">
 			</p>
 			<p class="f-l w100">
-				<label for="fano">Año</label><br>
-				<input type=text name="fano" id="fano" value="<?= set_value('fano') ?>" size="30">
+				<label for="ftipo">Tipo</label><br>
+				<input type="text" name="ftipo" id="ftipo" value="<?= (isset($aviones[0]->tipo)? $aviones[0]->tipo: ''); ?>" size="30" maxlength="10">
 				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 			</p>
 		</div>
 	</form>
 </div>
-
 
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){

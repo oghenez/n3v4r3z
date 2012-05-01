@@ -113,17 +113,20 @@ class privilegios_model extends CI_Model{
 	
 	
 	/**
-	 * Verifica si el usuairo tiene ese privilegio, si lo tiene genera un link para accederlo
-	 * @param unknown_type $url_accion
-	 * @param unknown_type $js
-	 */
-	public function getLinkPrivSm($url_accion, $id_obj, $js='', $attrs=''){
+	* Verifica si el usuairo tiene ese privilegio, si lo tiene genera un link para accederlo
+	* @param unknown_type $url_accion
+	* @param unknown_type $id_obj
+	* @param unknown_type $js
+	* @param unknown_type $attrs
+	* @param unknown_type $params
+	*/
+	public function getLinkPrivSm($url_accion, $id_obj, $js='', $attrs='', $params=''){
 		$txt = '';
 		$priv = $this->tienePrivilegioDe('', $url_accion, true);
 		if(is_object($priv)){
 			$js = $js!=''? ' onclick="'.$js.'"': '';
-			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.'?id='.$id_obj).'" class="linksm"'.$js.$attrs.'>
-				<img src="'.base_url('application/images/privilegios/'.$priv->url_icono).'" width="10" height="10"> '.$priv->nombre.'</a> <br>';
+			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.'?id='.$id_obj.$params).'" class="linksm"'.$js.$attrs.'>
+			<img src="'.base_url('application/images/privilegios/'.$priv->url_icono).'" width="10" height="10"> '.$priv->nombre.'</a> <br>';
 		}
 		return $txt;
 	}

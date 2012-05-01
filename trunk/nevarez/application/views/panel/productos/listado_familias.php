@@ -15,7 +15,7 @@
 					<p class="corner-bottom8">
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('productos/modificar_familia/', $famil->id_familia, '', 
-								' rel="superbox[iframe][450x250]" data-sbox="familia"'); 
+								' rel="superbox[iframe][450x270]" data-sbox="familia"'); 
 						echo $this->empleados_model->getLinkPrivSm('productos/desactivar_familia/', $famil->id_familia, 
 								"msb.confirm('Estas seguro de Eliminar la Familia? \\n Los productos asociados tambien se eliminaran', this, deleteFamilia); return false;");
 						?>

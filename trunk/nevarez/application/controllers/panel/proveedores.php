@@ -2,6 +2,11 @@
 
 
 class proveedores extends MY_Controller {
+	/**
+	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
+	 * @var unknown_type
+	 */
+	private $excepcion_privilegio = array('proveedores/ajax_get_proveedores/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -20,6 +25,7 @@ class proveedores extends MY_Controller {
 		
 		$this->load->model("empleados_model");
 		if($this->empleados_model->checkSession()){
+			$this->empleados_model->excepcion_privilegio = $this->excepcion_privilegio;
 			$this->info_empleado = $this->empleados_model->getInfoEmpleado($_SESSION['id_empleado'], true);
 			if($this->empleados_model->tienePrivilegioDe('', get_class($this).'/'.$method.'/')){
 				$this->{$method}();
@@ -175,22 +181,28 @@ class proveedores extends MY_Controller {
 			$this->load->library('form_validation');
 			$rules[] = array('field'	=> 'dcnombre',
 					'label'		=> 'Contacto Nombre',
-					'rules'		=> 'required|max_length[120]');
-			$rules[] = array('field'	=> 'dcdomicilio',
-					'label'		=> 'Contacto Domicilio',
-					'rules'		=> 'max_length[200]');
-			$rules[] = array('field'	=> 'dcmunicipio',
-					'label'		=> 'Contacto Municipio',
-					'rules'		=> 'max_length[40]');
-			$rules[] = array('field'	=> 'dcestado',
-					'label'		=> 'Contacto Estado',
-					'rules'		=> 'max_length[40]');
+					'rules'		=> 'max_length[120]');
+			$rules[] = array('field'	=> 'dcpuesto',
+					'label'		=> 'Contacto Puesto',
+					'rules'		=> 'max_length[20]');
 			$rules[] = array('field'	=> 'dctelefono',
 					'label'		=> 'Contacto Teléfono',
-					'rules'		=> 'required|max_length[15]');
+					'rules'		=> 'max_length[15]');
+			$rules[] = array('field'	=> 'dcextension',
+					'label'		=> 'Contacto Extensión',
+					'rules'		=> 'max_length[8]');
 			$rules[] = array('field'	=> 'dccelular',
 					'label'		=> 'Contacto Celular',
 					'rules'		=> 'max_length[20]');
+			$rules[] = array('field'	=> 'dcnextel',
+					'label'		=> 'Contacto Nextel',
+					'rules'		=> 'max_length[20]');
+			$rules[] = array('field'	=> 'dcnextel_id',
+					'label'		=> 'Contacto ID Nextel',
+					'rules'		=> 'max_length[25]');
+			$rules[] = array('field'	=> 'dcfax',
+					'label'		=> 'Contacto Fax',
+					'rules'		=> 'max_length[15]');
 			$this->form_validation->set_rules($rules);
 			
 			if($this->form_validation->run() == FALSE){
@@ -229,6 +241,16 @@ class proveedores extends MY_Controller {
 		echo json_encode($params);
 	}
 	
+	
+	/**
+	 * Obtiene lostado de proveedores para el autocomplete, ajax
+	 */
+	public function ajax_get_proveedores(){
+		$this->load->model('proveedores_model');
+		$params = $this->proveedores_model->getProveedoresAjax();
+		
+		echo json_encode($params);
+	}
 	
 	
 	
@@ -295,21 +317,27 @@ class proveedores extends MY_Controller {
 			$rules[] = array('field'	=> 'dcnombre',
 					'label'		=> 'Contacto Nombre',
 					'rules'		=> 'max_length[120]');
-			$rules[] = array('field'	=> 'dcdomicilio',
-					'label'		=> 'Contacto Domicilio',
-					'rules'		=> 'max_length[200]');
-			$rules[] = array('field'	=> 'dcmunicipio',
-					'label'		=> 'Contacto Municipio',
-					'rules'		=> 'max_length[40]');
-			$rules[] = array('field'	=> 'dcestado',
-					'label'		=> 'Contacto Estado',
-					'rules'		=> 'max_length[40]');
+			$rules[] = array('field'	=> 'dcpuesto',
+					'label'		=> 'Contacto Puesto',
+					'rules'		=> 'max_length[20]');
 			$rules[] = array('field'	=> 'dctelefono',
 					'label'		=> 'Contacto Teléfono',
 					'rules'		=> 'max_length[15]');
+			$rules[] = array('field'	=> 'dcextension',
+					'label'		=> 'Contacto Extensión',
+					'rules'		=> 'max_length[8]');
 			$rules[] = array('field'	=> 'dccelular',
 					'label'		=> 'Contacto Celular',
 					'rules'		=> 'max_length[20]');
+			$rules[] = array('field'	=> 'dcnextel',
+					'label'		=> 'Contacto Nextel',
+					'rules'		=> 'max_length[20]');
+			$rules[] = array('field'	=> 'dcnextel_id',
+					'label'		=> 'Contacto ID Nextel',
+					'rules'		=> 'max_length[25]');
+			$rules[] = array('field'	=> 'dcfax',
+					'label'		=> 'Contacto Fax',
+					'rules'		=> 'max_length[15]');
 		}
 		$this->form_validation->set_rules($rules);
 	}

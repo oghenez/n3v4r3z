@@ -8,7 +8,7 @@
 		<input type="submit" name="enviar" value="Buscar" class="btn-blue corner-all">
 	</p>	
 		
-	<?php echo str_replace('<br>', '', $this->empleados_model->getLinkPrivSm('productos/agregar/', '0&familia='.$_GET['id'], '', ' id="link_addprod" rel="superbox[iframe][800x530]"')); ?>
+	<?php echo str_replace('<br>', '', $this->empleados_model->getLinkPrivSm('productos/agregar/', '0&familia='.$_GET['id'], '', ' id="link_addprod" rel="superbox[iframe][800x280]"')); ?>
 	
 	<div class="clear"></div>
 </form>
