@@ -11,6 +11,16 @@ class String{
 	public static function formatoNumero($number, $decimales=2, $sigini='$'){
 		return $sigini.number_format($number, $decimales, '.', ',');
 	}
+	/**
+	 * Limpia el formatoNumero y lo deja en flotante o entero
+	 * @param unknown_type $number
+	 * @param unknown_type $decimales
+	 */
+	public static function float($number, $int=false, $decimales=2){
+		$decimales = $int? 0: $decimales;
+		$number = str_replace(array('$', ','), '', $number);
+		return number_format($number, $decimales, '.', '');
+	}
 	
 	/**
 	 * Obtiene las variables get y las prepara para los links

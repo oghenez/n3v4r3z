@@ -7,7 +7,7 @@ class tickets extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array();
+	private $excepcion_privilegio = array('tickets/ajax_get_total_vuelos/','tickets/ajax_submit_form/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -71,12 +71,16 @@ class tickets extends MY_Controller {
 	
 	public function agregar(){
 		$this->carabiner->css(array(
+				array('libs/jquery.msgbox.css', 'screen'),
 				array('libs/jquery.superbox.css', 'screen'),
 				array('general/forms.css', 'screen'),
 				array('general/tables.css', 'screen')
 		));
 		$this->carabiner->js(array(
+				array('libs/jquery.msgbox.min.js'),
 				array('libs/jquery.superbox.js'),
+				array('general/util.js'),
+				array('general/msgbox.js'),
 				array('tickets/frm_addmod.js')
 		));
 		
@@ -85,18 +89,8 @@ class tickets extends MY_Controller {
 				'titulo' => 'Agregar Ticket'
 		);
 		$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
-		$this->configAddTicket('add');
 		
 		$this->load->model('tickets_model');
-		
-		if($this->form_validation->run() == FALSE){
-			$params['frm_errors'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
-		}else{
-			$respons = $this->tickets_model->addTicket();
-			if($respons[0])
-				redirect(base_url('panel/tickets/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
-		}
-		
 		$params['ticket'] = $this->tickets_model->getNxtFolio();
 		
 		if(isset($_GET['msg']{0}))
@@ -239,106 +233,62 @@ class tickets extends MY_Controller {
 	/**
 	 * Obtiene lostado de pilotos para el autocomplete, ajax
 	 */
-	public function ajax_get_pilotos(){
-		$this->load->model('pilotos_model');
-		$params = $this->pilotos_model->getPilotosAjax();
+	public function ajax_get_total_vuelos(){
+		$this->load->model('tickets_model');
+		$params = $this->tickets_model->getTotalVuelosAjax();
 	
 		echo json_encode($params);
 	}
 	
 	
-	private function configAddTicket($tipo){
+	public function ajax_submit_form(){
+		
 		$this->load->library('form_validation');
 		$rules = array(
-				array('field'	=> 'dnombre',
-						'label'		=> 'Nombre',
-						'rules'		=> 'required|max_length[120]'),
-				array('field'	=> 'dcalle',
-						'label'		=> 'Calle',
-						'rules'		=> 'max_length[60]'),
-				array('field'	=> 'dno_exterior',
-						'label'		=> 'No exterior',
-						'rules'		=> 'max_length[7]'),
-				array('field'	=> 'dno_interior',
-						'label'		=> 'No interior',
-						'rules'		=> 'max_length[7]'),
-				array('field'	=> 'dcolonia',
-						'label'		=> 'Colonia',
-						'rules'		=> 'max_length[60]'),
-				array('field'	=> 'dlocalidad',
-						'label'		=> 'Localidad',
-						'rules'		=> 'max_length[45]'),
-				array('field'	=> 'dmunicipio',
-						'label'		=> 'Municipio',
-						'rules'		=> 'max_length[45]'),
-				array('field'	=> 'destado',
-						'label'		=> 'Estado',
-						'rules'		=> 'max_length[45]'),
-				array('field'	=> 'dcp',
-						'label'		=> 'CP',
-						'rules'		=> 'max_length[10]'),
-				array('field'	=> 'dtelefono',
-						'label'		=> 'Teléfono',
-						'rules'		=> 'max_length[15]'),
-				array('field'	=> 'dcelular',
-						'label'		=> 'Celular',
-						'rules'		=> 'max_length[20]'),
-				array('field'	=> 'demail',
-						'label'		=> 'Email',
-						'rules'		=> 'valid_email|max_length[70]'),
-				array('field'	=> 'dpag_web',
-						'label'		=> 'Pag Web',
-						'rules'		=> 'max_length[80]'),
-				array('field'	=> 'dcomentarios',
-						'label'		=> 'Comentarios',
-						'rules'		=> 'max_length[400]'),
-				array('field'	=> 'drecepcion_facturas',
-						'label'		=> 'Recepción facturas',
-						'rules'		=> 'max_length[10]'),
-				array('field'	=> 'ddias_pago',
-						'label'		=> 'Dias pago',
-						'rules'		=> 'max_length[10]'),
-				array('field'	=> 'ddias_credito',
-						'label'		=> 'Dias credito',
-						'rules'		=> 'max_length[4]'),
-				array('field'	=> 'dexpide_factura',
-						'label'		=> 'Expide Factura',
-						'rules'		=> 'is_natural|max_length[1]'),
-				array('field'	=> 'dlicencia_avion',
-						'label'		=> 'Licencia Avión',
-						'rules'		=> 'required|max_length[40]'),
-				array('field'	=> 'dlicencia_vehiculo',
-						'label'		=> 'Licencia Vehículo',
-						'rules'		=> 'max_length[40]'),
-				array('field'	=> 'dvencimiento_licencia_a',
-						'label'		=> 'Fecha vecimiento avión',
+				array('field'	=> 'tcliente',
+						'label'		=> 'Cliente',
+						'rules'		=> 'required|max_length[25]'),
+				array('field'	=> 'tfolio',
+						'label'		=> 'Folio',
+						'rules'		=> 'required|is_natural_no_zero'),
+				array('field'	=> 'tfecha',
+						'label'		=> 'Fecha',
 						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
-				array('field'	=> 'dvencimiento_licencia_v',
-						'label'		=> 'Fecha vecimiento vehículo',
-						'rules'		=> 'max_length[10]|callback_isValidDate')
+				array('field'	=> 'tipo_pago',
+						'label'		=> 'Tipo pago',
+						'rules'		=> 'required|max_length[10]'),
+				array('field'	=> 'tdias_credito',
+						'label'		=> 'Dias de Credito',
+						'rules'		=> 'is_natural'),
+				array('field'	=> 'subtotal',
+						'label'		=> 'Subtotal',
+						'rules'		=> 'required'),
+				array('field'	=> 'iva',
+						'label'		=> 'Iva',
+						'rules'		=> 'required'),
+				array('field'	=> 'total',
+						'label'		=> 'Total',
+						'rules'		=> 'required'),
+				array('field'	=> 'vuelos',
+						'label'		=> 'Vuelos',
+						'rules'		=> 'required')
 		);
-	
-		if($tipo == 'add'){
-			$rules[] = array('field'	=> 'dcnombre',
-					'label'		=> 'Contacto Nombre',
-					'rules'		=> 'max_length[120]');
-			$rules[] = array('field'	=> 'dcdomicilio',
-					'label'		=> 'Contacto Domicilio',
-					'rules'		=> 'max_length[200]');
-			$rules[] = array('field'	=> 'dcmunicipio',
-					'label'		=> 'Contacto Municipio',
-					'rules'		=> 'max_length[40]');
-			$rules[] = array('field'	=> 'dcestado',
-					'label'		=> 'Contacto Estado',
-					'rules'		=> 'max_length[40]');
-			$rules[] = array('field'	=> 'dctelefono',
-					'label'		=> 'Contacto Teléfono',
-					'rules'		=> 'max_length[15]');
-			$rules[] = array('field'	=> 'dccelular',
-					'label'		=> 'Contacto Celular',
-					'rules'		=> 'max_length[20]');
-		}
 		$this->form_validation->set_rules($rules);
+		
+		if($this->form_validation->run() == FALSE)
+		{
+			$params['msg']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+		}
+		else
+		{
+			$this->load->model('tickets_model');
+			$params	= $this->tickets_model->addTicket();
+		
+			if($params[0])
+				$params['msg'] = $this->showMsgs(4);
+		}
+		
+		echo json_encode($params);
 	}
 	
 	/**
@@ -361,7 +311,7 @@ class tickets extends MY_Controller {
 	 * @param unknown_type $msg
 	 * @param unknown_type $title
 	 */
-	private function showMsgs($tipo, $msg='', $title='Pilotos!'){
+	private function showMsgs($tipo, $msg='', $title='Tickets !'){
 		switch($tipo){
 			case 1:
 				$txt = 'El campo ID es requerido.';

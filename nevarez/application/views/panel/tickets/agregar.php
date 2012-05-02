@@ -5,25 +5,26 @@
 				<div class="corner-all">
 					<p class="w40 f-l">
 						<label for="dfolio">Folio:</label> <br>
-						<input type="text" name="dfolio" value="<?= isset($ticket[0][0]->folio) ? $ticket[0][0]->folio:'';?>"readonly>
+						<input type="text" name="dfolio" id="dfolio" value="<?= isset($ticket[0][0]->folio) ? $ticket[0][0]->folio:'1';?>"readonly>
 					</p>
 					<div class="clear"></div>
 					<p class="w100">
 						<label for="dcliente" class="f-l">*Cliente</label><br>
 						<input type="text" name="dcliente" value="<?php echo set_value('dcliente');?>" size="35" id="dcliente" class="f-l" autofocus>
 						<input type="hidden" name="hcliente" value="<?php echo set_value('hcliente');?>" id="hcliente">
+						<input type="hidden" name="hdias_credito" value="<?php echo set_value('hdias_credito');?>" id="hdias_credito">
 						
 						<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="66" readonly><?php echo set_value('dcliente_info'); ?></textarea>
 						
 						<div class="addv">
-							<a href="javascript:alerta();" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;">
+							<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta('Seleccione un Cliente !');">
 							<img src="<?php echo base_url('application/images/privilegios/add.png'); ?>" width="16" height="16"> Agregar vuelos</a>
 						</div>
 					</p>
 					
 					<div class="clear"></div>
 					
-					<table class="tblListados corner-all8" id="tbl_productos">
+					<table class="tblListados corner-all8" id="tbl_vuelos">
 						<tr class="header btn-gray">
 							<td>Cantidad</td>
 							<td>Código</td>
@@ -32,35 +33,6 @@
 							<td>Importe</td>
 							<td>Opc</td>
 						</tr>
-							
-						<?php
-						if(isset($_POST['dpid_producto'])){
-							foreach($_POST['dpid_producto'] as $key => $itm){
-								echo '<tr id="trp-'.str_replace('.', '_', $itm).'">
-										<td>
-											<input type="hidden" name="dpid_producto[]" value="'.$itm.'">
-											<input type="hidden" name="dpcantidad[]" value="'.$_POST['dpcantidad'][$key].'">
-											<input type="hidden" name="dpprecio_unitario[]" value="'.$_POST['dpprecio_unitario'][$key].'">
-											<input type="hidden" name="dpimporte[]" value="'.$_POST['dpimporte'][$key].'" class="dpimporte">
-											<input type="hidden" name="dptaza_iva[]" value="'.$_POST['dptaza_iva'][$key].'">
-											<input type="hidden" name="dpimporte_iva[]" value="'.$_POST['dpimporte_iva'][$key].'" class="dpimporte_iva">
-											
-											<input type="hidden" name="dpcodigo[]" value="'.$_POST['dpcodigo'][$key].'">
-											<input type="hidden" name="dpnombre[]" value="'.$_POST['dpnombre'][$key].'">
-											'.$_POST['dpcantidad'][$key].'</td>
-										<td>'.$_POST['dpcodigo'][$key].'</td>
-										<td>'.$_POST['dpnombre'][$key].'</td>
-										<td>'.String::formatoNumero($_POST['dpprecio_unitario'][$key]).'</td>
-										<td>'.String::formatoNumero($_POST['dpimporte'][$key]).'</td>
-										<td class="tdsmenu a-c" style="width: 90px;">
-											<a href="javascript:void(0);" class="linksm" 
-												onclick="quitarProducto(\''.$itm.'\');return false;">
-												<img src="'.base_url().'application/images/privilegios/delete.png" width="10" height="10"> Quitar</a>
-										</td>
-									</tr>';
-							}
-						} 
-						?>
 					</table>
 					
 					<table class="tblListados corner-all8 f-r" style="width:24% !important;margin-right:1%;text-align:center;">
@@ -97,7 +69,7 @@
 				</p>
 				<div class="clear"></div>
 			</div>
-			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
+			<input type="button" name="enviar" value="Guardar" class="btn-blue corner-all" id="submit">
 		</div>
 	</form>
 </div>

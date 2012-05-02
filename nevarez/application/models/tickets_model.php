@@ -6,109 +6,76 @@ class tickets_model extends privilegios_model{
 	}
 	
 	public function getNxtFolio(){
-		$folio = $this->db->select('(folio+1) as folio')->from('tickets')->order_by('folio')->limit(1)->get();
+		$folio = $this->db->select('(folio+1) as folio')->from('tickets')->order_by('folio','DESC')->limit(1)->get();
 		return array($folio->result());
 	}
 	
-	
-	public function getAviones($id_avion=false, $order = 'matricula ASC'){
+	public function getTotalVuelosAjax(){
 		
-		//paginacion
-		$params = array(
-				'result_items_per_page' => '30',
-				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
-		);
-		if($params['result_page'] % $params['result_items_per_page'] == 0)
-			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
-		
-		$order = (!empty($order)) ? $order : 'matricula ASC';
-		
-		($id_avion) ? $this->db->where('id_avion',$id_avion) : null;
-		$this->db->where('status','ac');
-		$this->db->like('lower(matricula)',mb_strtolower($this->input->get('fmatricula'), 'UTF-8'));
-		$this->db->order_by($order);
-		$this->db->get('aviones');	
-		
-		$sql	= $this->db->last_query();
-		
-		$query = BDUtil::pagination($sql, $params, true);
-		$res = $this->db->query($query['query']);
-		
-		$data = array(
-				'aviones' 			=> array(),
-				'total_rows' 		=> $query['total_rows'],
-				'items_per_page' 	=> $params['result_items_per_page'],
-				'result_page' 		=> $params['result_page']
-		);
-		
-		if($res->num_rows() > 0)
-			$data['aviones'] = $res->result();
-		
-		return $data;
-	}
-	
-	public function addAvion(){
-		if($this->db->select('id_avion')->from('aviones')->where(array('matricula'=>$this->input->post('fmatricula'),'status'=>'ac'))->get()->num_rows()<1)
-		{
-			$id_avion	= BDUtil::getId();
-			$data	= array(
-					'id_avion'	=> $id_avion,
-					'matricula'	=> $this->input->post('fmatricula'),
-					'modelo'	=> $this->input->post('fmodelo'),
-					'tipo'		=> $this->input->post('ftipo')
-			);
-			$this->db->insert('aviones',$data);
-			return array(true);
-		}
-		return array(false);
-	}
-	
-	public function editAvion($id_avion){
-		if($this->exist('aviones',array('id_avion'=>$id_avion,'status'=>'ac')))
-		{
-			$data	= array(
-					'matricula'	=> $this->input->post('fmatricula'),
-					'modelo'	=> $this->input->post('fmodelo'),
-					'tipo'		=> $this->input->post('ftipo')
-			);
-			$this->db->where('id_avion',$id_avion);
-			$this->db->update('aviones',$data);
-			
-			return array(true);
-		}
-		return array(false);
-	}
-	
-	public function delAvion($id_avion){
-		if($this->db->select('id_avion')->from('aviones')->where(array('id_avion'=>$id_avion,'status'=>'ac'))->get()->num_rows()==1){
-			$this->db->update('aviones',array('status'=>'e'),array('id_avion'=>$id_avion));
-			return array(true);
-		}
-		return array(false);
-	}
-	
-	public function getAvionesAjax(){
-		$sql = '';
-		$res = $this->db->query("
-				SELECT id_avion, matricula, modelo, tipo
-				FROM aviones
-				WHERE status = 'ac' AND lower(matricula) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
-				ORDER BY matricula ASC");
-	
 		$response = array();
-		if($res->num_rows() > 0){
-			foreach($res->result() as $itm){
-				$response[] = array(
-						'id' => $itm->id_avion,
-						'label' => $itm->matricula,
-						'value' => $itm->matricula,
-						'item' => $itm,
-				);
-			}
+		
+		foreach ($_POST as $v){
+			$res = $this->db->query("
+					SELECT v.id_vuelo, p.codigo, p.descripcion, plp.dias_credito, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio
+					FROM vuelos as v
+					INNER JOIN productos as p ON v.id_producto=p.id_producto
+					LEFT JOIN (SELECT plp.id_producto, plp.precio, c.dias_credito FROM productos_listas_precios as plp INNER JOIN clientes as c ON plp.id_lista=c.id_lista_precio WHERE c.id_cliente='{$v['id_cliente']}') as plp ON plp.id_producto=v.id_producto
+					WHERE v.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND v.fecha = '{$v['fecha']}'
+			");
+			
+			if($res->num_rows()>0)
+				foreach ($res->result() as $itm)
+					$response['vuelos'][] = $itm;
 		}
-	
+		
+		$response['tabla']['dias_credito']	= $response['vuelos'][0]->dias_credito;
+		$response['tabla']['cantidad']		= count($response['vuelos']);
+		$response['tabla']['codigo']		= $response['vuelos'][0]->codigo;
+		$response['tabla']['descripcion']	= $response['vuelos'][0]->descripcion;
+		$response['tabla']['p_uni']			= String::float($response['vuelos'][0]->precio);
+		$response['tabla']['importe']		= String::float($response['tabla']['cantidad']*$response['tabla']['p_uni']);
+			
 		return $response;
 	}
+	
+	public function addTicket(){
+		
+		$id_ticket = BDUtil::getId();
+		$data = array(
+					'id_ticket'		=> $id_ticket,
+					'id_cliente'	=> $this->input->post('tcliente'),
+					'folio'			=> $this->input->post('tfolio'),
+					'fecha'			=> $this->input->post('tfecha'),
+					'tipo_pago'		=> $this->input->post('tipo_pago'),
+					'dias_credito'	=> $this->input->post('tdias_credito'),
+					'subtotal'		=> $this->input->post('subtotal'),
+					'iva'			=> $this->input->post('iva'),
+					'total'			=> $this->input->post('total')
+				);
+		$this->db->insert('tickets',$data);
+		
+		
+		foreach ($_POST as $vuelo){
+			if(is_array($vuelo)){
+				$data_v = array(
+						'id_ticket'	=> $id_ticket,
+						'id_vuelo'	=> $vuelo['id_vuelo'],
+						'cantidad'	=> String::float($vuelo['cantidad']),
+						'taza_iva'	=> String::float($vuelo['taza_iva']),
+						'precio_unitario'	=> String::float($vuelo['precio_unitario']),
+						'importe'			=> String::float($vuelo['importe']),
+						'importe_iva'		=> String::float($vuelo['importe_iva']),
+						'total'				=> String::float($vuelo['total'])
+				);
+				$this->db->insert('tickets_vuelos',$data_v);
+			}
+		}
+		
+		$folio = $this->getNxtFolio();		
+		return array(true,'folio'=>$folio[0][0]->folio);
+	}
+	
+	
 	
 	
 	public function exist($table, $sql, $return_res=false){
