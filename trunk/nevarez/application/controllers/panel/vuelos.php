@@ -159,6 +159,11 @@ class vuelos extends MY_Controller {
 					array('general/tables.css', 'screen')
 			));
 			
+			$this->carabiner->js(array(
+					array('vuelos/vuelos_tickets.js')		
+			));
+			
+			
 			$params['seo'] = array(
 					'titulo' => 'Vuelos'
 			);

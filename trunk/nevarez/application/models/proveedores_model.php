@@ -162,13 +162,11 @@ class proveedores_model extends CI_Model{
 			'id_contacto' => $id_conta,
 			'id_proveedor' => $id_proveedor,
 			'nombre' => $this->input->post('dcnombre'),
-			'puesto' => $this->input->post('dcpuesto'),
+			'domicilio' => $this->input->post('dcdomicilio'),
+			'municipio' => $this->input->post('dcmunicipio'),
+			'estado' => $this->input->post('dcestado'),
 			'telefono' => $this->input->post('dctelefono'),
-			'extension' => $this->input->post('dcextension'),
-			'celular' => $this->input->post('dccelular'),
-			'nextel' => $this->input->post('dcnextel'),
-			'nextel_id' => $this->input->post('dcnextel_id'),
-			'fax' => $this->input->post('dcfax')
+			'celular' => $this->input->post('dccelular')
 		);
 		$this->db->insert('proveedores_contacto', $data);
 		return array(true, 'Se agregó el contacto correctamente.', $id_conta);

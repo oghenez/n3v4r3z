@@ -36,7 +36,7 @@
 								<td><?= $vuelo->matricula?></td>
 								<td><?= $vuelo->piloto?></td>
 								<td><?= $vuelo->total_vuelos?></td>
-								<td><input type="checkbox" name="vuelos[]" value="<?= $vuelo->id_cliente.'&'.$vuelo->id_piloto.'&'.$vuelo->id_avion.'&'.$vuelo->fecha?>"></td>
+								<td><input type="checkbox" name="vuelos" value="<?= $vuelo->id_cliente.'&'.$vuelo->id_piloto.'&'.$vuelo->id_avion.'&'.$vuelo->fecha?>"></td>
 							</tr>
 				<?php	 endforeach;
 					 endif;?>
@@ -46,10 +46,6 @@
 </div>
 
 
-<!-- Bloque de alertas -->
-<?php if(isset($frm_errors)){
-	if($frm_errors['msg'] != ''){ 
-?>
 <div id="container" style="display:none">
 	<div id="withIcon">
 		<a class="ui-notify-close ui-notify-cross" href="#">x</a>
@@ -59,6 +55,11 @@
 		<div class="clear"></div>
 	</div>
 </div>
+
+<!-- Bloque de alertas -->
+<?php if(isset($frm_errors)){
+	if($frm_errors['msg'] != ''){ 
+?>
 <script type="text/javascript" charset="UTF-8">
 $(function(){
 	create("withIcon", {
