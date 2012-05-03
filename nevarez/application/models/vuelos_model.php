@@ -30,7 +30,8 @@ class vuelos_model extends CI_Model{
 			$sql = " AND DATE(v.fecha)=DATE(now())";
 
 		$query = BDUtil::pagination("
-				SELECT v.id_vuelo, c.nombre_fiscal, pi.nombre as piloto, a.matricula, v.fecha FROM vuelos as v
+				SELECT v.id_vuelo, c.nombre_fiscal, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe
+				FROM vuelos as v
 				INNER JOIN clientes as c ON v.id_cliente = c.id_cliente
 				INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
 				INNER JOIN aviones as a ON v.id_avion = a.id_avion

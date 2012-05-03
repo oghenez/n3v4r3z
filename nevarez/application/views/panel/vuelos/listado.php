@@ -27,11 +27,13 @@
 					<td class="tdsmenu a-c" style="width: 90px;">
 						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
-							<p class="corner-bottom8">
-								<?=$this->empleados_model->getLinkPrivSm('vuelos/eliminar/', $vuelo->id_vuelo, 
-										"msb.confirm('Estas seguro de eliminar el vuelo?', this); return false;");?>
-								<?php ?>
-							</p>
+							<?php if($vuelo->existe=='f'):?>
+								<p class="corner-bottom8">
+									<?=$this->empleados_model->getLinkPrivSm('vuelos/eliminar/', $vuelo->id_vuelo, 
+											"msb.confirm('Estas seguro de eliminar el vuelo?', this); return false;");?>
+									<?php ?>
+								</p>
+							<?php endif;?>
 						</div>
 					</td>
 				</tr>
