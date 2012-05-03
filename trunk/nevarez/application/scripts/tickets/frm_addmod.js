@@ -162,6 +162,7 @@ function ajax_submit_form(){
 			$('#dfolio').val(resp.folio);
 			limpia_campos();
 			updateTablaPrecios();
+			
 		}
 	}, "json").complete(function(){ 
     	loader.close();
