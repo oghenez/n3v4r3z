@@ -16,6 +16,7 @@
 			<td>Matrícula</td>
 			<td>Modelo</td>
 			<td>Tipo</td>
+			<td>Venc. Tarjeta</td>
 			<td class="a-c">Opc</td>
 		</tr>
 
@@ -24,6 +25,7 @@
 					<td><?= $avn->matricula;?></td>
 					<td><?= $avn->modelo; ?></td>
 					<td><?= $avn->tipo; ?></td>
+					<td><?= $avn->fecha_vence_tarjeta; ?></td>
 					<td class="tdsmenu a-c" style="width: 90px;">
 						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">

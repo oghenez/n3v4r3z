@@ -148,7 +148,7 @@ function ajax_submit_form(){
 	}
 	
 	loader.create();
-	$.post(base_url+'panel/tickets/ajax_submit_form/', post, function(resp){
+	$.post(base_url+'panel/tickets/ajax_agrega_ticket/', post, function(resp){
 		
 		create("withIcon", {
 			title: resp.msg.title, 
@@ -162,7 +162,7 @@ function ajax_submit_form(){
 			$('#dfolio').val(resp.folio);
 			limpia_campos();
 			updateTablaPrecios();
-			
+			win = window.open(url_base+'tickets/imprime_ticket/?&id='+resp.id_ticket, 'Imprimir Ticket', 'left=20,top=20,width=450,height=500,toolbar=0,resizable=0');
 		}
 	}, "json").complete(function(){ 
     	loader.close();

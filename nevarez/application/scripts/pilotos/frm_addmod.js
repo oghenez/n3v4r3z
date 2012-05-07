@@ -5,6 +5,7 @@ $(function(){
 	});
 	$("#dvencimiento_licencia_a").datepicker($.datepicker.regional[ "es" ]);	
 	$("#dvencimiento_licencia_v").datepicker($.datepicker.regional[ "es" ]);
+	$("#dfecha_vence_seguro").datepicker($.datepicker.regional[ "es" ]);
 });
 
 

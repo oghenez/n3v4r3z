@@ -38,6 +38,16 @@ class tickets_model extends privilegios_model{
 		return $response;
 	}
 	
+	public function getInfoTicket($id_ticket=''){
+		if($this->exist('ticket', array('id_ticket'=>$id_ticket))){
+			
+			
+			
+			return array(true);
+		}
+		else return array(false); 
+	}
+	
 	public function addTicket(){
 		
 		$id_ticket = BDUtil::getId();
@@ -72,7 +82,7 @@ class tickets_model extends privilegios_model{
 		}
 		
 		$folio = $this->getNxtFolio();		
-		return array(true,'folio'=>$folio[0][0]->folio);
+		return array(true,'id_ticket'=>$id_ticket,folio=>$folio[0][0]->folio);
 	}
 	
 	
