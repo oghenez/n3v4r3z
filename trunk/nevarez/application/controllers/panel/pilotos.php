@@ -310,7 +310,10 @@ class pilotos extends MY_Controller {
 						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
 				array('field'	=> 'dvencimiento_licencia_v',
 						'label'		=> 'Fecha vecimiento vehículo',
-						'rules'		=> 'max_length[10]|callback_isValidDate')
+						'rules'		=> 'max_length[10]|callback_isValidDate'),
+				array('field'	=> 'dfecha_vence_seguro',
+						'label'		=> 'Fecha vecimiento seguro',
+						'rules'		=> 'required|max_length[10]|callback_isValidDate')
 		);
 	
 		if($tipo == 'add'){

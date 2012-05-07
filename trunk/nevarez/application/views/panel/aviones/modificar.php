@@ -9,11 +9,15 @@
 				<label for="fmodelo">Modelo</label><br>
 				<input type="text" name="fmodelo" id="fmodelo" value="<?= (isset($aviones[0]->modelo)? $aviones[0]->modelo: ''); ?>" size="30" maxlength="10">
 			</p>
-			<p class="f-l w100">
+			<p class="f-l w50">
 				<label for="ftipo">Tipo</label><br>
 				<input type="text" name="ftipo" id="ftipo" value="<?= (isset($aviones[0]->tipo)? $aviones[0]->tipo: ''); ?>" size="30" maxlength="10">
-				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 			</p>
+			<p class="f-l w50">
+				<label for="dfecha_vence_tarjeta">*Fecha vencimiento tarjeta</label><br>
+				<input type="text" name="dfecha_vence_tarjeta" id="dfecha_vence_tarjeta" value="<?= (isset($aviones[0]->fecha_vence_tarjeta)? $aviones[0]->fecha_vence_tarjeta: ''); ?>" size="30" maxlength="10">
+			</p>
+			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r" style="margin-right:55px;">
 		</div>
 	</form>
 </div>

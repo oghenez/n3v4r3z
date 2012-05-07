@@ -106,13 +106,15 @@ class pilotos_model extends privilegios_model{
 			'expide_factura' => ($this->input->post('dexpide_factura')==1) ? 'true' : 'false' ,
 			'licencia_vehiculo' => $this->input->post('dlicencia_vehiculo'),
 			'licencia_avion' => $this->input->post('dlicencia_avion'),
+			'licencia_avion' => $this->input->post('dlicencia_avion'),
+			'fecha_vence_seguro' => $this->input->post('dfecha_vence_seguro'),
 			'tipo' => 'pi'
 		);
 		
 		if($this->input->post('dvencimiento_licencia_v') != '')
 			$data['vencimiento_licencia_v'] = $this->input->post('dvencimiento_licencia_v');
 		
-		if($this->input->post('vencimiento_licencia_a') != '')
+		if($this->input->post('dvencimiento_licencia_a') != '')
 			$data['vencimiento_licencia_a'] = $this->input->post('dvencimiento_licencia_a');
 		
 		
@@ -150,7 +152,8 @@ class pilotos_model extends privilegios_model{
 			'dias_credito' => $this->input->post('ddias_credito'),
 			'expide_factura' => ($this->input->post('dexpide_factura')==1) ? 'true' : 'false' ,
 			'licencia_vehiculo' => $this->input->post('dlicencia_vehiculo'),
-			'licencia_avion' => $this->input->post('dlicencia_avion')
+			'licencia_avion' => $this->input->post('dlicencia_avion'),
+			'fecha_vence_seguro' => $this->input->post('dfecha_vence_seguro'),
 		);
 		
 		if($this->input->post('dvencimiento_licencia_v') != '')

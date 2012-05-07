@@ -72,14 +72,12 @@ class aviones extends MY_Controller {
 	
 	private function agregar(){
 		$this->carabiner->css(array(
-				array('libs/jquery.msgbox.css','screen'),
 				array('general/forms.css','screen'),
 				array('general/tables.css','screen')
 		));
 		
 		$this->carabiner->js(array(
-				array('libs/jquery.msgbox.min.js'),
-				array('general/msgbox.js')
+				array('aviones/frm_addmod.js')
 		));
 		
 		$params['info_empleado']	= $this->info_empleado['info'];
@@ -115,14 +113,12 @@ class aviones extends MY_Controller {
 		if(isset($_GET['id']) && $this->aviones_model->exist('aviones',array('id_avion'=>$_GET['id'],'status'=>'ac')))
 		{
 			$this->carabiner->css(array(
-					array('libs/jquery.msgbox.css','screen'),
 					array('general/forms.css','screen'),
 					array('general/tables.css','screen')
 			));
 			
 			$this->carabiner->js(array(
-					array('libs/jquery.msgbox.min.js'),
-					array('general/msgbox.js')
+					array('aviones/frm_addmod.js')
 			));
 			
 			$this->configAddAvion();
@@ -193,11 +189,27 @@ class aviones extends MY_Controller {
 								'rules'	=> 'max_lenght[10]'),
 						array('field'	=> 'ftipo',
 								'label'	=> 'tipo',
-								'rules'	=> 'max_lenght[10]')
+								'rules'	=> 'max_lenght[10]'),
+						array('field'	=> 'dfecha_vence_tarjeta',
+								'label'		=> 'Fecha vecimiento tarjeta',
+								'rules'		=> 'required|max_length[10]|callback_isValidDate')
 				);
 		$this->form_validation->set_rules($rules);
 	}
-		
+	
+	/**
+	 * Form_validation: Valida su una fecha esta en formato correcto
+	 */
+	public function isValidDate($str){
+		if($str != ''){
+			if(String::isValidDate($str) == false){
+				$this->form_validation->set_message('isValidDate', 'El campo %s no es una fecha valida');
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Muestra mensajes cuando se realiza alguna accion
 	 * @param unknown_type $tipo

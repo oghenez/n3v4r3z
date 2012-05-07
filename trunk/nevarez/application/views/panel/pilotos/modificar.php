@@ -210,34 +210,36 @@
 					</table>
 				</div>
 			</div>
-			
-			
 		</div>
-		
-		<div class="frmsec-right w25 f-l">
-			<div class="frmbox-r p5-tb corner-right8">
-				<label for="dlicencia_avion">Licencia Avion:</label> <br>
-				<input type="text" name="dlicencia_avion" class="a-c" value="<?php echo (isset($piloto['info']->licencia_avion)? $piloto['info']->licencia_avion: ''); ?>" size="15">
-				<br>
-				<label for="dvencimiento_licencia_a">Fecha vencimiento:</label> <br>
-				<input type="text" name="dvencimiento_licencia_a" class="a-c" id="dvencimiento_licencia_a" value="<?php echo (isset($piloto['info']->vencimiento_licencia_a)? $piloto['info']->vencimiento_licencia_a: ''); ?>" size="15">
+		<div class="w25 f-l">
+			<div class="frmsec-right w100 f-l">
+				<div class="frmbox-r p5-tb corner-right8">
+					<label for="dfecha_vence_seguro">Fecha vencimiento seguro:</label> <br>
+					<input type="text" name="dfecha_vence_seguro" id="dfecha_vence_seguro" value="<?php echo (isset($piloto['info']->fecha_vence_seguro))? $piloto['info']->fecha_vence_seguro: ''; ?>" class="a-c" size="15" readonly>
+				</div>
+			</div>
+			<div class="frmsec-right w100 f-l">
+				<div class="frmbox-r p5-tb corner-right8">
+					<label for="dlicencia_avion">Licencia Avion:</label> <br>
+					<input type="text" name="dlicencia_avion" class="a-c" value="<?php echo (isset($piloto['info']->licencia_avion)? $piloto['info']->licencia_avion: ''); ?>" size="15">
+					<br>
+					<label for="dvencimiento_licencia_a">Fecha vencimiento:</label> <br>
+					<input type="text" name="dvencimiento_licencia_a" class="a-c" id="dvencimiento_licencia_a" value="<?php echo (isset($piloto['info']->vencimiento_licencia_a)? $piloto['info']->vencimiento_licencia_a: ''); ?>" size="15">
+				</div>
+			</div>
+			<div class="frmsec-right w100 f-l">
+				<div class="frmbox-r p5-tb corner-right8">
+					<label for="dlicencia_vehiculo">Licencia Vehículo:</label> <br>
+					<input type="text" name="dlicencia_vehiculo" class="a-c" value="<?php echo (isset($piloto['info']->licencia_vehiculo)? $piloto['info']->licencia_vehiculo: ''); ?>" size="15">
+					<br>
+					<label for="dvencimiento_licencia_v">Fecha vencimiento:</label> <br>
+					<input type="text" name="dvencimiento_licencia_v" class="a-c" id="dvencimiento_licencia_v" value="<?php echo (isset($piloto['info']->vencimiento_licencia_v)? $piloto['info']->vencimiento_licencia_v: ''); ?>" size="15">
+				</div>
+				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
 			</div>
 		</div>
-		
-		<div class="frmsec-right w25 f-l">
-			<div class="frmbox-r p5-tb corner-right8">
-				<label for="dlicencia_vehiculo">Licencia Vehículo:</label> <br>
-				<input type="text" name="dlicencia_vehiculo" class="a-c" value="<?php echo (isset($piloto['info']->licencia_vehiculo)? $piloto['info']->licencia_vehiculo: ''); ?>" size="15">
-				<br>
-				<label for="dvencimiento_licencia_v">Fecha vencimiento:</label> <br>
-				<input type="text" name="dvencimiento_licencia_v" class="a-c" id="dvencimiento_licencia_v" value="<?php echo (isset($piloto['info']->vencimiento_licencia_v)? $piloto['info']->vencimiento_licencia_v: ''); ?>" size="15">
-			</div>
-			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
-		</div>
-		
 	</form>
 </div>
-
 
 <!-- Bloque de alertas -->
 <div id="container" style="display:none">
