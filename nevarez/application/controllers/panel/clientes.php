@@ -177,7 +177,7 @@ class clientes extends MY_Controller {
 	public function eliminar(){
 		if(isset($_GET['id']{0})){
 			$this->load->model('clientes_model');
-			$respons = $this->clientes_model->eliminarSucursal();
+			$respons = $this->clientes_model->eliminarCliente();
 			if($respons[0])
 				redirect(base_url('panel/clientes/?msg=5'));
 		}else
