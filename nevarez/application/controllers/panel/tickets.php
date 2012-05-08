@@ -7,7 +7,7 @@ class tickets extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('tickets/ajax_get_total_vuelos/','tickets/ajax_agrega_ticket/');
+	private $excepcion_privilegio = array('tickets/ajax_get_total_vuelos/','tickets/ajax_agrega_ticket/','tickets/imprime_ticket/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -42,30 +42,31 @@ class tickets extends MY_Controller {
 	public function index(){
 		$this->carabiner->css(array(
 			array('libs/jquery.msgbox.css', 'screen'),
-			array('general/forms.css', 'screen'),
-			array('general/tables.css', 'screen')
+			array('general/tables.css', 'screen'),
+			array('general/forms.css', 'screen')
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
-			array('general/msgbox.js')
+			array('general/msgbox.js'),
+			array('tickets/admin.js')
 		));
-		$this->load->model('pilotos_model');
+		$this->load->model('tickets_model');
 		$this->load->library('pagination');
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
-		$params['opcmenu_active'] = 'Pilotos'; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
 		$params['seo'] = array(
-			'titulo' => 'Administrar Pilotos'
+			'titulo' => 'Administrar Tickets'
 		);
 		
-		$params['pilotos'] = $this->pilotos_model->getPilotos();
+		$params['tickets'] = $this->tickets_model->getTickets();
 		
 		if(isset($_GET['msg']{0}))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
-		$this->load->view('panel/pilotos/listado', $params);
+		$this->load->view('panel/tickets/listado', $params);
 		$this->load->view('panel/footer');
 	}
 	
@@ -102,19 +103,68 @@ class tickets extends MY_Controller {
 			$this->load->view('panel/footer');
 	}
 	
+	public function cancelar(){
+		if(isset($_GET['id']{0})){
+			
+			$this->load->model('tickets_model');
+			$res = $this->tickets_model->cancelTicket($_GET['id']);
+			
+			if($res[0])
+				redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=5'));
+		}
+		else
+			redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=1'));
+	}
+	
+	public function ver(){
+		if(isset($_GET['id']{0})){
+			
+			$this->carabiner->css(array(
+					array('general/forms.css', 'screen'),
+					array('general/tables.css', 'screen')
+			));
+			
+			$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+			$params['seo'] = array(
+					'titulo' => 'Ver Ticket'
+			);
+			$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
+			
+			$this->load->model('tickets_model');
+			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
+			
+			$params['info']['dire'] = ($params['info'][1]['cliente_info'][0]->nombre_fiscal!='') ? 'Calle: '.$params['info'][1]['cliente_info'][0]->calle:''; 
+			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->colonia!='') ? ', Colonia: '.$params['info'][1]['cliente_info'][0]->colonia:'';
+			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->localidad!='') ? "\nLocalidad: ".$params['info'][1]['cliente_info'][0]->localidad:'';
+			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->municipio!='') ? ', Municipio: '.$params['info'][1]['cliente_info'][0]->municipio:'';
+			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->estado!='') ? ', Estado: '.$params['info'][1]['cliente_info'][0]->estado:'';
+			
+			$this->load->view('panel/header', $params);
+			$this->load->view('panel/general/menu', $params);
+			$this->load->view('panel/tickets/ver',$params);
+			$this->load->view('panel/footer');
+		}
+	}
+	
 	public function imprime_ticket(){
 		if(isset($_GET['id']{0})){
+			
 			$this->carabiner->css(array(
-						array('ticket/print_ticket.css','screen')
+							array('base.css', 'print'),
+							array('tickets/print_ticket.css', 'print')
 					));
+
+			$this->carabiner->js(array(
+						array('tickets/print_ticket.js')
+					));
+		
+		
+			$this->load->model('tickets_model');
+			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
+			$params['seo']['titulo'] = 'Ticket';
+			
+			$this->load->view('panel/tickets/print_ticket',$params);
 		}
-		
-		$this->load->model('tickets_model');
-		$params = $this->tickets_model->getInfoTicket($_GET['id']);
-		
-		
-		
-		$this->load->view('panel/tickets/print_ticket',$params);
 	}
 	
 	public function ajax_agrega_ticket(){
@@ -219,7 +269,7 @@ class tickets extends MY_Controller {
 				$icono = 'ok';
 				break;
 			case 5:
-				$txt = 'El Ticket se elimino correctamente.';
+				$txt = 'El Ticket se cancelo correctamente.';
 				$icono = 'ok';
 				break;
 		}
