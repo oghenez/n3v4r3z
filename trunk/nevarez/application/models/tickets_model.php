@@ -10,6 +10,62 @@ class tickets_model extends privilegios_model{
 		return array($folio->result());
 	}
 	
+	public function getTickets(){
+		$sql = '';
+		//paginacion
+		$params = array(
+				'result_items_per_page' => '30',
+				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
+		);
+		if($params['result_page'] % $params['result_items_per_page'] == 0)
+			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
+		
+		//Filtros para buscar
+		
+		switch ($this->input->get('fstatus')){
+			case 'todos':
+					$sql = "t.status<>'ca'";
+					break;
+			case 'pendientes':
+					$sql = "t.status='p'";
+					break;
+			case 'pagados':
+					$sql = "t.status='pa'";
+					break;
+		}
+		
+		if($this->input->get('fstatus') =='')
+			$sql = "t.status<>'ca'";
+		
+		if($this->input->get('ffecha_ini') != '')
+			$sql .= ($this->input->get('ffecha_fin') != '') ? " AND DATE(t.fecha)>='".$this->input->get('ffecha_ini')."'" : " AND DATE(t.fecha)='".$this->input->get('ffecha_ini')."'";
+
+		if($this->input->get('ffecha_fin') != '')
+			$sql .= ($this->input->get('ffecha_ini') != '') ? " AND DATE(t.fecha)<='".$this->input->get('ffecha_fin')."'" : " AND DATE(t.fecha)='".$this->input->get('ffecha_fin')."'";
+		
+		if($this->input->get('ffecha_ini') == '' && $this->input->get('ffecha_fin') == '')
+			$sql .= " AND DATE(t.fecha)=DATE(now())";
+		
+		$query = BDUtil::pagination("
+				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status
+				FROM tickets as t
+				INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
+				WHERE $sql
+				ORDER BY DATE(t.fecha) DESC
+				", $params, true);
+				$res = $this->db->query($query['query']);
+		
+				$response = array(
+						'tickets' 			=> array(),
+						'total_rows' 		=> $query['total_rows'],
+						'items_per_page' 	=> $params['result_items_per_page'],
+						'result_page' 		=> $params['result_page']
+				);
+				$response['tickets'] = $res->result();
+				return $response;
+		
+	}
+	
 	public function getTotalVuelosAjax(){
 		
 		$response = array();
@@ -39,11 +95,30 @@ class tickets_model extends privilegios_model{
 	}
 	
 	public function getInfoTicket($id_ticket=''){
-		if($this->exist('ticket', array('id_ticket'=>$id_ticket))){
+		if($this->exist('tickets', array('id_ticket'=>$id_ticket))){
+			$response = array();
+			$res_q1 = $this->db->query("
+						SELECT t.folio, t.tipo_pago, t.fecha, t.subtotal, t.iva, t.total, c.nombre_fiscal, c.rfc, c.calle, c.colonia, c.localidad, c. municipio,
+								c.estado, c.cp
+						FROM tickets as t
+						INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
+						WHERE t.id_ticket='$id_ticket'
+					");
+			$response['cliente_info'] = $res_q1->result();
 			
+			$res_q2 = $this->db->query("
+						SELECT v.fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion
+						FROM tickets as t
+						INNER JOIN tickets_vuelos as tv ON t.id_ticket=tv.id_ticket
+						INNER JOIN vuelos as v ON tv.id_vuelo=v.id_vuelo
+						INNER JOIN proveedores as pi ON v.id_piloto=pi.id_proveedor
+						INNER JOIN productos as p ON v.id_producto=p.id_producto
+						WHERE t.id_ticket='$id_ticket'
+						GROUP BY v.fecha,v.id_piloto, pi.nombre, tv.precio_unitario, p.codigo, p.descripcion
+					");
+			$response['vuelos_info'] = $res_q2->result();
 			
-			
-			return array(true);
+			return array(true,$response);
 		}
 		else return array(false); 
 	}
@@ -64,7 +139,6 @@ class tickets_model extends privilegios_model{
 				);
 		$this->db->insert('tickets',$data);
 		
-		
 		foreach ($_POST as $vuelo){
 			if(is_array($vuelo)){
 				$data_v = array(
@@ -82,10 +156,13 @@ class tickets_model extends privilegios_model{
 		}
 		
 		$folio = $this->getNxtFolio();		
-		return array(true,'id_ticket'=>$id_ticket,folio=>$folio[0][0]->folio);
+		return array(true,'id_ticket'=>$id_ticket,'folio'=>$folio[0][0]->folio);
 	}
 	
-	
+	public function cancelTicket($id_ticket=''){
+		$this->db->update('tickets',array('status'=>'ca'),array('id_ticket'=>$id_ticket));
+		return array(true);
+	}
 	
 	
 	public function exist($table, $sql, $return_res=false){
