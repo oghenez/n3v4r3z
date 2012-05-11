@@ -1,14 +1,28 @@
 $(function(){
-	$('#dfecha').datepicker($.datepicker.regional["es"]);
+	$('#dfecha').datepicker({
+		 dateFormat: 'yy-mm-dd', //formato de la fecha - dd,mm,yy=dia,mes,año numericos  DD,MM=dia,mes en texto
+		 //minDate: '-2Y', maxDate: '+1M +10D', //restringen a un rango el calendario - ej. +10D,-2M,+1Y,-3W(W=semanas) o alguna fecha
+		 changeMonth: true, //permite modificar los meses (true o false)
+		 changeYear: true, //permite modificar los años (true o false)
+		 //yearRange: (fecha_hoy.getFullYear()-70)+':'+fecha_hoy.getFullYear(),
+		 numberOfMonths: 1 //muestra mas de un mes en el calendario, depende del numero
+	});
 	
 	$("#dcliente").autocomplete({
 		source: base_url+'panel/clientes/ajax_get_clientes',
 		minLength: 1,
 		selectFirst: true,
 		select: function( event, ui ) {
-			$("#hcliente").val(ui.item.id);
-			$("#dcliente_info").val(createInfoCliente(ui.item.item));
+//			$("#hcliente").val(ui.item.id);
+//			$("#dcliente_info").val(createInfoCliente(ui.item.item));
 //			$("#dplazo_credito").val(ui.item.item.dias_credito);
+			
+			tr = '<tr><td>'+ui.item.item.nombre_fiscal+'</td><td>'+createInfoCliente(ui.item.item)+'</td></tr>';
+			$('#tbl_clientes tr:first').after(tr);
+			
+			hidde = '<input type="hidden" name="hids[]" value="'+ui.item.id+'">';
+			$('#hidde-ids').append(hidde);
+			
 			$("#dcliente").css("background-color", "#B0FFB0");
 		}
 	});
@@ -20,7 +34,6 @@ $(function(){
 		select: function( event, ui ) {
 			$("#havion").val(ui.item.id);
 			$("#davion_info").val(createInfoAvion(ui.item.item));
-//			$("#dplazo_credito").val(ui.item.item.dias_credito);
 			$("#davion").css("background-color", "#B0FFB0");
 		}
 	});
@@ -32,11 +45,9 @@ $(function(){
 		select: function( event, ui ) {
 			$("#hpiloto").val(ui.item.id);
 			$("#dpiloto_info").val(createInfoPiloto(ui.item.item));
-//			$("#dplazo_credito").val(ui.item.item.dias_credito);
 			$("#dPiloto").css("background-color", "#B0FFB0");
 		}
 	});
-	
 	
 	$("input[type=text]").on("keydown", function(event){
 		if(event.which == 8 || event == 46){

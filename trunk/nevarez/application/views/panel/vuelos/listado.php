@@ -20,7 +20,7 @@
 		</tr>
 <?php foreach($vuelos['vuelos'] as $vuelo): ?>
 				<tr class="row-conte" id="<?= $vuelo->id_vuelo?>">
-					<td><?= $vuelo->nombre_fiscal;?></td>
+					<td><?= $vuelo->clientes;?></td>
 					<td><?= $vuelo->piloto; ?></td>
 					<td><?= $vuelo->matricula; ?></td>
 					<td><?= $vuelo->fecha; ?></td>

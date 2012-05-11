@@ -30,12 +30,11 @@ class vuelos_model extends CI_Model{
 			$sql = " AND DATE(v.fecha)=DATE(now())";
 
 		$query = BDUtil::pagination("
-				SELECT v.id_vuelo, c.nombre_fiscal, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe
+				SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe
 				FROM vuelos as v
-				INNER JOIN clientes as c ON v.id_cliente = c.id_cliente
 				INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
 				INNER JOIN aviones as a ON v.id_avion = a.id_avion
-				WHERE c.status='ac' AND pi.status='ac' AND a.status='ac'				
+				WHERE pi.status='ac' AND a.status='ac'				
 				$sql
 				ORDER BY DATE(v.fecha) DESC
 				", $params, true);
@@ -59,7 +58,7 @@ class vuelos_model extends CI_Model{
 	public function getVuelosCliente($id_cliente=''){
 		$sql = ($id_cliente!='') ? "WHERE id_cliente = '$id_cliente'": "";
 		$res = $this->db->query("
-					SELECT nombre_fiscal, piloto, matricula, fecha, id_cliente, id_piloto, id_avion, total_vuelos
+					SELECT clientes, piloto, matricula, fecha, id_piloto, id_avion, total_vuelos
 					FROM get_vuelos_pendientes $sql
 			");
 		$resultado = array();
@@ -78,13 +77,16 @@ class vuelos_model extends CI_Model{
 		$id_vuelo = BDUtil::getId();
 		$data = array(
 			'id_vuelo' 		=> $id_vuelo,
-			'id_cliente'	=> $this->input->post('hcliente'),
 			'id_piloto'		=> $this->input->post('hpiloto'),
 			'id_avion'		=> $this->input->post('havion'),
 			'fecha'			=> $this->input->post('dfecha')
 		);
 		$this->db->insert('vuelos', $data);
+		$data = array();
+		foreach ($_POST['hids'] as $cid)
+			$data[] = array('id_vuelo' => $id_vuelo, 'id_cliente' => $cid);
 		
+		$this->db->insert_batch('vuelos_clientes',$data);
 		$msg = 4;
 		return array(true, '', $msg);
 	}	
