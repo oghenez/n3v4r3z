@@ -123,7 +123,13 @@ class vuelos extends MY_Controller {
 			if($respons[0])
 				redirect(base_url('panel/vuelos/agregar/?'.String::getVarsLink(array('msg')).'&msg='.$respons[2]));
 		}
-		
+		$params['infoc'] = array();
+		if(isset($_POST['hids'])){
+			$this->load->model('clientes_model');
+			foreach ($_POST['hids'] as $id)
+				$params['infoc'][] = $this->clientes_model->getInfoCliente($id, true);
+		}
+// 		var_dump($params['infoc']);
 		if(isset($_GET['msg']{0}))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
@@ -181,7 +187,7 @@ class vuelos extends MY_Controller {
 	private function configAddVuelo($tipo){
 		$this->load->library('form_validation');
 		$rules = array(
-				array('field'	=> 'hcliente',
+				array('field'	=> 'hids[]',
 						'label'		=> 'Cliente',
 						'rules'		=> 'required|max_length[25]'),
 				array('field'	=> 'havion',

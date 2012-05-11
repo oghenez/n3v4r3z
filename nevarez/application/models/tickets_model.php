@@ -70,13 +70,17 @@ class tickets_model extends privilegios_model{
 		
 		$response = array();
 		
+// 		var_dump($_POST);
+		
 		foreach ($_POST as $v){
+			$v['clientes'] = str_replace('-', '<br>', $v['clientes']);
 			$res = $this->db->query("
-					SELECT v.id_vuelo, p.codigo, p.descripcion, plp.dias_credito, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio
+					SELECT vc.id_vuelo, p.codigo, p.descripcion, plp.dias_credito, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio, get_clientes_vuelo(v.id_vuelo,null) as clientes
 					FROM vuelos as v
 					INNER JOIN productos as p ON v.id_producto=p.id_producto
+					INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo
 					LEFT JOIN (SELECT plp.id_producto, plp.precio, c.dias_credito FROM productos_listas_precios as plp INNER JOIN clientes as c ON plp.id_lista=c.id_lista_precio WHERE c.id_cliente='{$v['id_cliente']}') as plp ON plp.id_producto=v.id_producto
-					WHERE v.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND v.fecha = '{$v['fecha']}'
+					WHERE vc.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND v.fecha = '{$v['fecha']}' AND get_clientes_vuelo(v.id_vuelo,null) = '{$v['clientes']}';
 			");
 			
 			if($res->num_rows()>0)
@@ -98,23 +102,27 @@ class tickets_model extends privilegios_model{
 		if($this->exist('tickets', array('id_ticket'=>$id_ticket))){
 			$response = array();
 			$res_q1 = $this->db->query("
-						SELECT t.folio, t.tipo_pago, t.fecha, t.subtotal, t.iva, t.total, c.nombre_fiscal, c.rfc, c.calle, c.colonia, c.localidad, c. municipio,
-								c.estado, c.cp
+						SELECT t.folio, t.tipo_pago, t.fecha, t.subtotal, t.iva, t.total, c.nombre_fiscal, c.rfc, ('Calle: ' || c.calle || '<br>Colonia: ' || c.colonia || '<br>Localidad: ' || c.localidad || '<br>Municipio: ' || c. municipio ||
+								'<br>Estado: ' || c.estado || '<br>C.P: ' || c.cp) as domicilio, get_clientes_vuelo(vc.id_vuelo,t.id_cliente) as otros_clientes
 						FROM tickets as t
 						INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
+						INNER JOIN tickets_vuelos as tv ON t.id_ticket = tv.id_ticket
+						INNER JOIN vuelos_clientes as vc ON t.id_cliente=vc.id_cliente AND tv.id_vuelo=vc.id_vuelo
 						WHERE t.id_ticket='$id_ticket'
+						GROUP BY t.folio, t.tipo_pago, t.fecha, t.subtotal, t.iva, t.total, c.nombre_fiscal, c.rfc, c.calle, c.colonia, c.localidad, c. municipio, c.estado, c.cp, get_clientes_vuelo(vc.id_vuelo,t.id_cliente)
 					");
 			$response['cliente_info'] = $res_q1->result();
 			
 			$res_q2 = $this->db->query("
-						SELECT v.fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion
+						SELECT v.fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion, av.matricula
 						FROM tickets as t
 						INNER JOIN tickets_vuelos as tv ON t.id_ticket=tv.id_ticket
 						INNER JOIN vuelos as v ON tv.id_vuelo=v.id_vuelo
 						INNER JOIN proveedores as pi ON v.id_piloto=pi.id_proveedor
 						INNER JOIN productos as p ON v.id_producto=p.id_producto
+						INNER JOIN aviones as av ON av.id_avion=v.id_avion
 						WHERE t.id_ticket='$id_ticket'
-						GROUP BY v.fecha,v.id_piloto, pi.nombre, tv.precio_unitario, p.codigo, p.descripcion
+						GROUP BY v.fecha,v.id_piloto, pi.nombre, tv.precio_unitario, p.codigo, p.descripcion, av.matricula
 					");
 			$response['vuelos_info'] = $res_q2->result();
 			

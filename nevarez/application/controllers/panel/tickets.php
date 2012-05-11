@@ -133,11 +133,11 @@ class tickets extends MY_Controller {
 			$this->load->model('tickets_model');
 			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
 			
-			$params['info']['dire'] = ($params['info'][1]['cliente_info'][0]->nombre_fiscal!='') ? 'Calle: '.$params['info'][1]['cliente_info'][0]->calle:''; 
-			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->colonia!='') ? ', Colonia: '.$params['info'][1]['cliente_info'][0]->colonia:'';
-			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->localidad!='') ? "\nLocalidad: ".$params['info'][1]['cliente_info'][0]->localidad:'';
-			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->municipio!='') ? ', Municipio: '.$params['info'][1]['cliente_info'][0]->municipio:'';
-			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->estado!='') ? ', Estado: '.$params['info'][1]['cliente_info'][0]->estado:'';
+// 			$params['info']['dire'] = ($params['info'][1]['cliente_info'][0]->nombre_fiscal!='') ? 'Calle: '.$params['info'][1]['cliente_info'][0]->calle:''; 
+// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->colonia!='') ? ', Colonia: '.$params['info'][1]['cliente_info'][0]->colonia:'';
+// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->localidad!='') ? "\nLocalidad: ".$params['info'][1]['cliente_info'][0]->localidad:'';
+// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->municipio!='') ? ', Municipio: '.$params['info'][1]['cliente_info'][0]->municipio:'';
+// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->estado!='') ? ', Estado: '.$params['info'][1]['cliente_info'][0]->estado:'';
 			
 			$this->load->view('panel/header', $params);
 			$this->load->view('panel/general/menu', $params);

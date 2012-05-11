@@ -12,9 +12,37 @@
 					<p class="w100">
 						<label for="dcliente" class="f-l">*Cliente</label><br>
 						<input type="text" name="dcliente" value="<?php echo set_value('dcliente');?>" size="35" id="dcliente" class="f-l" autofocus>
-						<input type="hidden" name="hcliente" value="<?php echo set_value('hcliente');?>" id="hcliente">
 						
-						<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="55" readonly><?php echo set_value('dcliente_info'); ?></textarea>
+						<?php 
+						/*<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="55" readonly><?php echo set_value('dcliente_info'); ?></textarea>*/
+						?>
+						
+						<table class="tblListados corner-all8" id="tbl_clientes" style="width:50% !important;margin-top:-15px !important;border: 1px #79B7E7 solid;">
+							<tr class="header btn-gray">
+								<td>Cliente</td>
+								<td>Datos</td>
+							</tr>
+							<?php if(isset($infoc)):
+									foreach ($infoc as $c):?>
+										<tr>
+											<td><?= $c['info']->nombre_fiscal?></td>
+											<td><?= $c['info']->calle.', '.$c['info']->colonia.', '.$c['info']->municipio.', '.$c['info']->estado?></td>
+										</tr>
+							<?php endforeach;endif;?>
+							
+						</table>
+						<p id="hidde-ids">
+							<?php /*<input type="hidden" name="hcliente" value="<?php echo set_value('hcliente');?>" id="hcliente">*/?>
+							
+							<?php if(isset($_POST['hids'])):
+									foreach ($_POST['hids'] as $id):?>
+										<input type="hidden" name="hids[]" value="<?= $id?>">
+							<?php
+									endforeach;
+								  endif;
+							?>
+						</p>
+						
 					</p>
 					<div class="clear"></div>
 				</div>

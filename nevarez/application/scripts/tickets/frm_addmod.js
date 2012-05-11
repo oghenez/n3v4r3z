@@ -2,16 +2,26 @@
 var subtotal = 0;
 var iva = 0;
 var total = 0;
+var aux_varios_clientes = false;
+
+var cont_aux_clientes = 0;  // Controla el total de vuelos agregados a la tabla.
 
 var vuelos_selec = {}; // almacena los vuelos que han sido agregados
-var vuelos_data = {}; //almacena la informacion de los vuelos que sera enviada por POST
+var vuelos_data = {}; //almacena la informacion de los vuelos que seran enviados por POST
 var indice = 0; // indice para controlar los vuelos q han sido agregados
 
 var post = {}; // Contiene todos los valores del ticket q se pasaran por POST
 
 
 $(function(){
-	$('#dfecha').datepicker($.datepicker.regional["es"]);
+	$('#dfecha').datepicker({
+		 dateFormat: 'yy-mm-dd', //formato de la fecha - dd,mm,yy=dia,mes,año numericos  DD,MM=dia,mes en texto
+		 //minDate: '-2Y', maxDate: '+1M +10D', //restringen a un rango el calendario - ej. +10D,-2M,+1Y,-3W(W=semanas) o alguna fecha
+		 changeMonth: true, //permite modificar los meses (true o false)
+		 changeYear: true, //permite modificar los años (true o false)
+		 //yearRange: (fecha_hoy.getFullYear()-70)+':'+fecha_hoy.getFullYear(),
+		 numberOfMonths: 1 //muestra mas de un mes en el calendario, depende del numero
+});
 	
 	$("#dcliente").autocomplete({
 		source: base_url+'panel/clientes/ajax_get_clientes',
@@ -62,7 +72,7 @@ function createInfoCliente(item){
 	return info;
 }
 
-function ajax_get_total_vuelos(data){
+function ajax_get_total_vuelos(data, tipo){
 	loader.create();
 	$.post(base_url+'panel/tickets/ajax_get_total_vuelos/', data, function(resp){
 
@@ -84,10 +94,9 @@ function ajax_get_total_vuelos(data){
 			subtotal	+= parseFloat(resp.tabla.importe, 2);
 			iva			= parseFloat(subtotal*0.16, 2);
 			total		= parseFloat(subtotal+iva, 2);
-			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+'}';
+			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+', tipo:'+tipo+'}';
 			
 			$('#hdias_credito').val(resp.tabla.dias_credito);
-			
 			
 			opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
 				'onclick="msb.confirm(\'Estas seguro de eliminar el vuelo?\', '+vals+', eliminaVuelos); return false;">'+
@@ -121,7 +130,7 @@ function ajax_get_total_vuelos(data){
 }
 
 function ajax_submit_form(){
-//	print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id=l4fa94a76040cc5.02486848', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=300,height=500,toolbar=0,resizable=0');
+//	print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id=l4fad64948e6b90.54031426', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0');
 	post.tcliente	= $('#hcliente').val();
 	post.tfolio		= $('#dfolio').val();
 	post.tfecha		= $('#dfecha').val();
@@ -162,7 +171,7 @@ function ajax_submit_form(){
 			$('#dfolio').val(resp.folio);
 			limpia_campos();
 			updateTablaPrecios();
-			print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id='+resp.id_ticket+'', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=300,height=500,toolbar=0,resizable=0');
+			print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id='+resp.id_ticket+'', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0');
 		}
 	}, "json").complete(function(){ 
     	loader.close();
@@ -186,7 +195,6 @@ function limpia_campos(){
 	
 }
 
-
 function eliminaVuelos(vals){
 	delete vuelos_selec[vals.indice];
 	delete vuelos_data[vals.indice];
@@ -195,6 +203,12 @@ function eliminaVuelos(vals){
 	subtotal -= parseFloat(vals.importe,2);
 	iva			= parseFloat(subtotal*0.16, 2);
 	total		= parseFloat(subtotal+iva, 2);
+
+	if(aux_varios_clientes)
+		aux_varios_clientes = false;
+	
+	if(vals.tipo==1)
+		cont_aux_clientes--;
 	
 	updateTablaPrecios();
 	

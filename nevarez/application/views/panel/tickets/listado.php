@@ -19,17 +19,17 @@
 	
 	<table class="tblListados corner-all8">
 		<tr class="header btn-gray">
-			<td>Cliente</td>
 			<td>Fecha</td>
 			<td>Folio</td>
+			<td>Cliente</td>
 			<td>Tipo de Pago</td>
 			<td class="a-c">Opc</td>
 		</tr>
 <?php foreach($tickets['tickets'] as $ticket){ ?>
 		<tr>
-			<td><?php echo $ticket->cliente; ?></td>
 			<td><?php echo $ticket->fecha; ?></td>
 			<td><?php echo $ticket->folio; ?></td>
+			<td><?php echo $ticket->cliente; ?></td>
 			<td><?php echo $ticket->tipo_pago; ?></td>
 			<td class="tdsmenu a-c" style="width: 90px;">
 				<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">

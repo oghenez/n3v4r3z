@@ -94,7 +94,7 @@ class aviones extends MY_Controller {
 		{
 			$model_resp	= $this->aviones_model->addAvion();
 			if($model_resp[0])
-				redirect(base_url('panel/aviones/agregar/?'.String::getVarsLink(array('msg')).'&msg=1'));
+				redirect(base_url('panel/aviones/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
 			else
 				$params['frm_errors'] = $this->showMsgs(2,'Ya existe el Avión','Alerta !');
 		}

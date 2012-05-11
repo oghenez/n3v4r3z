@@ -36,17 +36,22 @@
 		<span class="f-b" style="font-weight:bold;">Datos Cliente</span><br>
 		<span>Nombre: <?= $info[1]['cliente_info'][0]->nombre_fiscal?></span><br>
 		<span>RFC: <?= $info[1]['cliente_info'][0]->rfc?></span><br>
+		<span><?= $info[1]['cliente_info'][0]->domicilio?></span>
+		<?php if($info[1]['cliente_info'][0]->otros_clientes !== null){?>
+				<br><br><span class="f-b" style="font-weight:bold;">Otros Clientes: <?= str_replace('<br>', ', ', $info[1]['cliente_info'][0]->otros_clientes)?></span><br>
+		<?php }?>
 	</div>
 	<br><br>
 	<div>
-		<div class="w100 a-c f-b" style="font-weight: bold;">V U E L O S</div><br>
+		<div class="w100 a-c f-b" style="font-weight: bold;">D E T A L L E</div><br>
 		
 		<table class="header w100">
 			<tr class="a-c">
-				<td>VUELOS</td>
-				<td>PILOTO</td>
-				<td>FECHA</td>
-				<td>PRECIO</td>
+				<td>CANT</td>
+				<td>DESC</td>
+				<td>AVION</td>
+				<td>FCHA</td>
+				<td>P/U</td>
 				<td>IMPORTE</td>
 			</tr>
 			<?php if(isset($info[1]['vuelos_info'])):
@@ -54,6 +59,7 @@
 						<tr class="a-c f-7em" style="font-size:0.7em;">
 							<td><?= $vuelo->vuelos?></td>
 							<td><?= $vuelo->nombre?></td>
+							<td><?= $vuelo->matricula?></td>
 							<td><?= $vuelo->fecha?></td>
 							<td><?= String::formatoNumero($vuelo->precio,2)?></td>
 							<td><?= String::formatoNumero($vuelo->importe,2)?></td>

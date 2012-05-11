@@ -12,7 +12,7 @@
 						<label for="dcliente" class="f-l">*Cliente</label><br>
 						<input type="text" name="dcliente" value="<?= isset($info[1]['cliente_info'][0]->nombre_fiscal) ? $info[1]['cliente_info'][0]->nombre_fiscal:'';?>" size="35" id="dcliente" class="f-l"  readonly>
 						
-						<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="66" ><?= $info['dire'];?></textarea>
+						<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="66" ><?= str_replace('<br>',', ',$info[1]['cliente_info'][0]->domicilio)?></textarea>
 					</p>
 					
 					<div class="clear"></div>
@@ -70,7 +70,7 @@
 				</p>
 				<div class="clear"></div>
 			</div>
-			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/tickets/imprime_ticket/?&id=<?= $this->input->get('id')?>', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=300,height=500,toolbar=0,resizable=0')">
+			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/tickets/imprime_ticket/?&id=<?= $this->input->get('id')?>', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0')">
 		</div>
 	</form>
 </div>
