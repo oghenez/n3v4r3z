@@ -24,7 +24,8 @@
 		closeTxt: "Close",
 		prevTxt: "Previous",
 		nextTxt: "Next",
-		beforeShow: function(){}
+		beforeShow: function(){},
+		beforeHide: function(){}
 	},
 	
 	galleryGroups = {},
@@ -380,6 +381,8 @@
 		$innerbox.empty();
 		if (typeof(superboxClosed)=='function')
 			superboxClosed();
+		
+		settings.beforeHide();
 	};
 	
 	// Hide Box + Overlay
