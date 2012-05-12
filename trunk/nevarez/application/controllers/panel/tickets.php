@@ -42,11 +42,13 @@ class tickets extends MY_Controller {
 	public function index(){
 		$this->carabiner->css(array(
 			array('libs/jquery.msgbox.css', 'screen'),
+			array('libs/jquery.superbox.css', 'screen'),
 			array('general/tables.css', 'screen'),
 			array('general/forms.css', 'screen')
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
+			array('libs/jquery.superbox.js'),
 			array('general/msgbox.js'),
 			array('tickets/admin.js')
 		));
@@ -133,17 +135,49 @@ class tickets extends MY_Controller {
 			$this->load->model('tickets_model');
 			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
 			
-// 			$params['info']['dire'] = ($params['info'][1]['cliente_info'][0]->nombre_fiscal!='') ? 'Calle: '.$params['info'][1]['cliente_info'][0]->calle:''; 
-// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->colonia!='') ? ', Colonia: '.$params['info'][1]['cliente_info'][0]->colonia:'';
-// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->localidad!='') ? "\nLocalidad: ".$params['info'][1]['cliente_info'][0]->localidad:'';
-// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->municipio!='') ? ', Municipio: '.$params['info'][1]['cliente_info'][0]->municipio:'';
-// 			$params['info']['dire'] .= ($params['info'][1]['cliente_info'][0]->estado!='') ? ', Estado: '.$params['info'][1]['cliente_info'][0]->estado:'';
-			
 			$this->load->view('panel/header', $params);
 			$this->load->view('panel/general/menu', $params);
 			$this->load->view('panel/tickets/ver',$params);
 			$this->load->view('panel/footer');
 		}
+	}
+	
+	public function pagar(){
+		if(isset($_GET['id']{0})){
+			$this->carabiner->css(array(
+						array('general/forms.css', 'screen'),
+						array('general/tables.css', 'screen'),
+					));
+			
+			$this->carabiner->js(array(
+						array('tickets/pago_ticket.js')
+					));
+			
+			$this->load->model('tickets_model');
+			
+			$this->configAddPago();
+			if($this->form_validation->run() == FALSE){
+				$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+			}
+			else{
+				$res = $this->tickets_model->abonar_ticket(true);
+				
+				if($res[0]){
+					$params['frm_errors'] = $this->showMsgs('6');
+					$params['load'] = true;
+				}
+				else
+					$params['frm_errors']= $this->showMsgs(2, $params['msg']);
+			}
+			
+			$res = $this->tickets_model->get_info_abonos();
+			$params['total'] = $res;
+			
+			$params['seo']['titulo'] = 'Pagar Ticket';
+			
+			$this->load->view('panel/tickets/pago_ticket',$params);
+		}
+		else redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=1'));
 	}
 	
 	public function imprime_ticket(){
@@ -156,8 +190,7 @@ class tickets extends MY_Controller {
 
 			$this->carabiner->js(array(
 						array('tickets/print_ticket.js')
-					));
-		
+					));		
 		
 			$this->load->model('tickets_model');
 			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
@@ -165,6 +198,20 @@ class tickets extends MY_Controller {
 			
 			$this->load->view('panel/tickets/print_ticket',$params);
 		}
+	}
+	
+	public function configAddPago(){
+	
+		$this->load->library('form_validation');
+		$rules = array(
+				array('field'	=> 'ffecha',
+						'label'		=> 'Fecha',
+						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
+				array('field'	=> 'fconcepto',
+						'label'		=> 'Concepto',
+						'rules'		=> 'required|max_length[25]')
+		);
+		$this->form_validation->set_rules($rules);
 	}
 	
 	public function ajax_agrega_ticket(){
@@ -270,6 +317,10 @@ class tickets extends MY_Controller {
 				break;
 			case 5:
 				$txt = 'El Ticket se cancelo correctamente.';
+				$icono = 'ok';
+				break;
+			case 6:
+				$txt = 'El Ticket se pagó correctamente.';
 				$icono = 'ok';
 				break;
 		}

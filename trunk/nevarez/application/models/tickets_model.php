@@ -67,10 +67,7 @@ class tickets_model extends privilegios_model{
 	}
 	
 	public function getTotalVuelosAjax(){
-		
 		$response = array();
-		
-// 		var_dump($_POST);
 		
 		foreach ($_POST as $v){
 			$v['clientes'] = str_replace('-', '<br>', $v['clientes']);
@@ -172,6 +169,65 @@ class tickets_model extends privilegios_model{
 		return array(true);
 	}
 	
+	public function abonar_ticket($liquidar=false,$id_ticket=null,$concepto=null){
+		
+		$id_ticket	= ($id_ticket==null) ? $this->input->get('id') : $id_ticket;
+		$concepto	= ($concepto==null) ? $this->input->post('fconcepto') : $concepto;
+		
+		$ticket_info = $this->get_info_abonos($id_ticket);
+		
+		if($ticket_info->status=='p'){
+			$pagado = false;
+			if($liquidar){
+				if($ticket_info->abonado = $ticket_info->total)
+					$total = $ticket_info->restante;
+				elseif($ticket_info->restante = $ticket_info->total)
+					$total = $ticket_info->total;
+				
+				$pagado = true;
+			}
+			else{
+				
+			}
+			
+			$id_abono = BDUtil::getId();
+			$data = array(
+					'id_abono'	=> $id_abono,
+					'id_ticket'	=> $id_ticket,
+					'fecha' 	=> $this->input->post('ffecha'),
+					'concepto'	=> $concepto,
+					'total'		=> floatval($total)
+			);
+			$this->db->insert('tickets_abonos',$data);
+			
+			if($pagado) 
+				$this->db->update('tickets',array('status'=>'pa'),array('id_ticket'=>$id_ticket));
+			
+			return array(true);
+		}
+		else return array(false,'msg'=>'No puede realizar mas abonos porque el ticket ya esta totalmente pagado');
+	}
+	
+	public function get_info_abonos($id_ticket=null){
+		
+		$id_ticket = ($id_ticket==null) ? $this->input->get('id') : $id_ticket;
+		$res =	$this->db->select("SUM(ta.total) AS abonado, (t.total-SUM(ta.total)) as restante, t.total, t.status")
+							->from("tickets_abonos as ta")
+							->join("tickets as t", "ta.id_ticket=t.id_ticket","inner")
+							->where(array("tipo"=>"ab","t.status !=" =>"ca","ta.id_ticket"=>$id_ticket))
+							->group_by("t.total, t.status")
+							->get();
+		
+ 		if($res->num_rows==0){
+ 			$res =	$this->db->select('(0) as abonado, t.total as restante, t.total, t.status')
+					 			->from("tickets as t")
+					 			->where(array("t.status !=" =>"ca","t.id_ticket"=>$id_ticket))
+					 			->get();
+ 		}
+			
+// 		var_dump($res->row());exit;
+		return $res->row();
+	}
 	
 	public function exist($table, $sql, $return_res=false){
 		$res = $this->db->get_where($table, $sql);
