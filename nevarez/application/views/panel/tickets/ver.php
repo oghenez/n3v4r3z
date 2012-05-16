@@ -70,7 +70,7 @@
 				</p>
 				<div class="clear"></div>
 			</div>
-			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/tickets/imprime_ticket/?&id=<?= $this->input->get('id')?>', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0')">
+			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/tickets/imprime_ticket/?&id=<?= $this->input->get('id')?>', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=440,height=500,toolbar=0,resizable=0')">
 		</div>
 	</form>
 </div>

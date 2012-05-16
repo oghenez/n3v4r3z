@@ -21,15 +21,16 @@ class proveedores_model extends CI_Model{
 		
 		//Filtros para buscar
 		if($this->input->get('fnombre') != '')
-			$sql = "WHERE lower(nombre) LIKE '%".mb_strtolower($this->input->get('fnombre'), 'UTF-8')."%'";
+			$sql = " AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('fnombre'), 'UTF-8')."%'";
 		if($this->input->get('fstatus') != 'todos'){
 			$_GET['fstatus'] = $this->input->get('fstatus')==''? 'ac': $this->input->get('fstatus');
-			$sql .= ($sql==''? 'WHERE': ' AND')." lower(status) LIKE '".mb_strtolower($this->input->get('fstatus'), 'UTF-8')."'";
+			$sql .= " AND lower(status) LIKE '%".mb_strtolower($this->input->get('fstatus'), 'UTF-8')."%'";
 		}
 		
 		$query = BDUtil::pagination("
 				SELECT id_proveedor, nombre, telefono, email, recepcion_facturas, dias_pago
 				FROM proveedores
+				WHERE tipo='pr'
 				".$sql."
 				ORDER BY nombre ASC
 				", $params, true);

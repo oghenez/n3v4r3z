@@ -37,7 +37,7 @@ class pilotos_model extends privilegios_model{
 		$res = $this->db->query($query['query']);
 		
 		$response = array(
-				'proveedores' => array(),
+				'pilotos' => array(),
 				'total_rows' 		=> $query['total_rows'],
 				'items_per_page' 	=> $params['result_items_per_page'],
 				'result_page' 		=> $params['result_page']

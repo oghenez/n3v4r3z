@@ -15,7 +15,7 @@
 	opcmenu_active = '<?php echo isset($opcmenu_active)? $opcmenu_active: 0;?>';
 </script>
 </head>
-<body class="f-9em" style="font-size:0.9em;">
+<body class="f-12pt" style="font-size:12pt;">
 <div class="w100">
 	<div style="width:100%;">
 		<a href="javascript:void(0);" style="float:right;" onclick="printt()">
@@ -56,7 +56,7 @@
 			</tr>
 			<?php if(isset($info[1]['vuelos_info'])):
 					foreach ($info[1]['vuelos_info'] as $vuelo):?>
-						<tr class="a-c f-7em" style="font-size:0.7em;">
+						<tr class="a-c f-12pt" style="font-size:12pt;">
 							<td><?= $vuelo->vuelos?></td>
 							<td><?= $vuelo->nombre?></td>
 							<td><?= $vuelo->matricula?></td>
@@ -66,10 +66,10 @@
 						</tr>
 			<?php endforeach;endif;?>
 		</table>
-		<table class="f-r w-24i m-r3 a-c f-7em" style="width: 24% !important; margin-right: 3%; text-align: center; font-size: 0.7em;">
+		<table class="f-r w-24i m-r3 a-c f-12pt" style="width: 24% !important; margin-right: 0%; text-align: center; font-size: 12pt;">
 			<tr>
 				<td></td>
-				<td id="ta_subtotal" class="w20 a-r">----------------</td>
+				<td id="ta_subtotal" class="w20 a-r">--------------</td>
 			</tr>
 			<tr>
 				<td class="a-r" style="text-align:right;">SubTotal</td>
@@ -86,9 +86,10 @@
 		</table>
 	</div><div class="clear"></div>
 	<br><br>
-	<div class="f-7em" style="font-size: 0.6em;">
-		Debemos y Pagaré incondicionalmente a la orden de __________________ de este lugar de ____________________ Cantidad de _____________________ (______________________) 
-		m.n., valor de la mercancía recibida a mi entera satisfacción. Este pagaré es mercantil y está regido por la Ley General de Títulos Y Operaciones de Crédito 
+	<div class="f-12pt" style="font-size:12pt;">
+		Debemos y Pagaré incondicionalmente a la orden de __________________ de este lugar de ____________________ Cantidad de 
+		<?= String::formatoNumero($info[1]['cliente_info'][0]->total); ?> (<?= String::num2letras($info[1]['cliente_info'][0]->total,false,true); ?>) 
+		, valor de la mercancía recibida a mi entera satisfacción. Este pagaré es mercantil y está regido por la Ley General de Títulos Y Operaciones de Crédito 
 		en su artículo 173 parte final y artículos correlativos por no ser pagaré domiciliado. Si no es pagado antes de su vencimiento causara un interés del ____% mensual.
 	</div>
 </div>
