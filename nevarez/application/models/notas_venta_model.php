@@ -153,20 +153,20 @@ class notas_venta_model extends privilegios_model{
 		return array(true);
 	}
 	
-	public function abonar_ticket($liquidar=false,$id_ticket=null,$concepto=null){
+	public function abonar_nota_venta($liquidar=false,$id_nota_venta=null,$abono=nulll,$concepto=null){
 		
-		$id_ticket	= ($id_ticket==null) ? $this->input->get('id') : $id_ticket;
-		$concepto	= ($concepto==null) ? $this->input->post('fconcepto') : $concepto;
+		$id_nota_venta	= ($id_nota_venta==null) ? $this->input->get('id') : $id_nota_venta;
+		$concepto		= ($concepto==null) ? $this->input->post('fconcepto') : $concepto;
+				
+		$nota_venta_info = $this->get_info_abonos($id_nota_venta);
 		
-		$ticket_info = $this->get_info_abonos($id_ticket);
-		
-		if($ticket_info->status=='p'){
+		if($nota_venta_info->status=='p'){
 			$pagado = false;
 			if($liquidar){
-				if($ticket_info->abonado = $ticket_info->total)
-					$total = $ticket_info->restante;
-				elseif($ticket_info->restante = $ticket_info->total)
-					$total = $ticket_info->total;
+				if($nota_venta_info->abonado = $nota_venta_info->total)
+					$total = $nota_venta_info->restante;
+				elseif($nota_venta_info->restante = $nota_venta_info->total)
+					$total = $nota_venta_info->total;
 				
 				$pagado = true;
 			}
@@ -177,35 +177,35 @@ class notas_venta_model extends privilegios_model{
 			$id_abono = BDUtil::getId();
 			$data = array(
 					'id_abono'	=> $id_abono,
-					'id_ticket'	=> $id_ticket,
+					'id_nota_venta'	=> $id_nota_venta,
 					'fecha' 	=> $this->input->post('ffecha'),
 					'concepto'	=> $concepto,
 					'total'		=> floatval($total)
 			);
-			$this->db->insert('tickets_abonos',$data);
+			$this->db->insert('tickets_notas_venta_abonos',$data);
 			
 			if($pagado) 
-				$this->db->update('tickets',array('status'=>'pa'),array('id_ticket'=>$id_ticket));
+				$this->db->update('tickets_notas_venta',array('status'=>'pa'),array('id_nota_venta'=>$id_nota_venta));
 			
 			return array(true);
 		}
-		else return array(false,'msg'=>'No puede realizar mas abonos porque el ticket ya esta totalmente pagado');
+		else return array(false,'msg'=>'No puede realizar mas abonos porque la nota de venta ya esta totalmente pagada');
 	}
 	
-	public function get_info_abonos($id_ticket=null){
+	public function get_info_abonos($id_nota_venta=null){
 		
-		$id_ticket = ($id_ticket==null) ? $this->input->get('id') : $id_ticket;
+		$id_nota_venta = ($id_nota_venta==null) ? $this->input->get('id') : $id_nota_venta;
 		$res =	$this->db->select("SUM(ta.total) AS abonado, (t.total-SUM(ta.total)) as restante, t.total, t.status")
-							->from("tickets_abonos as ta")
-							->join("tickets as t", "ta.id_ticket=t.id_ticket","inner")
-							->where(array("tipo"=>"ab","t.status !=" =>"ca","ta.id_ticket"=>$id_ticket))
+							->from("tickets_notas_venta_abonos as ta")
+							->join("tickets_notas_venta as t", "ta.id_nota_venta=t.id_nota_venta","inner")
+							->where(array("tipo"=>"ab","t.status !=" =>"ca","ta.id_nota_venta"=>$id_nota_venta))
 							->group_by("t.total, t.status")
 							->get();
 		
  		if($res->num_rows==0){
  			$res =	$this->db->select('(0) as abonado, t.total as restante, t.total, t.status')
-					 			->from("tickets as t")
-					 			->where(array("t.status !=" =>"ca","t.id_ticket"=>$id_ticket))
+					 			->from("tickets_notas_venta as t")
+					 			->where(array("t.status !=" =>"ca","t.id_nota_venta"=>$id_nota_venta))
 					 			->get();
  		}
 			

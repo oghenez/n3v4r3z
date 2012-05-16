@@ -66,7 +66,7 @@
 				</p>
 				<div class="clear"></div>
 			</div>
-			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/notas_venta/imprime_nota_venta/?&id=<?= $this->input->get('id')?>', 'Imprimir Nota de Venta', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0')">
+			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/notas_venta/imprime_nota_venta/?&id=<?= $this->input->get('id')?>', 'Imprimir Nota de Venta', 'left='+((window.innerWidth/2)-240)+',top='+((window.innerHeight/2)-280)+',width=500,height=630,toolbar=0,resizable=0')">
 		</div>
 	</form>
 </div>

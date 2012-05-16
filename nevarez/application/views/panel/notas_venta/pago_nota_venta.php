@@ -18,7 +18,7 @@
 <body>
 <div>
 	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
-	<form action="<?= base_url('panel/tickets/pagar/?'.String::getVarsLink(array('msg')));?>" method="post">
+	<form action="<?= base_url('panel/notas_venta/pagar/?'.String::getVarsLink(array('msg')));?>" method="post">
 		<div class="frmsec-left w90 f-l">
 			<p class="f-l w30">
 				<label for="ffecha">*Fecha</label><br>
