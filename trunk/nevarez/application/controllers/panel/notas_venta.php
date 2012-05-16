@@ -150,34 +150,34 @@ class notas_venta extends MY_Controller {
 					));
 			
 			$this->carabiner->js(array(
-						array('tickets/pago_ticket.js')
+						array('notas_venta/pago_nota_venta.js')
 					));
 			
-			$this->load->model('tickets_model');
+			$this->load->model('notas_venta_model');
 			
 			$this->configAddPago();
 			if($this->form_validation->run() == FALSE){
 				$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
 			}
 			else{
-				$res = $this->tickets_model->abonar_ticket(true);
+				$res = $this->notas_venta_model->abonar_nota_venta(true);
 				
 				if($res[0]){
 					$params['frm_errors'] = $this->showMsgs('6');
 					$params['load'] = true;
 				}
 				else
-					$params['frm_errors']= $this->showMsgs(2, $params['msg']);
+					$params['frm_errors']= $this->showMsgs(2, $res['msg']);
 			}
 			
-			$res = $this->tickets_model->get_info_abonos();
+			$res = $this->notas_venta_model->get_info_abonos();
 			$params['total'] = $res;
 			
-			$params['seo']['titulo'] = 'Pagar Ticket';
+			$params['seo']['titulo'] = 'Pagar Nota de Venta';
 			
-			$this->load->view('panel/tickets/pago_ticket',$params);
+			$this->load->view('panel/notas_venta/pago_nota_venta',$params);
 		}
-		else redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=1'));
+		else redirect(base_url('panel/notas_venta/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
 	
 	public function imprime_nota_venta(){
@@ -186,7 +186,7 @@ class notas_venta extends MY_Controller {
 			$res = $this->notas_venta_model->getInfoNotaVenta($_GET['id']);
 			
 			$this->load->library('mypdf');
-			// CreaciÃ³n del objeto de la clase heredada
+			// Creacion del objeto de la clase heredada
 			$pdf = new MYpdf('P', 'mm', 'Letter');
 			$pdf->show_head = false;
 			$pdf->AddPage();
@@ -282,17 +282,28 @@ class notas_venta extends MY_Controller {
 				$pdf->Row($datos, false);
 			}
 			
-			//------------ SUBTOTAL, IVA ,TOTAL
+			//------------ SUBTOTAL, IVA ,TOTAL --------------------
 			
-// 			$y = $pdf->GetY();
-// 			$pdf->SetFont('Arial','',12);
-// 			$pdf->SetXY(35, ($y+9));
-// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->nombre_fiscal , 0, 0, 'L');
-// 			$pdf->SetXY(35, ($y+15));
-// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
-// 			$pdf->SetXY(35, ($y+22));
-// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
+			$y = $pdf->GetY();
+			$pdf->SetFont('Arial','B',10);
+			$pdf->SetTextColor(255,255,255);
+			$pdf->SetFillColor(160,160,160);
 			
+			$pdf->SetXY(144, ($y+5));
+			$pdf->Cell(23, 8, 'Subtotal' , 1, 0, 'C',1);
+			$pdf->SetXY(144, ($y+13));
+			$pdf->Cell(23, 8, 'IVA' , 1, 1, 'C',1);
+			$pdf->SetXY(144, ($y+21));
+			$pdf->Cell(23, 8, 'Total' , 1, 1, 'C',1);
+			
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFillColor(255,255,255);
+			$pdf->SetXY(167, ($y+5));
+			$pdf->Cell(33, 8, String::formatoNumero($res[1]['cliente_info'][0]->subtotal,2) , 1, 0, 'C');
+			$pdf->SetXY(167, ($y+13));
+			$pdf->Cell(33, 8, String::formatoNumero($res[1]['cliente_info'][0]->iva,2) , 1, 0, 'C');
+			$pdf->SetXY(167, ($y+21));
+			$pdf->Cell(33, 8, String::formatoNumero($res[1]['cliente_info'][0]->total,2) , 1, 0, 'C');
 			
 			$pdf->Output('nota_de_venta.pdf', 'I');
 		}

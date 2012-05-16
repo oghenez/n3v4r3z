@@ -165,6 +165,9 @@ function ajax_submit_form(){
 			$('#dfolio').val(resp.folio);
 			limpia_campos();
 			updateTablaPrecios();
+			
+			win = window.open(base_url+'panel/notas_venta/imprime_nota_venta/?&id='+resp.id_nota_venta, 'Imprimir Nota de Venta', 'left='+((window.innerWidth/2)-240)+',top='+((window.innerHeight/2)-280)+',width=500,height=630,toolbar=0,resizable=0')
+			
 		}
 	}, "json").complete(function(){ 
     	loader.close();
