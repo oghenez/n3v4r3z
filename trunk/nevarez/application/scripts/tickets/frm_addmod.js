@@ -192,7 +192,8 @@ function limpia_campos(){
 	vuelos_data = {};
 	post = {};
 	indice = 0;
-	
+
+	$('.addv').html('<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16"> Agregar vuelos</a>');
 }
 
 function eliminaVuelos(vals){

@@ -66,6 +66,17 @@ class tickets_model extends privilegios_model{
 		
 	}
 	
+	public function getTicketsCliente($id_cliente=null){
+		$id_cliente = ($id_cliente==null) ? $this->input->get('id') : $id_cliente;
+		$res = $this->db->query("SELECT id_ticket, fecha, folio, cliente, otros_clientes, vuelos
+								FROM get_tickets_pendientes
+								WHERE id_cliente='$id_cliente'");
+		$tickets = array();
+		if($res->num_rows() > 0)
+			$tickets = $res->result();
+		return $tickets;
+	}
+	
 	public function getTotalVuelosAjax(){
 		$response = array();
 		

@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class tickets extends MY_Controller {
+class notas_venta extends MY_Controller {
 	
 	/**
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('tickets/ajax_get_total_vuelos/','tickets/ajax_agrega_ticket/','tickets/imprime_ticket/','tickets/tickets_cliente/');
+	private $excepcion_privilegio = array('notas_venta/ajax_get_total_tickets/','notas_venta/ajax_agrega_nota_venta/','notas_venta/imprime_nota_venta/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -50,25 +50,25 @@ class tickets extends MY_Controller {
 			array('libs/jquery.msgbox.min.js'),
 			array('libs/jquery.superbox.js'),
 			array('general/msgbox.js'),
-			array('tickets/admin.js')
+			array('notas_venta/admin.js')
 		));
-		$this->load->model('tickets_model');
+		$this->load->model('notas_venta_model');
 		$this->load->library('pagination');
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
-		$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Notas de Venta'; //activa la opcion del menu
 		$params['seo'] = array(
-			'titulo' => 'Administrar Tickets'
+			'titulo' => 'Administrar Notas de Venta'
 		);
 		
-		$params['tickets'] = $this->tickets_model->getTickets();
+		$params['notas'] = $this->notas_venta_model->getNotasVenta();
 		
 		if(isset($_GET['msg']{0}))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
-		$this->load->view('panel/tickets/listado', $params);
+		$this->load->view('panel/notas_venta/listado', $params);
 		$this->load->view('panel/footer');
 	}
 	
@@ -84,38 +84,38 @@ class tickets extends MY_Controller {
 				array('libs/jquery.superbox.js'),
 				array('general/util.js'),
 				array('general/msgbox.js'),
-				array('tickets/frm_addmod.js')
+				array('notas_venta/frm_addmod.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 		$params['seo'] = array(
-				'titulo' => 'Agregar Ticket'
+				'titulo' => 'Notas de Venta'
 		);
-		$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Notas de Venta'; //activa la opcion del menu
 		
-		$this->load->model('tickets_model');
-		$params['ticket'] = $this->tickets_model->getNxtFolio();
+		$this->load->model('notas_venta_model');
+		$params['nota'] = $this->notas_venta_model->getNxtFolio();
 		
 		if(isset($_GET['msg']{0}))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
 			$this->load->view('panel/header', $params);
 			$this->load->view('panel/general/menu', $params);
-			$this->load->view('panel/tickets/agregar', $params);
+			$this->load->view('panel/notas_venta/agregar', $params);
 			$this->load->view('panel/footer');
 	}
 	
 	public function cancelar(){
 		if(isset($_GET['id']{0})){
 			
-			$this->load->model('tickets_model');
-			$res = $this->tickets_model->cancelTicket($_GET['id']);
+			$this->load->model('notas_venta_model');
+			$res = $this->notas_venta_model->cancelNotaVenta($_GET['id']);
 			
 			if($res[0])
-				redirect(base_url('panel/tickets/?'.String::getVarsLink(array('id','msg')).'&msg=5'));
+				redirect(base_url('panel/notas_venta/?'.String::getVarsLink(array('id','msg')).'&msg=5'));
 		}
 		else
-			redirect(base_url('panel/tickets/?'.String::getVarsLink(array('msg')).'&msg=1'));
+			redirect(base_url('panel/notas_venta/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
 	
 	public function ver(){
@@ -128,16 +128,16 @@ class tickets extends MY_Controller {
 			
 			$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 			$params['seo'] = array(
-					'titulo' => 'Ver Ticket'
+					'titulo' => 'Ver Nota de Venta'
 			);
-			$params['opcmenu_active'] = 'Tickets'; //activa la opcion del menu
+			$params['opcmenu_active'] = 'Notas de Venta'; //activa la opcion del menu
 			
-			$this->load->model('tickets_model');
-			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
+			$this->load->model('notas_venta_model');
+			$params['info'] = $this->notas_venta_model->getInfoNotaVenta($_GET['id']);
 			
 			$this->load->view('panel/header', $params);
 			$this->load->view('panel/general/menu', $params);
-			$this->load->view('panel/tickets/ver',$params);
+			$this->load->view('panel/notas_venta/ver',$params);
 			$this->load->view('panel/footer');
 		}
 	}
@@ -180,51 +180,123 @@ class tickets extends MY_Controller {
 		else redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=1'));
 	}
 	
-	public function imprime_ticket(){
+	public function imprime_nota_venta(){
 		if(isset($_GET['id']{0})){
+			$this->load->model('notas_venta_model');
+			$res = $this->notas_venta_model->getInfoNotaVenta($_GET['id']);
 			
-			$this->carabiner->css(array(
-							array('base.css', 'print'),
-							array('tickets/print_ticket.css', 'print')
-					));
-
-			$this->carabiner->js(array(
-						array('tickets/print_ticket.js')
-					));		
-		
-			$this->load->model('tickets_model');
-			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
-			$params['seo']['titulo'] = 'Ticket';
+			$this->load->library('mypdf');
+			// CreaciÃ³n del objeto de la clase heredada
+			$pdf = new MYpdf('P', 'mm', 'Letter');
+			$pdf->show_head = false;
+			$pdf->AddPage();
+			$pdf->SetFont('Arial','',8);
 			
-			$this->load->view('panel/tickets/print_ticket',$params);
+			$y = 30;
+			$pdf->Image(APPPATH.'/images/logo.png',15,10,25,25,"PNG");
+			
+			$pdf->SetFont('Arial','B',17);
+			$pdf->SetXY(45, $y);
+			$pdf->Cell(120, 6, 'F U M I G A C I O N E S   A E R E A S' , 0, 0, 'C');
+			
+			// ----------- FOLIO ------------------
+			$pdf->SetXY(170, ($y-8));
+			$pdf->Cell(30, 15, '' , 1, 0, 'C');
+			
+			$pdf->SetFont('Arial','B',11);
+			$pdf->SetXY(170, ($y-8));
+			$pdf->Cell(30, 5, 'FOLIO', 1, 0, 'C');
+			
+			$pdf->SetFont('Arial','',18);
+			$pdf->SetTextColor(255,0,0);
+			$pdf->SetXY(170, ($y-3));
+			$pdf->Cell(30, 10, $res[1]['cliente_info'][0]->folio , 0, 0, 'C');
+			
+			// ----------- FECHA ------------------
+			
+			$pdf->SetXY(170, ($y+8));
+			$pdf->Cell(30, 12, '' , 1, 0, 'C');
+				
+			$pdf->SetFont('Arial','B',11);
+			$pdf->SetTextColor('0','0','0');
+			$pdf->SetXY(170, ($y+8));
+			$pdf->Cell(30, 5, 'FECHA' , 1, 0, 'C');
+				
+			$pdf->SetFont('Arial','',15);
+			$pdf->SetTextColor('255','0','0');
+			$pdf->SetXY(170, ($y+13));
+			$pdf->Cell(30, 7, $res[1]['cliente_info'][0]->fecha , 0, 0, 'C');
+			
+			// ----------- DATOS CLIENTE ------------------
+				
+			$pdf->SetXY(15, ($y+7));
+			$pdf->Cell(153, 23, '' , 1, 0, 'C');
+			
+			$pdf->SetFont('Arial','B',11);
+			$pdf->SetTextColor('0','0','0');
+			$pdf->SetXY(15, ($y+9));
+			$pdf->Cell(20, 5, 'Nombre:', 0, 0, 'L');
+			
+			$pdf->SetXY(15, ($y+15));
+			$pdf->Cell(20, 5, 'Domicilio:' , 0, 0, 'L');
+			
+			$pdf->SetXY(15, ($y+22));
+			$pdf->Cell(20, 5, 'Lugar:' , 0, 0, 'L');
+			
+			$pdf->SetFont('Arial','',12);
+			$pdf->SetXY(35, ($y+9));
+			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->nombre_fiscal , 0, 0, 'L');
+			$pdf->SetXY(35, ($y+15));
+			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
+			$pdf->SetXY(35, ($y+22));
+			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
+			
+			// ----------- TABLA CON LOS TICKETS ------------------
+			$pdf->SetY($y+33);
+			$aligns = array('C', 'C', 'C');
+			$widths = array(25, 127, 33);
+			$header = array('Cantidad', 'Descripción', 'Importe');
+			foreach($res[1]['tickets_info'] as $key => $item){
+				$band_head = false;
+				if($pdf->GetY() >= 200 || $key==0){ //salta de pagina si exede el max
+					if($key > 0)
+						$pdf->AddPage();
+						
+					$pdf->SetFont('Arial','B',8);
+					$pdf->SetTextColor(255,255,255);
+					$pdf->SetFillColor(160,160,160);
+					$pdf->SetX(15);
+					$pdf->SetAligns($aligns);
+					$pdf->SetWidths($widths);
+					$pdf->Row($header, true);
+				}
+					
+				$pdf->SetFont('Arial','',10);
+				$pdf->SetTextColor(0,0,0);
+					
+				$datos = array('1', 'Ticket Folio:'.$item->folio,String::formatoNumero($item->total));
+					
+				$pdf->SetX(15);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths);
+				$pdf->Row($datos, false);
+			}
+			
+			//------------ SUBTOTAL, IVA ,TOTAL
+			
+// 			$y = $pdf->GetY();
+// 			$pdf->SetFont('Arial','',12);
+// 			$pdf->SetXY(35, ($y+9));
+// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->nombre_fiscal , 0, 0, 'L');
+// 			$pdf->SetXY(35, ($y+15));
+// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
+// 			$pdf->SetXY(35, ($y+22));
+// 			$pdf->Cell(130, 5, $res[1]['cliente_info'][0]->domiciliof2 , 0, 0, 'L');
+			
+			
+			$pdf->Output('nota_de_venta.pdf', 'I');
 		}
 	}
-	
-	public function tickets_cliente(){
-		if(isset($_GET['id']{0})){
-					
-				$this->carabiner->css(array(
-						array('general/forms.css', 'screen'),
-						array('general/tables.css', 'screen')
-				));
-					
-				$this->carabiner->js(array(
-						array('tickets/tickets_notas_venta.js')
-				));
-					
-				$params['seo'] = array(
-						'titulo' => 'Tickets'
-				);
-	
-				$this->load->model('tickets_model');
-				$params['cliente'] = array('tickets' => $this->tickets_model->getTicketsCliente($_GET['id']));
-			}
-			else
-				$params['frm_errors'] = $this->showMsgs(1);
-	
-			$this->load->view('panel/tickets/tickets_cliente',$params);
-	}
-	
 	
 	public function configAddPago(){
 	
@@ -240,7 +312,7 @@ class tickets extends MY_Controller {
 		$this->form_validation->set_rules($rules);
 	}
 	
-	public function ajax_agrega_ticket(){
+	public function ajax_agrega_nota_venta(){
 	
 		$this->load->library('form_validation');
 		$rules = array(
@@ -268,8 +340,8 @@ class tickets extends MY_Controller {
 				array('field'	=> 'total',
 						'label'		=> 'Total',
 						'rules'		=> 'required'),
-				array('field'	=> 'vuelos',
-						'label'		=> 'Vuelos',
+				array('field'	=> 'tickets',
+						'label'		=> 'Tickets',
 						'rules'		=> 'required')
 		);
 		$this->form_validation->set_rules($rules);
@@ -280,8 +352,8 @@ class tickets extends MY_Controller {
 		}
 		else
 		{
-			$this->load->model('tickets_model');
-			$params	= $this->tickets_model->addTicket();
+			$this->load->model('notas_venta_model');
+			$params	= $this->notas_venta_model->addNotaVenta();
 	
 			if($params[0])
 				$params['msg'] = $this->showMsgs(4);
@@ -290,13 +362,12 @@ class tickets extends MY_Controller {
 		echo json_encode($params);
 	}
 	
-	
 	/**
 	 * Obtiene lostado de pilotos para el autocomplete, ajax
 	 */
-	public function ajax_get_total_vuelos(){
-		$this->load->model('tickets_model');
-		$params = $this->tickets_model->getTotalVuelosAjax();
+	public function ajax_get_total_tickets(){
+		$this->load->model('notas_venta_model');
+		$params = $this->notas_venta_model->getTotalTicketsAjax();
 	
 		echo json_encode($params);
 	}
@@ -334,19 +405,19 @@ class tickets extends MY_Controller {
 				$icono = 'error';
 				break;
 			case 3:
-				$txt = 'El Ticket se modifico correctamente.';
+				$txt = 'La nota de venta se modifico correctamente.';
 				$icono = 'ok';
 				break;
 			case 4:
-				$txt = 'El Ticket se agrego correctamente.';
+				$txt = 'La nota de venta se agrego correctamente.';
 				$icono = 'ok';
 				break;
 			case 5:
-				$txt = 'El Ticket se cancelo correctamente.';
+				$txt = 'La nota de venta se cancelo correctamente.';
 				$icono = 'ok';
 				break;
 			case 6:
-				$txt = 'El Ticket se pagó correctamente.';
+				$txt = 'La nota de venta se pagó correctamente.';
 				$icono = 'ok';
 				break;
 		}

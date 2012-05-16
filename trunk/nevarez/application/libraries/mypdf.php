@@ -1,6 +1,7 @@
 <?php
 
 class MYpdf extends FPDF {
+	var $show_head = true;
 	var $titulo1 = 'Red Fire de Colima';
 	var $titulo2 = '';
 	var $titulo3 = '';
@@ -9,6 +10,12 @@ class MYpdf extends FPDF {
 	
 	var $limiteY = 0;
 	
+	/**
+	 * P:Carta Vertical, L:Carta Horizontal, lP:Legal vertical, lL:Legal Horizontal
+	 * @param unknown_type $orientation
+	 * @param unknown_type $unit
+	 * @param unknown_type $size
+	 */
 	function __construct($orientation='P', $unit='mm', $size='Letter'){
 		parent::__construct($orientation, $unit, $size);
 		
@@ -18,15 +25,17 @@ class MYpdf extends FPDF {
 	
     //Page header
     public function Header() {
-        // Logo
-	    $this->Image(APPPATH.'/images/logo.png', 6, 5, 38);
-	    $this->SetFont('Arial','',5);
-	    //$this->Text(6, 15, 'EXTINTORES Y SISTEMAS CONTRA INCENDIOS');
-	    
-	    $this->{$this->hheader}();
-	    
-	    // Salto de línea
-	    $this->Ln(20);
+    	if($this->show_head){
+	        // Logo
+		    $this->Image(APPPATH.'/images/logo.png', 6, 5, 38);
+		    $this->SetFont('Arial','',5);
+		    //$this->Text(6, 15, 'EXTINTORES Y SISTEMAS CONTRA INCENDIOS');
+		    
+		    $this->{$this->hheader}();
+		    
+		    // Salto de línea
+		    $this->Ln(20);
+    	}
     }
 
     // Page footer
@@ -88,6 +97,8 @@ class MYpdf extends FPDF {
     	$this->Cell(16, 5, date("Y-m-d"), 0, 0, 'R');
     
     	$this->Line(6, 26, 273, 26);
+    	
+    	$this->limiteY = 190; //limite de alto
     }
     /**
      * Legal Vertical

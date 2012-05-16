@@ -37,9 +37,7 @@
 		<span>Nombre: <?= $info[1]['cliente_info'][0]->nombre_fiscal?></span><br>
 		<span>RFC: <?= $info[1]['cliente_info'][0]->rfc?></span><br>
 		<span><?= $info[1]['cliente_info'][0]->domicilio?></span>
-		<?php if($info[1]['cliente_info'][0]->otros_clientes !== null){?>
-				<br><br><span class="f-b" style="font-weight:bold;">Otros Clientes: <?= str_replace('<br>', ', ', $info[1]['cliente_info'][0]->otros_clientes)?></span><br>
-		<?php }?>
+		
 	</div>
 	<br><br>
 	<div>
@@ -54,15 +52,15 @@
 				<td>P/U</td>
 				<td>IMPORTE</td>
 			</tr>
-			<?php if(isset($info[1]['vuelos_info'])):
-					foreach ($info[1]['vuelos_info'] as $vuelo):?>
+			<?php if(isset($info[1]['tickets_info'])):
+					foreach ($info[1]['tickets_info'] as $ticket):?>
 						<tr class="a-c f-7em" style="font-size:0.7em;">
-							<td><?= $vuelo->vuelos?></td>
-							<td><?= $vuelo->nombre?></td>
-							<td><?= $vuelo->matricula?></td>
-							<td><?= $vuelo->fecha?></td>
-							<td><?= String::formatoNumero($vuelo->precio,2)?></td>
-							<td><?= String::formatoNumero($vuelo->importe,2)?></td>
+							<td><?= $ticket->vuelos?></td>
+							<td><?= $ticket->nombre?></td>
+							<td><?= $ticket->matricula?></td>
+							<td><?= $ticket->fecha?></td>
+							<td><?= String::formatoNumero($ticket->precio,2)?></td>
+							<td><?= String::formatoNumero($ticket->importe,2)?></td>
 						</tr>
 			<?php endforeach;endif;?>
 		</table>

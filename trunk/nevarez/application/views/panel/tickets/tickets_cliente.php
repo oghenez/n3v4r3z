@@ -23,25 +23,21 @@
 				<tr class="header btn-gray">
 					<td>Fecha</td>
 					<td>Cliente</td>
-					<td>Avion</td>
-					<td>Piloto</td>
-					<td>Vuelos</td>
+					<td>Folio</td>
 					<td></td>
 				</tr>
-				<?php if (isset($cliente['vuelos'])):
-						foreach($cliente['vuelos'] as $vuelo):?>
+				<?php if (isset($cliente['tickets'])):
+						foreach($cliente['tickets'] as $ticket):?>
 							<tr>
-								<td><?= $vuelo->fecha?></td>
-								<td><?= $vuelo->clientes?></td>
-								<td><?= $vuelo->matricula?></td>
-								<td><?= $vuelo->piloto?></td>
-								<td><?= $vuelo->total_vuelos?></td>
-								<td><input type="checkbox" name="vuelos" value="<?= $_GET['id'].'&'.$vuelo->id_piloto.'&'.$vuelo->id_avion.'&'.$vuelo->fecha.'&'.str_replace('<br>', '-', $vuelo->clientes).'&'.((strpos($vuelo->clientes, '<br>'))? 't' : 'f')?>"></td>
+								<td><?= $ticket->fecha?></td>
+								<td><?= $ticket->cliente?></td>
+								<td><?= $ticket->folio?></td>
+								<td><input type="checkbox" name="vuelos" value="<?= $ticket->id_ticket?>"></td>
 							</tr>
 				<?php	 endforeach;
 					 endif;?>
 			</table>
-			<input type="button" name="enviar" value="Cargar" class="btn-blue corner-all f-r" id="CgrVuelos">
+			<input type="button" name="enviar" value="Cargar" class="btn-blue corner-all f-r" id="CgrTickets">
 	</div>
 </div>
 
@@ -58,7 +54,7 @@
 
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){
-	if($frm_errors['msg'] != ''){ 
+	if($frm_errors['msg'] != ''){
 ?>
 <script type="text/javascript" charset="UTF-8">
 $(function(){
