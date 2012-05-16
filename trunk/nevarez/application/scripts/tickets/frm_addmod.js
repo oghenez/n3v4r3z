@@ -130,7 +130,6 @@ function ajax_get_total_vuelos(data, tipo){
 }
 
 function ajax_submit_form(){
-//	print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id=l4fad64948e6b90.54031426', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0');
 	post.tcliente	= $('#hcliente').val();
 	post.tfolio		= $('#dfolio').val();
 	post.tfecha		= $('#dfecha').val();
@@ -171,7 +170,7 @@ function ajax_submit_form(){
 			$('#dfolio').val(resp.folio);
 			limpia_campos();
 			updateTablaPrecios();
-			print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id='+resp.id_ticket+'', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0');
+			print_T = window.open(base_url+'panel/tickets/imprime_ticket/?&id='+resp.id_ticket+'', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=440,height=500,toolbar=0,resizable=0');
 		}
 	}, "json").complete(function(){ 
     	loader.close();
