@@ -17,21 +17,17 @@
 					
 					<div class="clear"></div>
 					
-					<table class="tblListados corner-all8" id="tbl_vuelos">
+					<table class="tblListados corner-all8" id="tbl_tickets">
 						<tr class="header btn-gray">
-							<td>Cantidad</td>
-							<td>Código</td>
-							<td>Descripción</td>
-							<td>Precio Unitario</td>
-							<td>Importe</td>
+							<td>Folio</td>
+							<td>Fecha</td>
+							<td>Total</td>
 						</tr>
-						<?php foreach ($info[1]['vuelos_info'] as $vuelos):?>
+						<?php foreach ($info[1]['tickets_info'] as $tickets):?>
 							<tr>
-								<td><?= $vuelos->vuelos; ?></td>
-								<td><?= $vuelos->codigo; ?></td>
-								<td><?= $vuelos->descripcion; ?></td>
-								<td><?= String::formatoNumero($vuelos->precio); ?></td>
-								<td><?= String::formatoNumero($vuelos->importe); ?></td>
+								<td><?= $tickets->folio; ?></td>
+								<td><?= $tickets->fecha; ?></td>
+								<td><?= String::formatoNumero($tickets->total); ?></td>
 							</tr>
 						<?php endforeach;?>
 					</table>
@@ -70,7 +66,7 @@
 				</p>
 				<div class="clear"></div>
 			</div>
-			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/tickets/imprime_ticket/?&id=<?= $this->input->get('id')?>', 'Imprimir Ticket', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0')">
+			<input type="button" name="" value="Imprimir" class="btn-blue corner-all" onclick="window.open(base_url+'panel/notas_venta/imprime_nota_venta/?&id=<?= $this->input->get('id')?>', 'Imprimir Nota de Venta', 'left='+((window.innerWidth/2)-210)+',top='+((window.innerHeight/2)-200)+',width=330,height=500,toolbar=0,resizable=0')">
 		</div>
 	</form>
 </div>
