@@ -66,8 +66,8 @@ function cargar_vuelos(){
 				window.parent.ajax_get_total_vuelos(json_data['vuelos'], tipo);
 				window.parent.$("p.close a").click();
 			}else{alerta('Un vuelo seleccionado ya existe');}
-		}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asiganados a más de un cliente');}
-	}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asiganados a más de un cliente');}
+		}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
+	}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
 }
 
 function verifica_vuelo_varios_clientes(obj){

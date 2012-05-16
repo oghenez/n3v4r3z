@@ -1,4 +1,4 @@
-
+var taza_iva = 0;
 var subtotal = 0;
 var iva = 0;
 var total = 0;
@@ -82,13 +82,13 @@ function ajax_get_total_tickets(data){
 				tickets_data[indice]['ticket'+i] = {};
 				tickets_data[indice]['ticket'+i].id_ticket		= resp.tickets[i].id_ticket;
 				tickets_data[indice]['ticket'+i].cantidad		= resp.tickets[i].cantidad;
-				tickets_data[indice]['ticket'+i].taza_iva		= parseFloat(resp.tickets[i].taza_iva);
+				tickets_data[indice]['ticket'+i].taza_iva		= parseFloat(taza_iva);
 				tickets_data[indice]['ticket'+i].precio_unitario= parseFloat(resp.tickets[i].precio_unitario,2);
 				tickets_data[indice]['ticket'+i].importe 		= parseFloat(resp.tickets[i].precio_unitario,2);
-				tickets_data[indice]['ticket'+i].importe_iva	= parseFloat(resp.tickets[i].importe_iva, 2);
-				tickets_data[indice]['ticket'+i].total			= parseFloat(resp.tickets[i].total_nv,2) ;
+				tickets_data[indice]['ticket'+i].importe_iva	= parseFloat(resp.tickets[i].precio_unitario*taza_iva, 2);
+				tickets_data[indice]['ticket'+i].total			= parseFloat(resp.tickets[i].total_ticket,2);
 			
-				vals= '{indice:'+indice+', importe:'+resp.tickets[i].total_ticket+'}';
+				vals= '{indice:'+indice+', importe:'+resp.tickets[i].subtotal_ticket+'}';
 				
 				opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
 					'onclick="msb.confirm(\'Estas seguro de eliminar el ticket?\', '+vals+', eliminaTickets); return false;">'+
@@ -110,11 +110,11 @@ function ajax_get_total_tickets(data){
 				'	</td>'+
 				'</tr>');
 				
-				subtotal	+= parseFloat(resp.tickets[i].total_ticket, 2);
+				subtotal	+= parseFloat(resp.tickets[i].subtotal_ticket, 2);
 				indice++;
 			}
 			
-			iva			= parseFloat(subtotal*0.16, 2);
+			iva			= parseFloat(subtotal*taza_iva, 2);
 			total		= parseFloat(subtotal+iva, 2);
 			updateTablaPrecios();
 		}
@@ -179,7 +179,7 @@ function limpia_campos(){
 	$('#dcliente_info').val('');
 	$('#hcliente').val('');
 	$('#hdias_credito').val('');
-	$('#dfecha').val('');
+	$('#dfecha').val(actualDate());
 	
 	subtotal = 0;
 	iva = 0;
@@ -217,4 +217,14 @@ function alerta(msg){
 		title: 'Avizo !',
 		text: msg, 
 		icon: base_url+'application/images/alertas/info.png' });
+}
+
+function actualDate(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+
+	var yyyy = today.getFullYear();
+	if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} var today = yyyy+'-'+mm+'-'+dd;
+	return today;
 }

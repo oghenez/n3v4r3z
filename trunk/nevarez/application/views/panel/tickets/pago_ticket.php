@@ -22,7 +22,7 @@
 		<div class="frmsec-left w90 f-l">
 			<p class="f-l w30">
 				<label for="ffecha">*Fecha</label><br>
-				<input type="text" name="ffecha" id="ffecha" value="<?= set_value('ffecha'); ?>" size="20" maxlength="40" readonly>
+				<input type="text" name="ffecha" id="ffecha" value="<?= (set_value('ffecha')!='') ? set_value('ffecha'): date("Y-m-d"); ?>" size="20" maxlength="40" readonly>
 			</p>
 			<p class="f-r w70">		
 				<table class="tblListados corner-all8" style="width:40% !important;margin-right:0px;">
@@ -42,7 +42,7 @@
 			</p>
 			<p class="f-l w100">
 				<label for="fconcepto">*Concepto</label><br>
-				<textarea name="fconcepto" rows="4" cols="53" autofocus><?= set_value('fconcepto'); ?></textarea>
+				<textarea name="fconcepto" rows="4" cols="53" autofocus><?= set_value('fconcepto')!='' ? set_value('fconcepto') : "Pago total del ticket ($folio)"; ?></textarea>
 			</p>
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 		</div>

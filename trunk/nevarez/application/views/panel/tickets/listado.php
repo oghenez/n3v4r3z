@@ -23,6 +23,7 @@
 			<td>Folio</td>
 			<td>Cliente</td>
 			<td>Tipo de Pago</td>
+			<td>Estatus</td>
 			<td class="a-c">Opc</td>
 		</tr>
 <?php foreach($tickets['tickets'] as $ticket){ ?>
@@ -31,16 +32,18 @@
 			<td><?php echo $ticket->folio; ?></td>
 			<td><?php echo $ticket->cliente; ?></td>
 			<td><?php echo $ticket->tipo_pago; ?></td>
+			<td><?php echo ($ticket->status == 'pa') ? 'Pagado' : 'Pendiente' ?></td>
 			<td class="tdsmenu a-c" style="width: 90px;">
 				<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 				<div class="submenul">
 					<p class="corner-bottom8">
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('tickets/ver/', $ticket->id_ticket);
-						if($ticket->status!='pa')
+						if($ticket->status!='pa' && ($ticket->existe=='no' || $ticket->existe=='ca'))
 							echo $this->empleados_model->getLinkPrivSm('tickets/pagar/', $ticket->id_ticket,'','rel="superbox[iframe][500x330]" data-sbox="ticket"','');
-						echo $this->empleados_model->getLinkPrivSm('tickets/cancelar/', $ticket->id_ticket, 
-								"msb.confirm('Estas seguro de cancelar el ticket?', this); return false;", '', '&'.String::getVarsLink());
+						if($ticket->existe=='no' || $ticket->existe=='ca')
+							echo $this->empleados_model->getLinkPrivSm('tickets/cancelar/', $ticket->id_ticket, 
+									"msb.confirm('Estas seguro de cancelar el ticket?', this); return false;", '', '&'.String::getVarsLink());
 						?>
 					</p>
 				</div>

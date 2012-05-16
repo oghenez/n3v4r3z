@@ -58,7 +58,7 @@
 		<div class="frmsec-right w20 f-l">
 			<div class="frmbox-r p5-tb corner-right8">
 				<label for="dfecha">*Fecha</label> <br>
-				<input type="text" name="dfecha" id="dfecha" value="<?php echo set_value('dfecha'); ?>" class="a-c" size="15" readonly>
+				<input type="text" name="dfecha" id="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d"); ?>" class="a-c" size="15" readonly>
 				
 				<p class="w100 f-l">
 						<label for="dtipo_pago">*Tipo de Pago</label> <br>
