@@ -170,6 +170,8 @@ class notas_venta extends MY_Controller {
 					$params['frm_errors']= $this->showMsgs(2, $res['msg']);
 			}
 			
+			$params['folio'] = $this->db->select('folio')->from('tickets_notas_venta')->where('id_nota_venta',$_GET['id'])->get()->row()->folio;
+			
 			$res = $this->notas_venta_model->get_info_abonos();
 			$params['total'] = $res;
 			
@@ -204,11 +206,14 @@ class notas_venta extends MY_Controller {
 			$pdf->Cell(30, 15, '' , 1, 0, 'C');
 			
 			$pdf->SetFont('Arial','B',11);
+			$pdf->SetTextColor(255,255,255);
+			$pdf->SetFillColor(160,160,160);
 			$pdf->SetXY(170, ($y-8));
-			$pdf->Cell(30, 5, 'FOLIO', 1, 0, 'C');
+			$pdf->Cell(30, 5, 'FOLIO', 1, 0, 'C',1);
 			
 			$pdf->SetFont('Arial','',18);
 			$pdf->SetTextColor(255,0,0);
+			$pdf->SetFillColor(255,255,255);
 			$pdf->SetXY(170, ($y-3));
 			$pdf->Cell(30, 10, $res[1]['cliente_info'][0]->folio , 0, 0, 'C');
 			
@@ -218,14 +223,16 @@ class notas_venta extends MY_Controller {
 			$pdf->Cell(30, 12, '' , 1, 0, 'C');
 				
 			$pdf->SetFont('Arial','B',11);
-			$pdf->SetTextColor('0','0','0');
+			$pdf->SetTextColor(255,255,255);
+			$pdf->SetFillColor(160,160,160);
 			$pdf->SetXY(170, ($y+8));
-			$pdf->Cell(30, 5, 'FECHA' , 1, 0, 'C');
+			$pdf->Cell(30, 5, 'FECHA' , 1, 0, 'C',1);
 				
 			$pdf->SetFont('Arial','',15);
-			$pdf->SetTextColor('255','0','0');
+			$pdf->SetTextColor(255,0,0);
+			$pdf->SetFillColor(255,255,255);
 			$pdf->SetXY(170, ($y+13));
-			$pdf->Cell(30, 7, $res[1]['cliente_info'][0]->fecha , 0, 0, 'C');
+			$pdf->Cell(30, 7, $res[1]['cliente_info'][0]->fecha , 1, 0, 'C',1);
 			
 			// ----------- DATOS CLIENTE ------------------
 				
@@ -292,9 +299,9 @@ class notas_venta extends MY_Controller {
 			$pdf->SetXY(144, ($y+5));
 			$pdf->Cell(23, 8, 'Subtotal' , 1, 0, 'C',1);
 			$pdf->SetXY(144, ($y+13));
-			$pdf->Cell(23, 8, 'IVA' , 1, 1, 'C',1);
+			$pdf->Cell(23, 8, 'IVA' , 1, 0, 'C',1);
 			$pdf->SetXY(144, ($y+21));
-			$pdf->Cell(23, 8, 'Total' , 1, 1, 'C',1);
+			$pdf->Cell(23, 8, 'Total' , 1, 0, 'C',1);
 			
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFillColor(255,255,255);
@@ -304,6 +311,19 @@ class notas_venta extends MY_Controller {
 			$pdf->Cell(33, 8, String::formatoNumero($res[1]['cliente_info'][0]->iva,2) , 1, 0, 'C');
 			$pdf->SetXY(167, ($y+21));
 			$pdf->Cell(33, 8, String::formatoNumero($res[1]['cliente_info'][0]->total,2) , 1, 0, 'C');
+			
+			//------------ TOTAL CON LETRA--------------------
+			
+			$pdf->SetXY(15, ($y+5));
+			$pdf->Cell(125, 24, '' , 1, 0, 'C');
+			
+			$pdf->SetFont('Arial','B',13);
+			$pdf->SetXY(15, ($y+5));
+			$pdf->Cell(60, 8, 'TOTAL CON LETRA' , 0, 0, 'L');
+			
+			$pdf->SetFont('Arial','',12);
+			$pdf->SetXY(15, ($y+13));
+			$pdf->Cell(125, 16, String::num2letras($res[1]['cliente_info'][0]->total) , 0, 0, 'C');
 			
 			$pdf->Output('nota_de_venta.pdf', 'I');
 		}
@@ -318,7 +338,7 @@ class notas_venta extends MY_Controller {
 						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
 				array('field'	=> 'fconcepto',
 						'label'		=> 'Concepto',
-						'rules'		=> 'required|max_length[25]')
+						'rules'		=> 'required|max_length[200]')
 		);
 		$this->form_validation->set_rules($rules);
 	}

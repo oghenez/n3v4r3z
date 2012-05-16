@@ -3,7 +3,7 @@
 		<div class="frmsec-left w75 f-l">
 			<p class="f-r">
 				<label for="dfecha">*Fecha</label>
-				<input type="text" name="dfecha" value="<?php echo set_value('dfecha');?>" size="10" id="dfecha" readonly class="a-c">
+				<input type="text" name="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d");?>" size="10" id="dfecha" readonly class="a-c">
 			</p>
 			<div class="clear"></div>
 			

@@ -47,9 +47,11 @@ class tickets_model extends privilegios_model{
 			$sql .= " AND DATE(t.fecha)=DATE(now())";
 		
 		$query = BDUtil::pagination("
-				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status
+				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status, COALESCE(tnv.status,'no') existe
 				FROM tickets as t
 				INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
+				LEFT JOIN tickets_notas_venta_tickets as nvt ON t.id_ticket=nvt.id_ticket
+				LEFT JOIN tickets_notas_venta as tnv ON nvt.id_nota_venta=tnv.id_nota_venta		
 				WHERE $sql
 				ORDER BY DATE(t.fecha) DESC
 				", $params, true);
@@ -153,7 +155,8 @@ class tickets_model extends privilegios_model{
 					'iva'			=> $this->input->post('iva'),
 					'total'			=> $this->input->post('total')
 				);
-		$this->db->insert('tickets',$data);
+		
+		$this->db->insert('tickets',$data);		
 		
 		foreach ($_POST as $vuelo){
 			if(is_array($vuelo)){
@@ -171,6 +174,11 @@ class tickets_model extends privilegios_model{
 			}
 		}
 		
+		if($_POST['tipo_pago']=='contado'){
+			$concepto = "Pago total del ticket ({$_POST['tfolio']})";
+			$res = $this->abonar_ticket(true,$id_ticket,null,$concepto);
+		}
+		
 		$folio = $this->getNxtFolio();		
 		return array(true,'id_ticket'=>$id_ticket,'folio'=>$folio[0][0]->folio);
 	}
@@ -180,7 +188,7 @@ class tickets_model extends privilegios_model{
 		return array(true);
 	}
 	
-	public function abonar_ticket($liquidar=false,$id_ticket=null,$concepto=null){
+	public function abonar_ticket($liquidar=false,$id_ticket=null,$abono=null,$concepto=null){
 		
 		$id_ticket	= ($id_ticket==null) ? $this->input->get('id') : $id_ticket;
 		$concepto	= ($concepto==null) ? $this->input->post('fconcepto') : $concepto;
@@ -205,7 +213,7 @@ class tickets_model extends privilegios_model{
 			$data = array(
 					'id_abono'	=> $id_abono,
 					'id_ticket'	=> $id_ticket,
-					'fecha' 	=> $this->input->post('ffecha'),
+					'fecha' 	=> $this->input->post('ffecha')!='' ? $this->input->post('ffecha') : date("Y-m-d") ,
 					'concepto'	=> $concepto,
 					'total'		=> floatval($total)
 			);

@@ -23,6 +23,7 @@
 			<td>Folio</td>
 			<td>Cliente</td>
 			<td>Tipo de Pago</td>
+			<td>Estatus</td>
 			<td class="a-c">Opc</td>
 		</tr>
 <?php foreach($notas['notas'] as $nv){ ?>
@@ -31,6 +32,7 @@
 			<td><?php echo $nv->folio; ?></td>
 			<td><?php echo $nv->cliente; ?></td>
 			<td><?php echo $nv->tipo_pago; ?></td>
+			<td><?php echo ($nv->status=='pa') ? 'Pagado' : 'Pendiente' ?></td>
 			<td class="tdsmenu a-c" style="width: 90px;">
 				<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 				<div class="submenul">

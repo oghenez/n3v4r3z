@@ -170,6 +170,7 @@ class tickets extends MY_Controller {
 					$params['frm_errors']= $this->showMsgs(2, $params['msg']);
 			}
 			
+			$params['folio'] = $this->db->select("folio")->from("tickets")->where("id_ticket",$_GET['id'])->get()->row()->folio;
 			$res = $this->tickets_model->get_info_abonos();
 			$params['total'] = $res;
 			
@@ -235,7 +236,7 @@ class tickets extends MY_Controller {
 						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
 				array('field'	=> 'fconcepto',
 						'label'		=> 'Concepto',
-						'rules'		=> 'required|max_length[25]')
+						'rules'		=> 'required|max_length[200]')
 		);
 		$this->form_validation->set_rules($rules);
 	}

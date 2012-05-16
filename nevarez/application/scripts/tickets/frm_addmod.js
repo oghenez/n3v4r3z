@@ -1,4 +1,4 @@
-
+var taza_iva = 0;
 var subtotal = 0;
 var iva = 0;
 var total = 0;
@@ -14,6 +14,7 @@ var post = {}; // Contiene todos los valores del ticket q se pasaran por POST
 
 
 $(function(){
+	
 	$('#dfecha').datepicker({
 		 dateFormat: 'yy-mm-dd', //formato de la fecha - dd,mm,yy=dia,mes,año numericos  DD,MM=dia,mes en texto
 		 //minDate: '-2Y', maxDate: '+1M +10D', //restringen a un rango el calendario - ej. +10D,-2M,+1Y,-3W(W=semanas) o alguna fecha
@@ -79,20 +80,21 @@ function ajax_get_total_vuelos(data, tipo){
 		if(resp.vuelos){
 			var opc_elimi = '';
 			
+			
 			vuelos_data[indice] = {};
 			for(var i in resp.vuelos){
 				vuelos_data[indice]['vuelo'+i] = {};
 				vuelos_data[indice]['vuelo'+i].id_vuelo = resp.vuelos[i].id_vuelo;
 				vuelos_data[indice]['vuelo'+i].cantidad = resp.tabla.cantidad;
-				vuelos_data[indice]['vuelo'+i].taza_iva = parseFloat(0.16,2);
+				vuelos_data[indice]['vuelo'+i].taza_iva = parseFloat(taza_iva,2);
 				vuelos_data[indice]['vuelo'+i].precio_unitario = resp.tabla.p_uni;
 				vuelos_data[indice]['vuelo'+i].importe = parseFloat(resp.tabla.importe,2);
-				vuelos_data[indice]['vuelo'+i].importe_iva = parseFloat(resp.tabla.importe*0.16, 2);
-				vuelos_data[indice]['vuelo'+i].total = parseFloat(resp.tabla.importe,2) +  parseFloat(resp.tabla.importe*0.16, 2);
+				vuelos_data[indice]['vuelo'+i].importe_iva = parseFloat(resp.tabla.importe*taza_iva, 2);
+				vuelos_data[indice]['vuelo'+i].total = parseFloat(resp.tabla.importe,2) +  parseFloat(resp.tabla.importe*taza_iva, 2);
 			}
 			
 			subtotal	+= parseFloat(resp.tabla.importe, 2);
-			iva			= parseFloat(subtotal*0.16, 2);
+			iva			= parseFloat(subtotal*taza_iva, 2);
 			total		= parseFloat(subtotal+iva, 2);
 			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+', tipo:'+tipo+'}';
 			
@@ -182,7 +184,8 @@ function limpia_campos(){
 	$('#dcliente_info').val('');
 	$('#hcliente').val('');
 	$('#hdias_credito').val('');
-	$('#dfecha').val('');
+	
+	$('#dfecha').val(actualDate());
 	
 	subtotal = 0;
 	iva = 0;
@@ -191,7 +194,10 @@ function limpia_campos(){
 	vuelos_data = {};
 	post = {};
 	indice = 0;
-
+	
+	 aux_varios_clientes = false;
+	 cont_aux_clientes = 0;
+	 
 	$('.addv').html('<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16"> Agregar vuelos</a>');
 }
 
@@ -201,7 +207,7 @@ function eliminaVuelos(vals){
 	$('#e'+vals.indice).remove();
 	
 	subtotal -= parseFloat(vals.importe,2);
-	iva			= parseFloat(subtotal*0.16, 2);
+	iva			= parseFloat(subtotal*taza_iva, 2);
 	total		= parseFloat(subtotal+iva, 2);
 
 	if(aux_varios_clientes)
@@ -227,4 +233,14 @@ function alerta(msg){
 		title: 'Avizo !',
 		text: msg, 
 		icon: base_url+'application/images/alertas/info.png' });
+}
+
+function actualDate(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+
+	var yyyy = today.getFullYear();
+	if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} var today = yyyy+'-'+mm+'-'+dd;
+	return today;
 }

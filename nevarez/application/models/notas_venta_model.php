@@ -43,8 +43,8 @@ class notas_venta_model extends privilegios_model{
 		if($this->input->get('ffecha_fin') != '')
 			$sql .= ($this->input->get('ffecha_ini') != '') ? " AND DATE(tnv.fecha)<='".$this->input->get('ffecha_fin')."'" : " AND DATE(tnv.fecha)='".$this->input->get('ffecha_fin')."'";
 		
-		if($this->input->get('ffecha_ini') == '' && $this->input->get('ffecha_fin') == '')
-			$sql .= " AND DATE(tnv.fecha)=DATE(now())";
+// 		if($this->input->get('ffecha_ini') == '' && $this->input->get('ffecha_fin') == '')
+// 			$sql .= " AND DATE(tnv.fecha)=DATE(now())";
 		
 		$query = BDUtil::pagination("
 				SELECT tnv.id_nota_venta, tnv.folio, tnv.fecha, tnv.tipo_pago, c.nombre_fiscal as cliente, tnv.status
@@ -71,8 +71,7 @@ class notas_venta_model extends privilegios_model{
 
 		foreach ($_POST['tickets'] as $t){
 			$res = $this->db->query("
-							SELECT t.id_ticket, t.folio, t.fecha, t.subtotal as subtotal_ticket, t.iva as iva_ticket, t.total as total_ticket, count(*) as cantidad, t.total as precio_unitario, 
-									0.16 as taza_iva, (t.total*0.16) as importe_iva, (t.total+(t.total*0.16)) as total_nv
+							SELECT t.id_ticket, t.folio, t.fecha, t.subtotal as subtotal_ticket, t.iva as iva_ticket, t.total as total_ticket, count(*) as cantidad, t.total as precio_unitario
 							FROM tickets as t
 							WHERE t.id_ticket='$t'
 							GROUP BY t.id_ticket, t.folio, t.fecha, t.subtotal, t.iva, t.total
@@ -144,6 +143,11 @@ class notas_venta_model extends privilegios_model{
 			}
 		}
 		
+		if($_POST['tipo_pago']=='contado'){
+			$concepto = "Pago total de la venta ({$_POST['tfolio']})";
+			$res = $this->abonar_nota_venta(true,$id_nota_venta,null,$concepto);
+		}
+		
 		$folio = $this->getNxtFolio();		
 		return array(true,'id_nota_venta'=>$id_nota_venta,'folio'=>$folio[0][0]->folio);
 	}
@@ -153,7 +157,7 @@ class notas_venta_model extends privilegios_model{
 		return array(true);
 	}
 	
-	public function abonar_nota_venta($liquidar=false,$id_nota_venta=null,$abono=nulll,$concepto=null){
+	public function abonar_nota_venta($liquidar=false,$id_nota_venta=null,$abono=null,$concepto=null){
 		
 		$id_nota_venta	= ($id_nota_venta==null) ? $this->input->get('id') : $id_nota_venta;
 		$concepto		= ($concepto==null) ? $this->input->post('fconcepto') : $concepto;
@@ -178,7 +182,7 @@ class notas_venta_model extends privilegios_model{
 			$data = array(
 					'id_abono'	=> $id_abono,
 					'id_nota_venta'	=> $id_nota_venta,
-					'fecha' 	=> $this->input->post('ffecha'),
+					'fecha' 	=> $this->input->post('ffecha')!='' ? $this->input->post('ffecha') : date("Y-m-d"),
 					'concepto'	=> $concepto,
 					'total'		=> floatval($total)
 			);

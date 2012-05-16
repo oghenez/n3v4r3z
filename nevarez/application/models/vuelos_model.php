@@ -36,7 +36,7 @@ class vuelos_model extends CI_Model{
 				INNER JOIN aviones as a ON v.id_avion = a.id_avion
 				WHERE pi.status='ac' AND a.status='ac'				
 				$sql
-				ORDER BY DATE(v.fecha) DESC
+				ORDER BY (DATE(v.fecha),get_clientes_vuelo(v.id_vuelo,null), pi.nombre,a.matricula) DESC
 				", $params, true);
 		$res = $this->db->query($query['query']);
 		
@@ -60,6 +60,7 @@ class vuelos_model extends CI_Model{
 		$res = $this->db->query("
 					SELECT clientes, piloto, matricula, fecha, id_piloto, id_avion, total_vuelos
 					FROM get_vuelos_pendientes $sql
+					ORDER BY (fecha,clientes) DESC
 			");
 		$resultado = array();
 		if($res->num_rows()>0)
