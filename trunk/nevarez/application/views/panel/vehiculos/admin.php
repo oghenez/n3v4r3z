@@ -1,6 +1,6 @@
 
 <div id="contentAll" class="f-l">
-<div class="f-l w90 ">
+<div class="f-l w100">
 	
 <form action="<?= base_url('panel/vehiculo/')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
 	
