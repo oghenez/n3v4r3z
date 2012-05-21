@@ -2,10 +2,10 @@
 <div id="contentAll" class="f-l">
 <div class="f-l w100">
 	
-<form action="<?= base_url('panel/aviones/')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
+<form action="<?= base_url('panel/facturacion/index_series_folios')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
 	
-	<label for="fmatricula">Matrícula </label>
-	<input type="text" name="fmatricula" value="<?= set_value_get('fmatricula')?>">
+	<label for="fserie">Serie</label>
+	<input type="text" name="fserie" value="<?= set_value_get('fserie')?>">
 
 	<input type="submit" name="enviar" value="enviar" class="btn-blue corner-all">	
 </form>
@@ -13,27 +13,24 @@
 	
 <table class="tblListados corner-all8">
 		<tr class="header btn-gray">
-			<td>Matrícula</td>
-			<td>Modelo</td>
-			<td>Tipo</td>
-			<td>Venc. Tarjeta</td>
+			<td>Serie</td>
+			<td>No Aprobación</td>
+			<td>Folio Inicio</td>
+			<td>Folio Fin</td>
 			<td class="a-c">Opc</td>
 		</tr>
 
-		<?php foreach($datos_a['aviones'] as $avn): ?>
+		<?php foreach($datos_s['series'] as $serie): ?>
 				<tr class="row-conte">
-					<td><?= $avn->matricula;?></td>
-					<td><?= $avn->modelo; ?></td>
-					<td><?= $avn->tipo; ?></td>
-					<td><?= $avn->fecha_vence_tarjeta; ?></td>
+					<td><?= $serie->serie;?></td>
+					<td><?= $serie->no_aprobacion; ?></td>
+					<td><?= $serie->folio_inicio; ?></td>
+					<td><?= $serie->folio_fin; ?></td>
 					<td class="tdsmenu a-c" style="width: 90px;">
 						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
 							<p class="corner-bottom8">
-								<?= $this->empleados_model->getLinkPrivSm('aviones/modificar/', $avn->id_avion, '', ''); ?>
-								<?=$this->empleados_model->getLinkPrivSm('aviones/eliminar/', $avn->id_avion, 
-										"msb.confirm('Estas seguro de eliminar el Avión?', this); return false;");?>
-								<?php ?>
+								<?= $this->empleados_model->getLinkPrivSm('facturacion/modificar_serie_folio/', $serie->id_serie_folio, '', ''); ?>
 							</p>
 						</div>
 					</td>
@@ -45,9 +42,9 @@
 //Paginacion
 $this->pagination->initialize(array(
 		'base_url' 			=> base_url($this->uri->uri_string()).'?'.String::getVarsLink(array('pag')).'&',
-		'total_rows'		=> $datos_a['total_rows'],
-		'per_page'			=> $datos_a['items_per_page'],
-		'cur_page'			=> $datos_a['result_page']*$datos_a['items_per_page'],
+		'total_rows'		=> $datos_s['total_rows'],
+		'per_page'			=> $datos_s['items_per_page'],
+		'cur_page'			=> $datos_s['result_page']*$datos_s['items_per_page'],
 		'page_query_string'	=> TRUE,
 		'num_links'			=> 1,
 		'anchor_class'		=> 'pags corner-all'
