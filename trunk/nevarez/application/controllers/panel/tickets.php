@@ -82,6 +82,7 @@ class tickets extends MY_Controller {
 		$this->carabiner->js(array(
 				array('libs/jquery.msgbox.min.js'),
 				array('libs/jquery.superbox.js'),
+				array('libs/jquery.numeric.js'),
 				array('general/util.js'),
 				array('general/msgbox.js'),
 				array('tickets/frm_addmod.js')

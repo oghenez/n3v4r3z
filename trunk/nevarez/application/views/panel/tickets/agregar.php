@@ -15,11 +15,39 @@
 						<input type="hidden" name="hdias_credito" value="<?php echo set_value('hdias_credito');?>" id="hdias_credito">
 						
 						<textarea name="dcliente_info" id="dcliente_info" class="m10-l" rows="3" cols="66" readonly><?php echo set_value('dcliente_info'); ?></textarea>
-						
+
 						<div class="addv">
 							<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta('Seleccione un Cliente !');">
 							<img src="<?php echo base_url('application/images/privilegios/add.png'); ?>" width="16" height="16"> Agregar vuelos</a>
-						</div>
+						</div>						
+						
+						<fieldset class="w100">
+							<legend>Productos</legend>
+							<p class="w50 f-l">
+								<label for="a_desc">Descripción:</label> <br>
+								<input type="text" name="a_desc" id="a_desc" size="47" class="not">
+							</p>
+							<p class="f-l">
+								<label for="a_cantidad">Cantidad:</label> <br>
+								<input type="text" name="a_cantidad" value="1" id="a_cantidad" class="vinteger not" size="8">
+							</p>
+							<p class="f-l">
+								<label for="a_pu">P.U.:</label> <br>
+								<input type="text" name="a_pu" value="0" id="a_pu" class="vpositive not" size="8">
+							</p>
+							<p class="f-l">
+								<label for="a_iva">IVA:</label> <br>
+								<select name="a_iva" id="a_iva">
+									<option value="0.16">16%</option>
+									<option value="0.1">10%</option>
+									<option value="0">0%</option>
+								</select>
+							</p>
+							<a href="javascript:void(0);" id="btnAddProducto" class="linksm f-l" style="margin: 30px 0 0 20px;">
+								<img src="<?php echo base_url('application/images/privilegios/add.png'); ?>" width="16" height="16"> Agregar</a>
+								
+							<div class="clear"></div>
+						</fieldset>
 					</p>
 					
 					<div class="clear"></div>
