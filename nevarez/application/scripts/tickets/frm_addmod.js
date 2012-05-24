@@ -8,7 +8,9 @@ var cont_aux_clientes = 0;  // Controla el total de vuelos agregados a la tabla.
 
 var vuelos_selec = {}; // almacena los vuelos que han sido agregados
 var vuelos_data = {}; //almacena la informacion de los vuelos que seran enviados por POST
-var indice = 0; // indice para controlar los vuelos q han sido agregados
+var indice = 0; // indice para controlar los vuelos y productos q han sido agregados
+
+var productos_data = {}; //almacena la informacion de los productos que seran enviados por POST
 
 var post = {}; // Contiene todos los valores del ticket q se pasaran por POST
 
@@ -37,7 +39,7 @@ $(function(){
 		}
 	});	
 	
-	$("input[type=text]").on("keydown", function(event){
+	$("input[type=text]:not(.not)").on("keydown", function(event){
 		if(event.which == 8 || event == 46){
 			var input = this.id;
 			var hidde = 'h'+input.substr(1);
@@ -46,6 +48,11 @@ $(function(){
 			$("#"+input).val("").css("background-color", "#FFD9B3");
 			$('.addv').html('<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16"> Agregar vuelos</a>');
 		}
+	});
+	
+	
+	$('#btnAddProducto').on('click',function(){
+		addProducto();
 	});
 	
 	$('#submit').on('click',function(){
@@ -91,6 +98,7 @@ function ajax_get_total_vuelos(data, tipo){
 				vuelos_data[indice]['vuelo'+i].importe = parseFloat(resp.tabla.importe,2);
 				vuelos_data[indice]['vuelo'+i].importe_iva = parseFloat(resp.tabla.importe*taza_iva, 2);
 				vuelos_data[indice]['vuelo'+i].total = parseFloat(resp.tabla.importe,2) +  parseFloat(resp.tabla.importe*taza_iva, 2);
+				vuelos_data[indice]['vuelo'+i].tipo = 'vu';
 			}
 			
 			subtotal	+= parseFloat(resp.tabla.importe, 2);
@@ -104,7 +112,7 @@ function ajax_get_total_vuelos(data, tipo){
 				'onclick="msb.confirm(\'Estas seguro de eliminar el vuelo?\', '+vals+', eliminaVuelos); return false;">'+
 				'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10">Eliminar</a>';
 			
-			//Agrego el tr con la informacion del contacto agregado
+			//Agrego el tr con la informacion del vuelo agregado
 			$("#tbl_vuelos tr.header:last").after(
 			'<tr id="e'+indice+'">'+
 			'	<td>'+resp.tabla.cantidad+'</td>'+
@@ -157,6 +165,14 @@ function ajax_submit_form(){
 		}
 	}
 	
+	for(var i in productos_data){
+		for(var x in productos_data[i]){
+			post['pvuelo'+cont]	= {};
+			post['pvuelo'+cont]	= productos_data[i][x];
+			cont++;
+		}
+	}
+	
 	loader.create();
 	$.post(base_url+'panel/tickets/ajax_agrega_ticket/', post, function(resp){
 		
@@ -195,6 +211,8 @@ function limpia_campos(){
 	post = {};
 	indice = 0;
 	
+	productos_data = {};
+	
 	 aux_varios_clientes = false;
 	 cont_aux_clientes = 0;
 	 
@@ -217,8 +235,6 @@ function eliminaVuelos(vals){
 		cont_aux_clientes--;
 	
 	updateTablaPrecios();
-	
-//	alert(vuelos_data.toSource());
 }
 
 function updateTablaPrecios(){
@@ -227,6 +243,114 @@ function updateTablaPrecios(){
 	$('#ta_total').text(util.darFormatoNum(total));
 }
 
+function addProducto(){
+	
+	res = validaProducto();
+	
+	if(res.status){
+		var pdesc, pcant, ppu, piva, ptotal; 
+		
+		pdesc	= $('#a_desc').val();
+		pcant	= parseFloat($('#a_cantidad').val());
+		ppu		= parseFloat($('#a_pu').val(),2);
+		piva	= parseFloat($('#a_iva').val(),2);
+		ptotal	= parseFloat((pcant*ppu)+((pcant*ppu)*piva),2);
+		
+		subtotal	+= parseFloat(ptotal);
+		iva			= parseFloat(subtotal*taza_iva, 2);
+		total		= parseFloat(subtotal,2);
+		
+		productos_data[indice] = {};
+		productos_data[indice]['prod'] = {};
+		productos_data[indice]['prod'].cantidad = pcant;
+		productos_data[indice]['prod'].descripcion = pdesc;
+		productos_data[indice]['prod'].taza_iva = parseFloat(piva,2);
+		productos_data[indice]['prod'].precio_unitario = ppu;
+		productos_data[indice]['prod'].importe = parseFloat((pcant*ppu),2);
+		productos_data[indice]['prod'].importe_iva = parseFloat((pcant*ppu)*piva, 2);
+		productos_data[indice]['prod'].total = parseFloat(ptotal,2);
+		productos_data[indice]['prod'].tipo = 'pr';
+		
+		vals= '{indice:'+indice+',importe:'+parseFloat(ptotal, 2)+'}';
+		
+		opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
+			'onclick="msb.confirm(\'Estas seguro de eliminar el Producto?\', '+vals+', eliminaProducto); return false;">'+
+			'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10">Eliminar</a>';
+		
+		//Agrego el tr con la informacion del productos agregado
+		$("#tbl_vuelos tr.header:last").after(
+		'<tr id="e'+indice+'">'+
+		'	<td>'+pcant+'</td>'+
+		'	<td></td>'+
+		'	<td>'+pdesc+'</td>'+
+		'	<td>'+util.darFormatoNum(ppu)+'</td>'+
+		'	<td>'+util.darFormatoNum(ptotal)+'</td>'+
+		'	<td class="tdsmenu a-c" style="width: 90px;">'+
+		'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
+		'		<div class="submenul">'+
+		'			<p class="corner-bottom8">'+
+							opc_elimi+
+		'			</p>'+
+		'		</div>'+
+		'	</td>'+
+		'</tr>');
+		
+		updateTablaPrecios();
+		limpiaProducto();
+		
+		indice++;
+	}
+}
+
+function validaProducto(){
+	var msg = '', obj, res=Object;
+	
+	res['status'] = true;
+	obj = $("#a_desc");
+	
+	if($.trim(obj.val()) == ""){
+		msg += "Ingrese la Descripción del producto.<br>";
+		res['status'] = false;
+	}
+	
+	obj = $("#a_cantidad");
+	if(parseFloat(obj.val()) == 0 || isNaN(parseFloat(obj.val())) ){
+		msg += "Ingresa la cantidad del producto.<br>";
+		res['status'] = false;
+	}
+
+	obj = $("#a_pu");
+	if(parseFloat(obj.val()) == 0 || isNaN(parseFloat(obj.val())) ){
+		msg += "Ingresa el precio unitario.";
+		res['status'] = false;
+	}
+	
+	if(msg != '')
+		alerta(msg);
+	
+	return res;
+}
+
+/**
+ * Limpia los valores del form agregar productos a la lista
+ */
+function limpiaProducto(){
+	$("#a_desc").val("");
+	$("#a_cantidad").val("1");
+	$("#a_pu").val("0");
+	$("#a_iva").val("");
+}
+
+function eliminaProducto(vals){
+	delete productos_data[vals.indice];
+	$('#e'+vals.indice).remove();
+	
+	subtotal -= parseFloat(vals.importe,2);
+	iva			= parseFloat(subtotal*taza_iva, 2);
+	total		= parseFloat(subtotal+iva, 2);
+	
+	updateTablaPrecios();
+}
 
 function alerta(msg){
 	create("withIcon", {

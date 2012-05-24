@@ -57,7 +57,7 @@
 					foreach ($info[1]['vuelos_info'] as $vuelo):?>
 						<tr class="a-c f-12pt" style="font-size:12pt;">
 							<td><?= $vuelo->vuelos?></td>
-							<td><?= $vuelo->nombre.' | '.$vuelo->matricula?></td>
+							<td><?= $vuelo->nombre.(($vuelo->matricula!='') ? ' | '.$vuelo->matricula : '' )?></td>
 							<td><?= $vuelo->fecha?></td>
 							<td><?= String::formatoNumero($vuelo->precio,2)?></td>
 							<td><?= String::formatoNumero($vuelo->importe,2)?></td>

@@ -136,12 +136,19 @@ class tickets_model extends privilegios_model{
 					");
 			$response['vuelos_info'] = $res_q2->result();
 			
+			$res_q3 = $this->db->query("
+						SELECT '' as fecha, descripcion as nombre, cantidad  as vuelos, precio_unitario as precio, total as importe, '' as codigo, descripcion, '' as matricula 
+						FROM tickets_productos as t
+						WHERE t.id_ticket='$id_ticket'
+					");
+			$response['vuelos_info'] = array_merge($response['vuelos_info'],$res_q3->result());
+			
 			return array(true,$response);
 		}
 		else return array(false); 
 	}
 	
-	public function addTicket(){
+	public function addTicket(){		
 		
 		$id_ticket = BDUtil::getId();
 		$data = array(
@@ -160,17 +167,35 @@ class tickets_model extends privilegios_model{
 		
 		foreach ($_POST as $vuelo){
 			if(is_array($vuelo)){
-				$data_v = array(
-						'id_ticket'	=> $id_ticket,
-						'id_vuelo'	=> $vuelo['id_vuelo'],
-						'cantidad'	=> String::float($vuelo['cantidad']),
-						'taza_iva'	=> String::float($vuelo['taza_iva']),
-						'precio_unitario'	=> String::float($vuelo['precio_unitario']),
-						'importe'			=> String::float($vuelo['importe']),
-						'importe_iva'		=> String::float($vuelo['importe_iva']),
-						'total'				=> String::float($vuelo['total'])
-				);
-				$this->db->insert('tickets_vuelos',$data_v);
+				
+				if($vuelo['tipo']=='vu'){
+					$data_v = array(
+							'id_ticket'	=> $id_ticket,
+							'id_vuelo'	=> $vuelo['id_vuelo'],
+							'cantidad'	=> String::float($vuelo['cantidad']),
+							'taza_iva'	=> String::float($vuelo['taza_iva']),
+							'precio_unitario'	=> String::float($vuelo['precio_unitario']),
+							'importe'			=> String::float($vuelo['importe']),
+							'importe_iva'		=> String::float($vuelo['importe_iva']),
+							'total'				=> String::float($vuelo['total'])
+					);
+					$this->db->insert('tickets_vuelos',$data_v);
+				}
+				elseif($vuelo['tipo']=='pr'){
+					$id_producto = BDUtil::getId();
+					$data_p = array(
+							'id_ticket'	=> $id_ticket,
+							'id_ticket_producto'=> $id_producto,
+							'cantidad'			=> String::float($vuelo['cantidad']),
+							'descripcion'		=> $vuelo['descripcion'],
+							'taza_iva'			=> String::float($vuelo['taza_iva']),
+							'precio_unitario'	=> String::float($vuelo['precio_unitario']),
+							'importe'			=> String::float($vuelo['importe']),
+							'importe_iva'		=> String::float($vuelo['importe_iva']),
+							'total'				=> String::float($vuelo['total'])
+					);
+					$this->db->insert('tickets_productos',$data_p);
+				}
 			}
 		}
 		
