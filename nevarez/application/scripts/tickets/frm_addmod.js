@@ -50,7 +50,6 @@ $(function(){
 		}
 	});
 	
-	
 	$('#btnAddProducto').on('click',function(){
 		addProducto();
 	});
@@ -59,11 +58,10 @@ $(function(){
 		ajax_submit_form();
 	});
 	
-	
 });
 
 /**
- * Crea una cadena con la informacion del proveedor para mostrarla
+ * Crea una cadena con la informacion del cliente para mostrarla
  * cuando se seleccione
  * @param item
  * @returns {String}
@@ -102,9 +100,13 @@ function ajax_get_total_vuelos(data, tipo){
 			}
 			
 			subtotal	+= parseFloat(resp.tabla.importe, 2);
-			iva			= parseFloat(subtotal*taza_iva, 2);
+			
+			vivat 		= parseFloat(subtotal*taza_iva);
+			iva			+= parseFloat(vivat, 2);
+			
 			total		= parseFloat(subtotal+iva, 2);
-			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+', tipo:'+tipo+'}';
+			
+			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+', iva:'+vivat+', tipo:'+tipo+'}';
 			
 			$('#hdias_credito').val(resp.tabla.dias_credito);
 			
@@ -225,8 +227,8 @@ function eliminaVuelos(vals){
 	$('#e'+vals.indice).remove();
 	
 	subtotal -= parseFloat(vals.importe,2);
-	iva			= parseFloat(subtotal*taza_iva, 2);
-	total		= parseFloat(subtotal+iva, 2);
+	iva		 -= parseFloat(vals.iva, 2);
+	total	  = parseFloat(subtotal+iva, 2);
 
 	if(aux_varios_clientes)
 		aux_varios_clientes = false;
@@ -234,6 +236,7 @@ function eliminaVuelos(vals){
 	if(vals.tipo==1)
 		cont_aux_clientes--;
 	
+	alert(cont_aux_clientes);
 	updateTablaPrecios();
 }
 
@@ -254,24 +257,25 @@ function addProducto(){
 		pcant	= parseFloat($('#a_cantidad').val());
 		ppu		= parseFloat($('#a_pu').val(),2);
 		piva	= parseFloat($('#a_iva').val(),2);
-		ptotal	= parseFloat((pcant*ppu)+((pcant*ppu)*piva),2);
+		pimporte= parseFloat((pcant*ppu),2);	// importe total del producto
+		pimporte_iva = parseFloat(pimporte*piva); // iva total del producto
 		
-		subtotal	+= parseFloat(ptotal);
-		iva			= parseFloat(subtotal*taza_iva, 2);
-		total		= parseFloat(subtotal,2);
+		subtotal	+= parseFloat(pimporte,2);
+		iva			+= parseFloat(pimporte_iva,2);
+		total		= parseFloat(subtotal+iva,2);
 		
 		productos_data[indice] = {};
 		productos_data[indice]['prod'] = {};
-		productos_data[indice]['prod'].cantidad = pcant;
-		productos_data[indice]['prod'].descripcion = pdesc;
-		productos_data[indice]['prod'].taza_iva = parseFloat(piva,2);
-		productos_data[indice]['prod'].precio_unitario = ppu;
-		productos_data[indice]['prod'].importe = parseFloat((pcant*ppu),2);
-		productos_data[indice]['prod'].importe_iva = parseFloat((pcant*ppu)*piva, 2);
-		productos_data[indice]['prod'].total = parseFloat(ptotal,2);
+		productos_data[indice]['prod'].cantidad 		= pcant;
+		productos_data[indice]['prod'].descripcion		= pdesc;
+		productos_data[indice]['prod'].taza_iva			= parseFloat(piva,2);
+		productos_data[indice]['prod'].precio_unitario	= ppu;
+		productos_data[indice]['prod'].importe			= parseFloat((pcant*ppu),2);
+		productos_data[indice]['prod'].importe_iva		= parseFloat((pcant*ppu)*piva, 2);
+		productos_data[indice]['prod'].total			= parseFloat(pimporte+pimporte_iva,2);
 		productos_data[indice]['prod'].tipo = 'pr';
 		
-		vals= '{indice:'+indice+',importe:'+parseFloat(ptotal, 2)+'}';
+		vals= '{indice:'+indice+',importe:'+parseFloat(pimporte, 2)+',iva:'+parseFloat(pimporte_iva)+'}';
 		
 		opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
 			'onclick="msb.confirm(\'Estas seguro de eliminar el Producto?\', '+vals+', eliminaProducto); return false;">'+
@@ -284,7 +288,7 @@ function addProducto(){
 		'	<td></td>'+
 		'	<td>'+pdesc+'</td>'+
 		'	<td>'+util.darFormatoNum(ppu)+'</td>'+
-		'	<td>'+util.darFormatoNum(ptotal)+'</td>'+
+		'	<td>'+util.darFormatoNum(pimporte)+'</td>'+
 		'	<td class="tdsmenu a-c" style="width: 90px;">'+
 		'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
 		'		<div class="submenul">'+
@@ -346,8 +350,8 @@ function eliminaProducto(vals){
 	$('#e'+vals.indice).remove();
 	
 	subtotal -= parseFloat(vals.importe,2);
-	iva			= parseFloat(subtotal*taza_iva, 2);
-	total		= parseFloat(subtotal+iva, 2);
+	iva		 -= parseFloat(vals.iva, 2);
+	total	  = parseFloat(subtotal+iva, 2);
 	
 	updateTablaPrecios();
 }

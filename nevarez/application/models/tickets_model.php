@@ -137,7 +137,7 @@ class tickets_model extends privilegios_model{
 			$response['vuelos_info'] = $res_q2->result();
 			
 			$res_q3 = $this->db->query("
-						SELECT '' as fecha, descripcion as nombre, cantidad  as vuelos, precio_unitario as precio, total as importe, '' as codigo, descripcion, '' as matricula 
+						SELECT '' as fecha, descripcion as nombre, cantidad  as vuelos, precio_unitario as precio, importe, '' as codigo, descripcion, '' as matricula 
 						FROM tickets_productos as t
 						WHERE t.id_ticket='$id_ticket'
 					");
