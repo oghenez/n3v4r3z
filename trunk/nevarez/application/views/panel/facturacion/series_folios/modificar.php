@@ -22,7 +22,7 @@
 				<input type="text" name="fano_aprobacion" id="fano_aprobacion" value="<?= (isset($serie_info[0]->ano_aprobacion)) ? $serie_info[0]->ano_aprobacion :set_value('fano_aprobacion') ?>" size="30" maxlength="4">
 			</p>
 			<p class="f-l w50">
-				<label for="durl_img">*Imagen</label><br>
+				<label for="durl_img">Imagen</label><br>
 				<input type="file" name="durl_img" id="durl_img" value="<?= set_value('durl_img') ?>" size="30">
 			</p>
 			<p class="f-l w100">

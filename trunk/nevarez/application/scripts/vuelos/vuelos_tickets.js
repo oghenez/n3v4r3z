@@ -38,6 +38,7 @@ function cargar_vuelos(){
 			if(all_ok){
 				is_ok=true;
 				window.parent.vuelos_selec[indice] = [];
+				var c=1;
 				$(':checkbox:checked').each(function(){
 					var data = $(this).val().split('&');
 					json_data['vuelos']['v'+aux_inc] = {};
@@ -54,8 +55,10 @@ function cargar_vuelos(){
 					}
 					
 					if(data[5]=='f'){
-						window.parent.cont_aux_clientes++;
+						if(c==1)
+							window.parent.cont_aux_clientes++;
 						tipo = 1;
+						c++;
 					}
 					
 					window.parent.vuelos_selec[indice].push($(this).val());
