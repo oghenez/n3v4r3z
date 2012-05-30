@@ -89,7 +89,7 @@ function ajax_get_total_tickets(data){
 				tickets_data[indice]['ticket'+i].importe_iva	= parseFloat(resp.tickets[i].precio_unitario*taza_iva, 2);
 				tickets_data[indice]['ticket'+i].total			= parseFloat(resp.tickets[i].total_ticket,2);
 			
-				vals= '{indice:'+indice+', importe:'+resp.tickets[i].subtotal_ticket+'}';
+				vals= '{indice:'+indice+', subtotal:'+resp.tickets[i].subtotal_ticket+', iva: '+resp.tickets[i].iva_ticket+', total:'+resp.tickets[i].total_ticket+'}';
 				
 				opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
 					'onclick="msb.confirm(\'Estas seguro de eliminar el ticket?\', '+vals+', eliminaTickets); return false;">'+
@@ -100,7 +100,7 @@ function ajax_get_total_tickets(data){
 				'<tr id="e'+indice+'">'+
 				'	<td>'+resp.tickets[i].folio+'</td>'+
 				'	<td>'+resp.tickets[i].fecha+'</td>'+
-				'	<td>'+resp.tickets[i].total_ticket+'</td>'+
+				'	<td>'+resp.tickets[i].subtotal_ticket+'</td>'+
 				'	<td class="tdsmenu a-c" style="width: 90px;">'+
 				'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
 				'		<div class="submenul">'+
@@ -112,11 +112,10 @@ function ajax_get_total_tickets(data){
 				'</tr>');
 				
 				subtotal	+= parseFloat(resp.tickets[i].subtotal_ticket, 2);
+				iva			+= parseFloat(resp.tickets[i].iva_ticket, 2);//parseFloat(subtotal*taza_iva, 2);
+				total		+= parseFloat(resp.tickets[i].total_ticket, 2);
 				indice++;
 			}
-			
-			iva			= parseFloat(subtotal*taza_iva, 2);
-			total		= parseFloat(subtotal+iva, 2);
 			updateTablaPrecios();
 		}
 	}, "json").complete(function(){ 
@@ -198,13 +197,11 @@ function eliminaTickets(vals){
 	delete tickets_data[vals.indice];
 	$('#e'+vals.indice).remove();
 	
-	subtotal -= parseFloat(vals.importe,2);
-	iva			= parseFloat(subtotal*0.16, 2);
-	total		= parseFloat(subtotal+iva, 2);
+	subtotal	-= parseFloat(vals.subtotal, 2);
+	iva			-= parseFloat(vals.iva, 2);
+	total		-= parseFloat(vals.total, 2);
 	
 	updateTablaPrecios();
-	
-//	alert(vuelos_data.toSource());
 }
 
 function updateTablaPrecios(){
@@ -217,15 +214,15 @@ function alerta(msg){
 	create("withIcon", {
 		title: 'Avizo !',
 		text: msg, 
-		icon: base_url+'application/images/alertas/info.png' });
+		icon: base_url+'application/images/alertas/info.png'});
 }
 
-function actualDate(){
+function actualDate(time){
 	var today = new Date();
 	var dd = today.getDate();
 	var mm = today.getMonth()+1; //January is 0!
-
 	var yyyy = today.getFullYear();
-	if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} var today = yyyy+'-'+mm+'-'+dd;
-	return today;
+	if(dd<10){dd='0'+dd;} if(mm<10){mm='0'+mm;}var date = yyyy+'-'+mm+'-'+dd;
+	if(time){h=today.getHours();m=today.getMinutes();s=today.getSeconds();date+=' '+h+':'+m+':'+s;}
+	return date;
 }

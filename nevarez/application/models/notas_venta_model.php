@@ -71,10 +71,14 @@ class notas_venta_model extends privilegios_model{
 
 		foreach ($_POST['tickets'] as $t){
 			$res = $this->db->query("
-							SELECT t.id_ticket, t.folio, t.fecha, t.subtotal as subtotal_ticket, t.iva as iva_ticket, t.total as total_ticket, count(*) as cantidad, t.total as precio_unitario
-							FROM tickets as t
-							WHERE t.id_ticket='$t'
-							GROUP BY t.id_ticket, t.folio, t.fecha, t.subtotal, t.iva, t.total
+									SELECT t.id_ticket, t.folio, t.fecha, t.subtotal as subtotal_ticket, t.iva as iva_ticket, t.total as total_ticket, 1 as cantidad, t.total as precio_unitario,
+										COALESCE(SUM(tvp16.importe_iva),0) as importe_iva_16, COALESCE(SUM(tvp10.importe_iva),0) as importe_iva_10, COALESCE(SUM(tvp0.importe_iva),0) as importe_iva_
+									FROM tickets as t
+									LEFT JOIN tickets_vuelos_productos as tvp16 ON t.id_ticket=tvp16.id_ticket AND tvp16.taza_iva='0.16'
+									LEFT JOIN tickets_vuelos_productos as tvp10 ON t.id_ticket=tvp10.id_ticket AND tvp10.taza_iva='0.1'
+									LEFT JOIN tickets_vuelos_productos as tvp0 ON t.id_ticket=tvp0.id_ticket AND tvp0.taza_iva='0'
+									WHERE t.id_ticket='$t'
+									GROUP BY t.id_ticket, t.folio, t.fecha, t.subtotal, t.iva, t.total
 					");
 			
 			if($res->num_rows()>0)
@@ -99,7 +103,7 @@ class notas_venta_model extends privilegios_model{
 			$response['cliente_info'] = $res_q1->result();
 			
 			$res_q2 = $this->db->query("
-						SELECT t.folio, t.fecha, t.total
+						SELECT t.folio, t.fecha, t.subtotal, t.total
 						FROM tickets as t 
 						INNER JOIN tickets_notas_venta_tickets as nvt ON t.id_ticket=nvt.id_ticket
 						WHERE nvt.id_nota_venta='$id_nota_venta'

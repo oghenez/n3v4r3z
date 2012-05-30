@@ -281,7 +281,7 @@ class notas_venta extends MY_Controller {
 				$pdf->SetFont('Arial','',10);
 				$pdf->SetTextColor(0,0,0);
 					
-				$datos = array('1', 'Ticket Folio:'.$item->folio,String::formatoNumero($item->total));
+				$datos = array('1', 'Ticket Folio:'.$item->folio,String::formatoNumero($item->subtotal));
 					
 				$pdf->SetX(15);
 				$pdf->SetAligns($aligns);
@@ -319,7 +319,7 @@ class notas_venta extends MY_Controller {
 			
 			$pdf->SetFont('Arial','B',13);
 			$pdf->SetXY(15, ($y+5));
-			$pdf->Cell(60, 8, 'TOTAL CON LETRA' , 0, 0, 'L');
+			$pdf->Cell(60, 8, 'IMPORTE CON LETRA' , 0, 0, 'L');
 			
 			$pdf->SetFont('Arial','',12);
 			$pdf->SetXY(15, ($y+13));
@@ -401,10 +401,7 @@ class notas_venta extends MY_Controller {
 		$params = $this->notas_venta_model->getTotalTicketsAjax();
 	
 		echo json_encode($params);
-	}
-	
-	
-	
+	}	
 	
 	/**
 	 * Form_validation: Valida su una fecha esta en formato correcto
