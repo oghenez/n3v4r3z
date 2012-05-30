@@ -393,9 +393,6 @@ class notas_venta extends MY_Controller {
 		echo json_encode($params);
 	}
 	
-	/**
-	 * Obtiene lostado de pilotos para el autocomplete, ajax
-	 */
 	public function ajax_get_total_tickets(){
 		$this->load->model('notas_venta_model');
 		$params = $this->notas_venta_model->getTotalTicketsAjax();
