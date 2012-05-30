@@ -68,7 +68,7 @@ var util = {
 		string_literal_conversion: function(number){
 			centenas = this.ObtenerParteEntDiv(number, 100); 
 			
-			number = this.mod(number, 100); 
+			number = this.mod(number, 100);
 			
 			decenas = this.ObtenerParteEntDiv(number, 10); 
 			number = this.mod(number, 10); 

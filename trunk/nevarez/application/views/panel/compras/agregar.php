@@ -141,7 +141,7 @@
 						value="<?php echo set_value('dplazo_credito', $plazo_credito); ?>" size="15" min="0" max="120"> días
 				</p>
 			</div>
-			
+				
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
 		</div>
 	</form>
