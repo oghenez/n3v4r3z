@@ -23,9 +23,17 @@
 						
 						<fieldset class="w100">
 							<legend>Productos</legend>
-							<p class="w50 f-l">
+							<p class="w40 f-l">
 								<label for="a_desc">Descripción:</label> <br>
-								<input type="text" name="a_desc" id="a_desc" size="47" class="not">
+								<input type="text" name="a_desc" id="a_desc" size="37" class="not">
+							</p>
+							<p class="f-l">
+								<label for="a_unidad">Unidad:</label> <br>
+								<select name="a_unidad" id="a_unidad">
+									<?php foreach ($unidad as $u){?>
+										<option value="<?php echo $u->id_unidad?>"><?php echo $u->abreviatura?></option>
+									<?php }?>
+								</select>
 							</p>
 							<p class="f-l">
 								<label for="a_cantidad">Cantidad:</label> <br>

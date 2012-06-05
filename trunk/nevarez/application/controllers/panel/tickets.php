@@ -97,6 +97,10 @@ class tickets extends MY_Controller {
 		$this->load->model('tickets_model');
 		$params['ticket'] = $this->tickets_model->getNxtFolio();
 		
+		$unidad = $this->db->select("id_unidad, abreviatura")->from("productos_unidades")->where("status","ac")->get();
+		
+		$params['unidad'] = $unidad->result();
+		
 		if(isset($_GET['msg']{0}))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		

@@ -188,6 +188,7 @@ class tickets_model extends privilegios_model{
 							'id_ticket_producto'=> $id_producto,
 							'cantidad'			=> String::float($vuelo['cantidad']),
 							'descripcion'		=> $vuelo['descripcion'],
+							'id_unidad'			=> $vuelo['unidad'],
 							'taza_iva'			=> String::float($vuelo['taza_iva']),
 							'precio_unitario'	=> String::float($vuelo['precio_unitario']),
 							'importe'			=> String::float($vuelo['importe']),
@@ -223,9 +224,9 @@ class tickets_model extends privilegios_model{
 		if($ticket_info->status=='p'){
 			$pagado = false;
 			if($liquidar){
-				if($ticket_info->abonado = $ticket_info->total)
+				if($ticket_info->abonado <= $ticket_info->total)
 					$total = $ticket_info->restante;
-				elseif($ticket_info->restante = $ticket_info->total)
+				elseif($ticket_info->restante == $ticket_info->total)
 					$total = $ticket_info->total;
 				
 				$pagado = true;
@@ -268,8 +269,6 @@ class tickets_model extends privilegios_model{
 					 			->where(array("t.status !=" =>"ca","t.id_ticket"=>$id_ticket))
 					 			->get();
  		}
-			
-// 		var_dump($res->row());exit;
 		return $res->row();
 	}
 	

@@ -85,7 +85,7 @@
 	</div><div class="clear"></div>
 	<br><br>
 	<div class="f-12pt" style="font-size:12pt;">
-		Debemos y Pagaré incondicionalmente a la orden de __________________ de este lugar de ____________________ Cantidad de 
+		Debemos y Pagaré incondicionalmente a la orden de ROBERTO NEVAREZ DOMINGUEZ de este lugar de PISTA AEREA S/N, RANCHITO, MICHOACAN la Cantidad de 
 		<?= String::formatoNumero($info[1]['cliente_info'][0]->total); ?> (<?= String::num2letras($info[1]['cliente_info'][0]->total,false,true); ?>) 
 		, valor de la mercancía recibida a mi entera satisfacción. Este pagaré es mercantil y está regido por la Ley General de Títulos Y Operaciones de Crédito 
 		en su artículo 173 parte final y artículos correlativos por no ser pagaré domiciliado. Si no es pagado antes de su vencimiento causara un interés del ____% mensual.
