@@ -235,8 +235,7 @@ function eliminaVuelos(vals){
 	
 	if(vals.tipo==1)
 		cont_aux_clientes--;
-	
-	alert(cont_aux_clientes);
+
 	updateTablaPrecios();
 }
 
@@ -254,6 +253,7 @@ function addProducto(){
 		var pdesc, pcant, ppu, piva, ptotal; 
 		
 		pdesc	= $('#a_desc').val();
+		puni	= $('#a_unidad').val();
 		pcant	= parseFloat($('#a_cantidad').val());
 		ppu		= parseFloat($('#a_pu').val(),2);
 		piva	= parseFloat($('#a_iva').val(),2);
@@ -268,6 +268,7 @@ function addProducto(){
 		productos_data[indice]['prod'] = {};
 		productos_data[indice]['prod'].cantidad 		= pcant;
 		productos_data[indice]['prod'].descripcion		= pdesc;
+		productos_data[indice]['prod'].unidad			= puni;
 		productos_data[indice]['prod'].taza_iva			= parseFloat(piva,2);
 		productos_data[indice]['prod'].precio_unitario	= ppu;
 		productos_data[indice]['prod'].importe			= parseFloat((pcant*ppu),2);
@@ -343,6 +344,7 @@ function limpiaProducto(){
 	$("#a_cantidad").val("1");
 	$("#a_pu").val("0");
 	$("#a_iva").val("");
+	$("#a_unidad").val("");
 }
 
 function eliminaProducto(vals){

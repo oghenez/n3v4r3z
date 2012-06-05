@@ -37,7 +37,7 @@ class notas_venta extends MY_Controller {
 	}
 	
 	/**
-	 * Default. Mustra el listado de proveedores para administrarlos
+	 * Default. Mustra el listado de las notas de venta para administrarlas
 	 */
 	public function index(){
 		$this->carabiner->css(array(
