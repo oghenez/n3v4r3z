@@ -139,7 +139,7 @@ class notas_venta extends MY_Controller {
 			$this->load->view('panel/general/menu', $params);
 			$this->load->view('panel/notas_venta/ver',$params);
 			$this->load->view('panel/footer');
-		}
+		}redirect(base_url('panel/notas_venta/?'.String::getVarsLink().'&msg=1'));
 	}
 	
 	public function pagar(){

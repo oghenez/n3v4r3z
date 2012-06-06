@@ -42,19 +42,19 @@ class cfd{
 	}
 		
 	public function obtenCadenaOriginal($data){
-		$data['frm_no_interior']= (isset($data['frm_no_interior'])) ? (($data['frm_no_interior']!='') ? '|'.$data['frm_no_interior']: '') : ''; // Numero Interior
-		$data['no_cta_pago']	= (isset($data['no_cta_pago'])) ? (($data['no_cta_pago']!='') ? '|'.$data['no_cta_pago']: '') : ''; // Ultimos 4 digitos
+		$data['cno_interior']= (isset($data['cno_interior'])) ? (($data['cno_interior']!='') ? '|'.$data['cno_interior']: '') : ''; // Numero Interior
+		$data['no_cuenta_pago']	= (isset($data['no_cuenta_pago'])) ? (($data['no_cuenta_pago']!='') ? '|'.$data['no_cuenta_pago']: '') : ''; // Ultimos 4 digitos
 
-		$cadena = '||'.$this->version.'|'.$data['serie'].'|'.$data['folio'].'|'.$data['fecha_xml'].'|'.$data['no_aprobacion'].'|'.$data['ano_aprobacion'].'|'.$data['tipo_comprobante'].'|'.$data['forma_pago'].'|'.$data['subtotal'].'|0|'.$data['total'].'|'.$data['metodo_pago'].'|'.$this->localidad.', '.$this->estado.$data['no_cta_pago'].'|'.$data['moneda'].'|'.$this->rfc.'|'.$this->razon_social.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->regimen_fiscal.'|'.$data['frm_rfc'].'|'.$data['frm_nombre'].'|'.$data['frm_calle'].'|'.$data['frm_numero'].$data['frm_no_interior'].'|'.$data['frm_colonia'].'|'.$data['frm_localidad'].'|'.$data['frm_municipio'].'|'.$data['frm_estado'].'|'.$data['frm_pais'].'|'.$data['frm_cp'].'|';
+		$cadena = '||'.$this->version.'|'.$data['serie'].'|'.$data['folio'].'|'.$data['fecha_xml'].'|'.$data['no_aprobacion'].'|'.$data['ano_aprobacion'].'|'.$data['tipo_comprobante'].'|'.$data['forma_pago'].'|'.$data['subtotal'].'|0|'.$data['total'].'|'.$data['metodo_pago'].'|'.$this->localidad.', '.$this->estado.$data['no_cuenta_pago'].'|'.$data['moneda'].'|'.$this->rfc.'|'.$this->razon_social.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->regimen_fiscal.'|'.$data['crfc'].'|'.$data['cnombre'].'|'.$data['ccalle'].'|'.$data['cno_exterior'].$data['cno_interior'].'|'.$data['ccolonia'].'|'.$data['clocalidad'].'|'.$data['cmunicipio'].'|'.$data['cestado'].'|'.$data['cpais'].'|'.$data['ccp'].'|';
 
 		if(count($data["productos"])>0)
 			foreach($data["productos"] as $key => $p){
-				$cadena .= $p['cantidad'].'|'.$p['unidad'].'|'.$p['descripcion'].'|'.$p['precio'].'|'.$p['importe'].'|';
+				$cadena .= $p['cantidad'].'|'.$p['unidad'].'|'.$p['descripcion'].'|'.$p['precio_unit'].'|'.$p['importe'].'|';
 		}
 				
 		if(count($data["ivas"])>0)
 			foreach($data["ivas"] as $key => $iva)
-				$cadena .= 'IVA|'.$iva['tasa_iva'].'|'.$iva['total_tasa_iva'].'|';
+				$cadena .= 'IVA|'.$iva['tasa_iva'].'|'.$iva['importe_iva'].'|';
 		
 		$cadena .= $data['iva_total'].'||';
 		$cadena = preg_replace('/ +/', ' ', $cadena);
@@ -66,6 +66,10 @@ class cfd{
 		$this->generarPDF($data);
 	}
 	
+	public function actualizarArchivos($data){
+		$this->guardarXML($data,true);
+		$this->generarPDF($data,array('F'),true);
+	}
 	/********** REPORTE MENSUAL ************/
 	public function descargaReporte($anio, $mes, $rfc){
 		if($this->existeReporte($anio, $mes)){
@@ -160,10 +164,22 @@ class cfd{
 			return false;
 	}
 	
-	private function guardarXML($data){
+	private function obtenFechaMes($fecha){
+		$fecha = explode('-', $fecha);
+		return array($fecha[0],$fecha[1]);
+	}
+	
+	private function guardarXML($data,$update=false){
 		$xml = $this->generarXML($data);
-		$dir_anio = $this->validaDir('anio', 'facturasXML/');
-		$dir_mes = $this->validaDir('mes', 'facturasXML/'.$dir_anio.'/');
+		if(!$update){	
+			$dir_anio = $this->validaDir('anio', 'facturasXML/');
+			$dir_mes = $this->validaDir('mes', 'facturasXML/'.$dir_anio.'/');
+		}
+		else{
+			$fecha = $this->obtenFechaMes($data['fecha_xml']);
+			$dir_anio = $fecha[0];
+			$dir_mes = $this->mesToString($fecha[1]);
+		}
 		$path_guardar = APPPATH.'/media/cfd/facturasXML/'.$dir_anio.'/'.$dir_mes.'/'.
 				$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.xml';
 		$fp = fopen($path_guardar, 'w');
@@ -233,18 +249,18 @@ class cfd{
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Emisor>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Receptor rfc="'.$data['rfc'].'" nombre="'.$data['nombre'].'">';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Receptor rfc="'.$data['crfc'].'" nombre="'.$data['cnombre'].'">';
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Domicilio ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬calle="'.$data['calle'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noExterior="'.$data['no_exterior'].'" ';
-		if($data['no_interior']!=='')
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noInterior="'.$data['no_interior'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬colonia="'.$data['colonia'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬localidad="'.$data['localidad'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬municipio="'.$data['municipio'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬estado="'.$data['estado'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬pais="'.$data['pais'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬codigoPostal="'.$data['cp'].'"';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬calle="'.$data['ccalle'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noExterior="'.$data['cno_exterior'].'" ';
+		if($data['cno_interior']!=='')
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noInterior="'.$data['cno_interior'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬colonia="'.$data['ccolonia'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬localidad="'.$data['clocalidad'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬municipio="'.$data['cmunicipio'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬estado="'.$data['cestado'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬pais="'.$data['cpais'].'" ';
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬codigoPostal="'.$data['ccp'].'"';
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Receptor>';
 		
@@ -279,7 +295,7 @@ class cfd{
 		return $xml;
 	}
 	
-	public function generarPDF($data=array(), $accion=array('F')){
+	public function generarPDF($data=array(), $accion=array('F'), $update=false){
 		if(count($data)>0){
 			$ci =& get_instance();			
 			$ci->load->library('mypdf');
@@ -427,37 +443,37 @@ class cfd{
 			$pdf->SetTextColor(0,0,0);
 			
 			$pdf->SetXY(25, $y+9); // BLOQUE DATOS 1 INFO
-			$pdf->Cell(132, 6, strtoupper($data['rfc']), 0, 0, 'L');
+			$pdf->Cell(132, 6, strtoupper($data['crfc']), 0, 0, 'L');
 			
 			$pdf->SetXY(25, $y+15);
-			$pdf->Cell(132, 6, strtoupper($data['nombre']), 0, 0, 'L');
+			$pdf->Cell(132, 6, strtoupper($data['cnombre']), 0, 0, 'L');
 			
 			$pdf->SetXY(25, $y+21);
-			$pdf->Cell(132, 6, strtoupper($data['calle']), 0, 0, 'L');
+			$pdf->Cell(132, 6, strtoupper($data['ccalle']), 0, 0, 'L');
 
 			$pdf->SetXY(25, $y+27);
-			$pdf->Cell(44, 6, strtoupper($data['no_exterior']), 0, 0, 'L');
+			$pdf->Cell(44, 6, strtoupper($data['cno_exterior']), 0, 0, 'L');
 			
 			$pdf->SetXY(25, $y+33);
-			$pdf->Cell(44, 6, strtoupper($data['colonia']), 0, 0, 'L');
+			$pdf->Cell(44, 6, strtoupper($data['ccolonia']), 0, 0, 'L');
 			
 			$pdf->SetXY(25, $y+39);
-			$pdf->Cell(44, 6, strtoupper($data['estado']), 0, 0, 'L');
+			$pdf->Cell(44, 6, strtoupper($data['cestado']), 0, 0, 'L');
 			
 			$pdf->SetXY(88, $y+27); // BLOQUE DATOS 2 INFO
-			$pdf->Cell(28, 6, strtoupper($data['no_interior']), 0, 0, 'L');
+			$pdf->Cell(28, 6, strtoupper($data['cno_interior']), 0, 0, 'L');
 			
 			$pdf->SetXY(88, $y+33);
-			$pdf->Cell(28, 6, strtoupper($data['municipio']), 0, 0, 'L');
+			$pdf->Cell(28, 6, strtoupper($data['cmunicipio']), 0, 0, 'L');
 			
 			$pdf->SetXY(88, $y+39);
-			$pdf->Cell(28, 6, strtoupper($data['pais']), 0, 0, 'L');
+			$pdf->Cell(28, 6, strtoupper($data['cpais']), 0, 0, 'L');
 			
 			$pdf->SetXY(133, $y+27); // BLOQUE DATOS 3 INFO
-			$pdf->Cell(24, 6, strtoupper($data['cp']), 0, 0, 'L');
+			$pdf->Cell(24, 6, strtoupper($data['ccp']), 0, 0, 'L');
 				
 			$pdf->SetXY(133, $y+33);
-			$pdf->Cell(24, 6, strtoupper($data['municipio']), 0, 0, 'L');
+			$pdf->Cell(24, 6, strtoupper($data['cmunicipio']), 0, 0, 'L');
 			
 			// ----------- TABLA CON LOS PRODUCTOS ------------------
 			$pdf->SetY($y+50);
@@ -584,8 +600,16 @@ class cfd{
 			$pdf->Cell(200,5,'ESTE DOCUMENTO ES UNA IMPRESIÓN DE UN COMPROBANTE FISCAL DIGITAL',0,0,'C');
 			
 			//-----------------------------------------------------------------------------------
-			$dir_anio = $this->validaDir('anio', 'facturasPDF/');
-			$dir_mes = $this->validaDir('mes', 'facturasPDF/'.$dir_anio.'/');
+			
+			if(!$update){
+				$dir_anio = $this->validaDir('anio', 'facturasPDF/');
+				$dir_mes = $this->validaDir('mes', 'facturasPDF/'.$dir_anio.'/');
+			}
+			else{
+				$fecha = $this->obtenFechaMes($data['fecha_xml']);
+				$dir_anio = $fecha[0];
+				$dir_mes = $this->mesToString($fecha[1]);
+			}
 			
 			if(count($accion)>0){
 				foreach($accion as $a){

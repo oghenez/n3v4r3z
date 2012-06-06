@@ -217,7 +217,6 @@ function ajax_submit_form(){
 	
 	loader.create();
 	$.post(base_url+'panel/facturacion/ajax_agrega_factura/', post, function(resp){
-		
 		create("withIcon", {
 			title: resp.msg.title, 
 			text: resp.msg.msg, 

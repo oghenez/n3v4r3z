@@ -123,6 +123,17 @@ class facturacion_model extends privilegios_model{
 		return $response;
 	}
 	
+	public function ajax_actualiza_digitos(){
+		$this->load->library('cfd');
+		$this->db->update('facturacion',array('metodo_pago_digitos'=>$this->input->post('digitos')),array('id_factura'=>$this->input->post('id')));		
+		$data = $this->getDataFactura($this->input->post('id'),true);
+		$cadena = $this->cfd->obtenCadenaOriginal($data);
+		$this->db->update('facturacion',array('cadena_original'=>$cadena),array('id_factura'=>$this->input->post('id')));
+		$data = $this->getDataFactura($this->input->post('id'),true);
+		$this->cfd->actualizarArchivos($data);
+		return array(true);
+	}
+	
 	public function addFactura(){
 // 		Carga la libreria de Facturacion
 		$this->load->library('cfd');
@@ -148,21 +159,20 @@ class facturacion_model extends privilegios_model{
 					'subtotal'			=> String::float($this->input->post('subtotal')), 
 					'total'				=> String::float($this->input->post('total')),
 					'metodo_pago'		=> $this->input->post('dmetodo_pago'), 
-					'no_cta_pago'		=> $no_cta_pago,
+					'no_cuenta_pago'	=> $no_cta_pago,
 					'moneda'			=> 'pesos',
 				 
-					'frm_rfc'			=> $this->input->post('frfc'), 
-					'frm_nombre'		=> $this->input->post('dcliente'), 
-					'frm_calle'			=> $this->input->post('fcalle'), 
-					'frm_numero'		=> $this->input->post('fno_exterior'), 
-					'frm_no_interior'	=> $this->input->post('fno_interior'), 
-					'frm_colonia'		=> $this->input->post('fcolonia'), 
-					'frm_localidad'		=> $this->input->post('flocalidad'), 
-					'frm_municipio'		=> $this->input->post('fmunicipio'), 
-					'frm_estado'		=> $this->input->post('festado'), 
-				
-					'frm_pais'			=> $this->input->post('fpais'), 
-					'frm_cp'			=> $this->input->post('fcp')
+					'crfc'			=> $this->input->post('frfc'), 
+					'cnombre'		=> $this->input->post('dcliente'), 
+					'ccalle'		=> $this->input->post('fcalle'), 
+					'cno_exterior'	=> $this->input->post('fno_exterior'), 
+					'cno_interior'	=> $this->input->post('fno_interior'), 
+					'ccolonia'		=> $this->input->post('fcolonia'), 
+					'clocalidad'	=> $this->input->post('flocalidad'), 
+					'cmunicipio'	=> $this->input->post('fmunicipio'), 
+					'cestado'		=> $this->input->post('festado'),
+					'cpais'			=> $this->input->post('fpais'), 
+					'ccp'			=> $this->input->post('fcp')
 				);
 		
 		$productos = array();
@@ -197,7 +207,7 @@ class facturacion_model extends privilegios_model{
 				
 				if($res_q1->num_rows>0)
 					foreach ($res_q1->result() as $prod)
-						$productos[] = array('cantidad'=>$prod->cantidad,'unidad'=>$prod->unidad,'descripcion'=>$prod->descripcion,'precio'=>$prod->precio_unitario,'importe'=>$prod->importe);
+						$productos[] = array('cantidad'=>$prod->cantidad,'unidad'=>$prod->unidad,'descripcion'=>$prod->descripcion,'precio_unit'=>$prod->precio_unitario,'importe'=>$prod->importe);
 				
 				if($res_q2->num_rows>0)
 					foreach ($res_q2->result() as $iva){
@@ -210,11 +220,11 @@ class facturacion_model extends privilegios_model{
 		}
 
 		if($iva_16>0)
-			$cad_data['ivas'][] = array('tasa_iva'=>'16','total_tasa_iva'=>$iva_16);
+			$cad_data['ivas'][] = array('tasa_iva'=>'16','importe_iva'=>$iva_16);
 		if($iva_10>0)
-			$cad_data['ivas'][] = array('tasa_iva'=>'10','total_tasa_iva'=>$iva_10);
+			$cad_data['ivas'][] = array('tasa_iva'=>'10','importe_iva'=>$iva_10);
 		if($tot_prod_iva_0>0)
-			$cad_data['ivas'][] = array('tasa_iva'=>'0','total_tasa_iva'=>$iva_0);
+			$cad_data['ivas'][] = array('tasa_iva'=>'0','importe_iva'=>$iva_0);
 		
 		$cad_data['iva_total'] = $iva_16 + $iva_10 + $iva_0;
 		$cad_data['productos'] = $productos;
@@ -298,12 +308,7 @@ class facturacion_model extends privilegios_model{
 	public function getDataFactura($id_factura=null, $ivas=false){
 		$id_factura = ($id_factura) ? $id_factura : $_GET['id'];
 
-		$res_q1 = $this->db->select("serie, folio, no_aprobacion, ano_aprobacion, importe_iva, subtotal, total, total_letra, sello, cadena_original,
-										no_certificado, version, fecha_xml, nombre, rfc, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, pais,
-										tipo_comprobante, forma_pago, metodo_pago, metodo_pago_digitos")
-							->from('facturacion')
-							->where('id_factura',$id_factura)
-							->get()->result();
+		$res_q1 = $this->db->select("*")->from('facturacion')->where('id_factura',$id_factura)->get()->result();
 			
 		$res_q2 = $this->db->query("
 					SELECT tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe
@@ -326,7 +331,7 @@ class facturacion_model extends privilegios_model{
 					'importe_iva'		=> $res_q1[0]->importe_iva,
 					'subtotal'			=> $res_q1[0]->subtotal,
 					'total'				=> $res_q1[0]->total,
-					'total_letra'		=> $res_q1[0]->total,
+					'total_letra'		=> $res_q1[0]->total_letra,
 					'sello'				=> $res_q1[0]->sello,
 					'cadena_original'	=> $res_q1[0]->cadena_original,
 					'no_certificado'	=> $res_q1[0]->no_certificado,
@@ -340,18 +345,21 @@ class facturacion_model extends privilegios_model{
 					'moneda'			=> 'pesos',
 					'no_cuenta_pago'	=> $res_q1[0]->metodo_pago_digitos,
 				
-					'nombre'			=> $res_q1[0]->nombre,
-					'rfc'				=> $res_q1[0]->rfc,
-					'calle'				=> $res_q1[0]->calle,
-					'no_exterior'	=> $res_q1[0]->no_exterior,
-					'no_interior'	=> $res_q1[0]->no_interior,
-					'colonia'		=> $res_q1[0]->colonia,
-					'localidad'		=> $res_q1[0]->localidad,
-					'municipio'		=> $res_q1[0]->municipio,
-					'estado'		=> $res_q1[0]->estado,
-					'cp'		=> $res_q1[0]->cp,
-					'pais'		=> $res_q1[0]->pais,
-					'productos' => $productos
+					'cnombre'			=> $res_q1[0]->nombre,
+					'crfc'				=> $res_q1[0]->rfc,
+					'ccalle'				=> $res_q1[0]->calle,
+					'cno_exterior'	=> $res_q1[0]->no_exterior,
+					'cno_interior'	=> $res_q1[0]->no_interior,
+					'ccolonia'		=> $res_q1[0]->colonia,
+					'clocalidad'	=> $res_q1[0]->localidad,
+					'cmunicipio'	=> $res_q1[0]->municipio,
+					'cestado'		=> $res_q1[0]->estado,
+					'ccp'		=> $res_q1[0]->cp,
+					'cpais'		=> $res_q1[0]->pais,
+					'productos' => $productos,
+				
+					'condicion_pago'=> $res_q1[0]->condicion_pago,
+					'plazo_credito'	=> $res_q1[0]->plazo_credito
 		);
 		
 		if($ivas){
