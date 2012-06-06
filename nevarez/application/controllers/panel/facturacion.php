@@ -10,7 +10,8 @@ class facturacion extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('facturacion/ajax_get_total_tickets/','facturacion/ajax_get_folio/','facturacion/ajax_agrega_factura/','facturacion/imprimir_pdf/');
+	private $excepcion_privilegio = array('facturacion/ajax_get_total_tickets/','facturacion/ajax_get_folio/','facturacion/ajax_agrega_factura/','facturacion/imprimir_pdf/',
+											'facturacion/ajax_actualiza_digitos/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -111,64 +112,69 @@ class facturacion extends MY_Controller {
 		$this->load->view('panel/footer',$params);
 	}
 	
+	private function ver(){
+		if(isset($_GET['id']{0})){
+			$this->carabiner->css(array(
+					array('general/forms.css', 'screen'),
+					array('general/tables.css', 'screen')
+			));
+			$this->carabiner->js(array(array('facturacion/frm_ver.js')));
+			
+			$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+			$params['seo'] = array('titulo' => 'Facturas');
+			$params['opcmenu_active'] = 'Facturas'; //activa la opcion del menu
+				
+			$this->load->model('facturacion_model');
+			$params['factura'] = $this->facturacion_model->getDataFactura($_GET['id']);
+			$params['factura']['leyenda'] = $this->db->select("leyenda")->from("facturacion_series_folios")->where("serie",$params['factura']['serie'])->get()->row()->leyenda;
+			$params['factura']['forma_pago_val'] = (strpos($params['factura']['forma_pago'],'Pago')!==false)?'0':'1';
+			$this->load->view('panel/header', $params);
+			$this->load->view('panel/general/menu', $params);
+			$this->load->view('panel/facturacion/ver',$params);
+			$this->load->view('panel/footer');
+		}else redirect(base_url('panel/facturacion/?'.String::getVarsLink().'&msg=1'));
+	}
+	
 	private function cancelar(){
 		if(isset($_GET['id']{0})){
-					
-				$this->load->model('facturacion_model');
-				$res = $this->facturacion_model->cancelFactura($_GET['id']);
-					
-				if($res[0])
-					redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('id','msg')).'&msg=5'));
-			}
-			else
-				redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
+			$this->load->model('facturacion_model');
+			$res = $this->facturacion_model->cancelFactura($_GET['id']);
+			if($res[0]) redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('id','msg')).'&msg=5'));
+		}else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
 	
 	private function pagar(){
 		if(isset($_GET['id']{0})){
-				$this->carabiner->css(array(
-						array('general/forms.css', 'screen'),
-						array('general/tables.css', 'screen'),
-				));
-					
-				$this->carabiner->js(array(
-						array('facturacion/pago_factura.js')
-				));
-					
-				$this->load->model('facturacion_model');
-					
-				$this->configAddPago();
-				if($this->form_validation->run() == FALSE){
-					$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
-				}
-				else{
-					$res = $this->facturacion_model->abonar_factura(true);
-	
-					if($res[0]){
-						$params['frm_errors'] = $this->showMsgs('7');
-						$params['load'] = true;
-					}
-					else
-						$params['frm_errors']= $this->showMsgs(2, $res['msg']);
-				}
-					
-				 $res_q= $this->db->select('serie,folio')->from('facturacion')->where('id_factura',$_GET['id'])->get()->result();
-
-				 $params['serie'] = $res_q[0]->serie;
-				 $params['folio'] = $res_q[0]->folio;
-				 
-				$res = $this->facturacion_model->get_info_abonos();
-				$params['total'] = $res;
-					
-				$params['seo']['titulo'] = 'Pagar Factura';
-					
-				$this->load->view('panel/facturacion/pago_factura',$params);
+			$this->carabiner->css(array(
+					array('general/forms.css', 'screen'),
+					array('general/tables.css', 'screen'),
+			));
+			$this->carabiner->js(array(
+					array('facturacion/pago_factura.js')
+			));
+			$this->load->model('facturacion_model');
+			$this->configAddPago();
+			if($this->form_validation->run() == FALSE){
+				$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
 			}
-			else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
+			else{
+				$res = $this->facturacion_model->abonar_factura(true);
+				if($res[0]){
+					$params['frm_errors'] = $this->showMsgs('7');
+					$params['load'] = true;
+				}else $params['frm_errors']= $this->showMsgs(2, $res['msg']);
+			}	
+			$res_q= $this->db->select('serie,folio')->from('facturacion')->where('id_factura',$_GET['id'])->get()->result();
+			$params['serie'] = $res_q[0]->serie;
+			$params['folio'] = $res_q[0]->folio;
+			$res = $this->facturacion_model->get_info_abonos();
+			$params['total'] = $res;
+			$params['seo']['titulo'] = 'Pagar Factura';
+			$this->load->view('panel/facturacion/pago_factura',$params);
+		}else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}	
 	
 	public function configAddPago(){
-	
 		$this->load->library('form_validation');
 		$rules = array(
 				array('field'	=> 'ffecha',
@@ -180,8 +186,7 @@ class facturacion extends MY_Controller {
 		);
 		$this->form_validation->set_rules($rules);
 	}
-	
-	
+
 	private function ajax_get_folio(){
 		if(isset($_POST['id'])){
 			if($_POST['id']!=''){
@@ -189,14 +194,12 @@ class facturacion extends MY_Controller {
 				$result = $this->facturacion_model->ajax_get_folio($_POST['id']);
 				echo json_encode($result);
 			}else echo json_encode(array(false,'msg'=>'Seleccione una Serie Valida'));
-		}
-		else echo json_encode(array(false,'msg'=>'El campo ID es requerido'));
+		}else echo json_encode(array(false,'msg'=>'El campo ID es requerido'));
 	}
 	
 	private function ajax_get_total_tickets(){
 		$this->load->model('facturacion_model');
 		$params = $this->facturacion_model->ajax_get_total_tickets();
-	
 		echo json_encode($params);
 	}
 	
@@ -306,7 +309,6 @@ class facturacion extends MY_Controller {
 									'rules'		=> 'max_length[20]');
 		
 		$this->form_validation->set_rules($rules);
-		
 		if($this->form_validation->run() == FALSE)
 		{
 			$params['msg']	= $this->showMsgs(2,preg_replace("[\n|\r|\n\r]", '', validation_errors()));
@@ -315,15 +317,23 @@ class facturacion extends MY_Controller {
 		{			
 			$this->load->model('facturacion_model');
 			$params	= $this->facturacion_model->addFactura();
-			
 			if($params[0])
 				$params['msg'] = $this->showMsgs(4);
 		}
 		echo json_encode($params);
 	}
 	
+	private function ajax_actualiza_digitos(){
+		$this->load->model('facturacion_model');
+		$result = $this->facturacion_model->ajax_actualiza_digitos();
+		if($result[0])
+			$params['msg'] = $this->showMsgs(8);
+		echo json_encode($params);
+	}
+	
 	private function imprimir_pdf(){
-		if(isset($_GET['id']{0})){
+		if(isset($_GET['id']{0}))
+		{
 			$this->load->model('facturacion_model');
 			$data = $this->facturacion_model->getDataFactura($_GET['id']);
 			$this->load->library('cfd');			
@@ -373,7 +383,6 @@ class facturacion extends MY_Controller {
 		
 		$this->load->model('facturacion_model');
 		$this->configAddSerieFolio();
-
 		if($this->form_validation->run() == FALSE)
 		{
 			$params['frm_errors']	= $this->showMsgs(2,preg_replace("[\n|\r|\n\r]", '', validation_errors()));
@@ -396,8 +405,7 @@ class facturacion extends MY_Controller {
 		$this->load->view('panel/footer',$params);
 	}
 	
-	private function modificar_serie_folio(){
-		
+	private function modificar_serie_folio(){	
 		if(isset($_GET['id']{0})){
 			$this->carabiner->css(array(
 					array('general/forms.css','screen'),
@@ -547,7 +555,7 @@ class facturacion extends MY_Controller {
 	 * @param unknown_type $msg
 	 * @param unknown_type $title
 	 */
-	private function showMsgs($tipo, $msg='', $title='Aviones!'){
+	private function showMsgs($tipo, $msg='', $title='Facturacion!'){
 		switch($tipo){
 			case 1:
 				$txt = 'El campo ID es requerido.';
@@ -579,6 +587,10 @@ class facturacion extends MY_Controller {
 				break;
 			case 7:
 				$txt = 'La Factura se pagó correctamente.';
+				$icono = 'ok';
+				break;
+			case 8:
+				$txt = 'La Factura y los archivos fueron actualizados correctamente.';
 				$icono = 'ok';
 				break;
 		}
