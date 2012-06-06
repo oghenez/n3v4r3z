@@ -8,7 +8,7 @@ class cfd{
 	
 	private $version = '2.2';
 	
-	private $rfc = 'nedr620710h76';
+	private $rfc = 'NEDR620710H76';
 	private $razon_social = 'ROBERTO NEVAREZ DOMINGUEZ';
 	private $regimen_fiscal = 'reg1';
 	private $calle = 'Pista Aérea';
@@ -22,9 +22,9 @@ class cfd{
 	private $cp = '60800';
 	
 	public function __construct(){
-		$this->path_certificado_org = APPPATH.'media/cfd/nedr620710h76.cer';
-		$this->path_certificado = APPPATH.'media/cfd/nedr620710h76.cer.pem';
-		$this->path_key = APPPATH.'media/cfd/nedr620710h76_1012012219s.key.pem';
+		$this->path_certificado_org = APPPATH.'media/cfd/00001000000102341541.cer';
+		$this->path_certificado = APPPATH.'media/cfd/00001000000102341541.cer.pem';
+		$this->path_key = APPPATH.'media/cfd/nedr620710h76_1012091114s_p.key.pem';
 	}
 	
 	public function obtenNoCertificado(){
@@ -198,100 +198,100 @@ class cfd{
 		$xml = '';
 		$xml .= '<?xml version="1.0" encoding="utf-8"?>';
 		$xml .= '<Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sat.gob.mx/cfd/2" xsi:schemaLocation="http://www.sat.gob.mx/cfd/2 http://www.sat.gob.mx/sitio_internet/cfd/2/cfdv22.xsd" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬version="'.$data['version'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬serie="'.$data['serie'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬folio="'.$data['folio'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬fecha="'.$data['fecha_xml'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬noAprobacion="'.$data['no_aprobacion'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬anoAprobacion="'.$data['ano_aprobacion'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬tipoDeComprobante="'.$data['tipo_comprobante'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬formaDePago="'.$data['forma_pago'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬metodoDePago="'.$data['metodo_pago'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬LugarExpedicion="'.$this->localidad.', '.$this->estado.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬version="'.$data['version'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬serie="'.$data['serie'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬folio="'.$data['folio'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬fecha="'.$data['fecha_xml'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noAprobacion="'.$data['no_aprobacion'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬anoAprobacion="'.$data['ano_aprobacion'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬tipoDeComprobante="'.$data['tipo_comprobante'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬formaDePago="'.$data['forma_pago'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬metodoDePago="'.$data['metodo_pago'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬LugarExpedicion="'.$this->localidad.', '.$this->estado.'" ';
 		if($data['no_cuenta_pago']!=='')
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬NumCtaPago="'.$data['no_cuenta_pago'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬subTotal="'.$data['subtotal'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬descuento="'.$data['descuento'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬total="'.$data['total'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬sello="'.$data['sello'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬noCertificado="'.$data['no_certificado'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬Moneda="'.$data['moneda'].'"';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬NumCtaPago="'.$data['no_cuenta_pago'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬subTotal="'.$data['subtotal'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬descuento="'.$data['descuento'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬total="'.$data['total'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬sello="'.$data['sello'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noCertificado="'.$data['no_certificado'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Moneda="'.$data['moneda'].'"';
 		$xml .= '>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Emisor rfc="'.$this->rfc.'" nombre="'.$this->razon_social.'">';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<DomicilioFiscal ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬calle="'.$this->calle.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noExterior="'.$this->no_exterior.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Emisor rfc="'.$this->rfc.'" nombre="'.$this->razon_social.'">';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<DomicilioFiscal ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬calle="'.$this->calle.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noExterior="'.$this->no_exterior.'" ';
 		if($this->no_interior!=='')
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noInterior="'.$this->no_interior.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬colonia="'.$this->colonia.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬localidad="'.$this->localidad.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬municipio="'.$this->municipio.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬estado="'.$this->estado.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬pais="'.$this->pais.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬codigoPostal="'.$this->cp.'"';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noInterior="'.$this->no_interior.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬colonia="'.$this->colonia.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬localidad="'.$this->localidad.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬municipio="'.$this->municipio.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬estado="'.$this->estado.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬pais="'.$this->pais.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬codigoPostal="'.$this->cp.'"';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<ExpedidoEn ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬calle="'.$this->calle.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noExterior="'.$this->no_exterior.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<ExpedidoEn ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬calle="'.$this->calle.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noExterior="'.$this->no_exterior.'" ';
 		if($this->no_interior!=='')
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noInterior="'.$this->no_interior.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬colonia="'.$this->colonia.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬localidad="'.$this->localidad.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬municipio="'.$this->municipio.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬estado="'.$this->estado.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬pais="'.$this->pais.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬codigoPostal="'.$this->cp.'"';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<RegimenFiscal ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬Regimen="'.$this->regimen_fiscal.'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Emisor>';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noInterior="'.$this->no_interior.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬colonia="'.$this->colonia.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬localidad="'.$this->localidad.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬municipio="'.$this->municipio.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬estado="'.$this->estado.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬pais="'.$this->pais.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬codigoPostal="'.$this->cp.'"';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<RegimenFiscal ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Regimen="'.$this->regimen_fiscal.'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬</Emisor>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Receptor rfc="'.$data['crfc'].'" nombre="'.$data['cnombre'].'">';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Domicilio ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬calle="'.$data['ccalle'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noExterior="'.$data['cno_exterior'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Receptor rfc="'.$data['crfc'].'" nombre="'.$data['cnombre'].'">';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Domicilio ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬calle="'.$data['ccalle'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noExterior="'.$data['cno_exterior'].'" ';
 		if($data['cno_interior']!=='')
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬noInterior="'.$data['cno_interior'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬colonia="'.$data['ccolonia'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬localidad="'.$data['clocalidad'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬municipio="'.$data['cmunicipio'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬estado="'.$data['cestado'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬pais="'.$data['cpais'].'" ';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬codigoPostal="'.$data['ccp'].'"';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Receptor>';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬noInterior="'.$data['cno_interior'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬colonia="'.$data['ccolonia'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬localidad="'.$data['clocalidad'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬municipio="'.$data['cmunicipio'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬estado="'.$data['cestado'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬pais="'.$data['cpais'].'" ';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬codigoPostal="'.$data['ccp'].'"';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬</Receptor>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Conceptos>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Conceptos>';
 		
 		foreach($data['productos'] as $itm){
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Concepto ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬cantidad="'.(float)$itm['cantidad'].'" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬unidad="'.$itm['unidad'].'" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬valorUnitario="'.(float)$itm['precio_unit'].'" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬descripcion="'.$itm['descripcion'].'" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬importe="'.(float)$itm['importe'].'"';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Concepto ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬cantidad="'.(float)$itm['cantidad'].'" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬unidad="'.$itm['unidad'].'" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬valorUnitario="'.(float)$itm['precio_unit'].'" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬descripcion="'.$itm['descripcion'].'" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬importe="'.(float)$itm['importe'].'"';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
 		}
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Conceptos>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬</Conceptos>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Impuestos totalImpuestosTrasladados="'.(float)$data['iva_total'].'">';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Traslados>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Impuestos totalImpuestosTrasladados="'.(float)$data['iva_total'].'">';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Traslados>';
 		foreach($data['ivas'] as $itm){
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Traslado ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬impuesto="IVA" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬tasa="'.(float)$itm['tasa_iva'].'" ';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬importe="'.(float)$itm['importe_iva'].'"';
-			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬<Traslado ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬impuesto="IVA" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬tasa="'.(float)$itm['tasa_iva'].'" ';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬importe="'.(float)$itm['importe_iva'].'"';
+			$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬/>';
 		}
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬</Traslados>';
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Impuestos>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬</Traslados>';
+		$xml .= 'Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬Â¬</Impuestos>';
 		
 		$xml .= '</Comprobante>';
 		
-		$xml = str_replace('¬','',$xml);
+		$xml = str_replace('Â¬','',$xml);
 		return $xml;
 	}
 	
@@ -346,7 +346,7 @@ class cfd{
 			$pdf->SetTextColor(255,255,255);
 			$pdf->SetFillColor(140,140,140);
 			$pdf->SetXY(158, ($y-8));
-			$pdf->Cell(50, 5, 'Fecha de Expedición' , 1, 0, 'C',1);
+			$pdf->Cell(50, 5, 'Fecha de ExpediciÃ³n' , 1, 0, 'C',1);
 				
 			$pdf->SetFont('Arial','',12);
 			$pdf->SetTextColor(255,0,0);
@@ -354,7 +354,7 @@ class cfd{
 			$pdf->SetXY(158, ($y-3));
 			$pdf->Cell(50, 8, $data['fecha_xml'] , 1, 0, 'C',1);
 			
-			// ----------- No y Año aprob ------------------
+			// ----------- No y AÃ±o aprob ------------------
 				
 			$pdf->SetXY(158, ($y+6));
 			$pdf->Cell(50, 13, '' , 1, 0, 'C');
@@ -363,7 +363,7 @@ class cfd{
 			$pdf->SetTextColor(255,255,255);
 			$pdf->SetFillColor(140,140,140);
 			$pdf->SetXY(158, ($y+6));
-			$pdf->Cell(50, 5, 'No. y Año aprobracion' , 1, 0, 'C',1);
+			$pdf->Cell(50, 5, 'No. y AÃ±o aprobracion' , 1, 0, 'C',1);
 			
 			$pdf->SetFont('Arial','',12);
 			$pdf->SetTextColor(255,0,0);
@@ -597,7 +597,7 @@ class cfd{
 			
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(8, $y+2);
-			$pdf->Cell(200,5,'ESTE DOCUMENTO ES UNA IMPRESIÓN DE UN COMPROBANTE FISCAL DIGITAL',0,0,'C');
+			$pdf->Cell(200,5,'ESTE DOCUMENTO ES UNA IMPRESIÃ“N DE UN COMPROBANTE FISCAL DIGITAL',0,0,'C');
 			
 			//-----------------------------------------------------------------------------------
 			
