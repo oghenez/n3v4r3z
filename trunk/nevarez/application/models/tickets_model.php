@@ -47,11 +47,9 @@ class tickets_model extends privilegios_model{
 			$sql .= " AND DATE(t.fecha)=DATE(now())";
 		
 		$query = BDUtil::pagination("
-				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status, COALESCE(tnv.status,'no') existe
+				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status, valida_ticket(t.id_ticket) as disponible
 				FROM tickets as t
 				INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
-				LEFT JOIN tickets_notas_venta_tickets as nvt ON t.id_ticket=nvt.id_ticket
-				LEFT JOIN tickets_notas_venta as tnv ON nvt.id_nota_venta=tnv.id_nota_venta		
 				WHERE $sql
 				ORDER BY DATE(t.fecha) DESC
 				", $params, true);

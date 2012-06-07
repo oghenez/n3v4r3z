@@ -19,7 +19,7 @@ class facturacion_model extends privilegios_model{
 	
 		switch ($this->input->get('fstatus')){
 			case 'todos':
-				$sql = "f.status<>'ca'";
+				$sql = "f.status<>''";
 				break;
 			case 'pendientes':
 				$sql = "f.status='p'";
@@ -30,7 +30,7 @@ class facturacion_model extends privilegios_model{
 		}
 	
 		if($this->input->get('fstatus') =='')
-			$sql = "f.status<>'ca'";
+			$sql = "f.status<>''";
 	
 		if($this->input->get('ffecha_ini') != '')
 			$sql .= ($this->input->get('ffecha_fin') != '') ? " AND DATE(f.fecha)>='".$this->input->get('ffecha_ini')."'" : " AND DATE(f.fecha)='".$this->input->get('ffecha_ini')."'";
@@ -152,8 +152,8 @@ class facturacion_model extends privilegios_model{
 					'serie'			=> $this->input->post('dserie'), 
 					'folio'			=> $this->input->post('dfolio'), 
 					'fecha_xml'		=> $fecha_xml,
-					'no_aprobacion'	=> $this->input->post('dano_aprobacion'),
-					'ano_aprobacion'=> $this->input->post('dno_aprobacion'),
+					'no_aprobacion'	=> $this->input->post('dno_aprobacion'),
+					'ano_aprobacion'=> $this->input->post('dano_aprobacion'),
 					'tipo_comprobante'	=> $this->input->post('dtipo_comprobante'), 
 					'forma_pago'		=> $forma_pago, 
 					'subtotal'			=> String::float($this->input->post('subtotal')), 
@@ -359,7 +359,8 @@ class facturacion_model extends privilegios_model{
 					'productos' => $productos,
 				
 					'condicion_pago'=> $res_q1[0]->condicion_pago,
-					'plazo_credito'	=> $res_q1[0]->plazo_credito
+					'plazo_credito'	=> $res_q1[0]->plazo_credito,
+					'status'		=> $res_q1[0]->status
 		);
 		
 		if($ivas){

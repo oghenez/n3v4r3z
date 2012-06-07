@@ -39,9 +39,9 @@
 					<p class="corner-bottom8">
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('tickets/ver/', $ticket->id_ticket);
-						if($ticket->status!='pa' && ($ticket->existe=='no' || $ticket->existe=='ca'))
+						if($ticket->status!='pa' && $ticket->disponible=='t')
 							echo $this->empleados_model->getLinkPrivSm('tickets/pagar/', $ticket->id_ticket,'','rel="superbox[iframe][500x330]" data-sbox="ticket"','');
-						if($ticket->existe=='no' || $ticket->existe=='ca')
+						if($ticket->disponible=='t')
 							echo $this->empleados_model->getLinkPrivSm('tickets/cancelar/', $ticket->id_ticket, 
 									"msb.confirm('Estas seguro de cancelar el ticket?', this); return false;", '', '&'.String::getVarsLink());
 						?>

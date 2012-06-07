@@ -158,9 +158,7 @@
 					<div class="w100 f-l">
 						<label for="dtipo_comprobante">*Tipo de Comprobante</label> <br>
 						<select name="dtipo_comprobante" id="dtipo_comprobante">
-							<option value="">--------------------------------------</option>
 							<option value="ingreso" <?php echo set_select('dtipo_comprobante', 'ingreso'); ?>>Ingreso</option>
-							<option value="egreso" <?php echo set_select('dtipo_comprobante', 'egreso'); ?>>Egreso</option>
 						</select>
 					</div>
 					<div class="clear"></div>
