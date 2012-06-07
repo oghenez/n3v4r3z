@@ -155,10 +155,8 @@
 				<div class="frmbox-r p5-tb corner-right8">
 					<div class="w100 f-l">
 						<label for="dtipo_comprobante">*Tipo de Comprobante</label> <br>
-						<select name="dtipo_comprobante" id="dtipo_comprobante" disabled>
-							<option value="">--------------------------------------</option>							
+						<select name="dtipo_comprobante" id="dtipo_comprobante" disabled>					
 							<option value="ingreso" <?=set_select('dtipo_comprobante', 'ingreso', false,$factura['tipo_comprobante'])?>>Ingreso</option>
-							<option value="egreso" <?=set_select('dtipo_comprobante', 'egreso', false,$factura['tipo_comprobante'])?>>Egreso</option>
 						</select>
 					</div>
 					<div class="clear"></div>

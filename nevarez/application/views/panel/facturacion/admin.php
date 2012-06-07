@@ -30,8 +30,8 @@
 			<td><?php echo $f->fecha; ?></td>
 			<td><?php echo $f->serie.'-'.$f->folio; ?></td>
 			<td><?php echo $f->cliente; ?></td>
-			<td><?php echo ($f->condicion_pago=='cr') ? 'credito':'contado'; ?></td>
-			<td><?php echo ($f->status=='pa') ? 'Pagado' : 'Pendiente' ?></td>
+			<td><?php echo ($f->condicion_pago=='cr') ? 'Credito': 'Contado'; ?></td>
+			<td><?php echo ($f->status=='pa') ? 'Pagado' :  (($f->status=='p') ? 'Pendiente' :  'Cancelado') ?></td>
 			<td class="tdsmenu a-c" style="width: 90px;">
 				<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 				<div class="submenul">
@@ -42,8 +42,9 @@
 							echo $this->empleados_model->getLinkPrivSm('facturacion/pagar/', $f->id_factura,'','rel="superbox[iframe][500x330]" data-sbox="notas_venta"','');
 						echo $this->empleados_model->getLinkPrivSm('facturacion/xml/', $f->id_factura);
 						echo $this->empleados_model->getLinkPrivSm('facturacion/imprimir_pdf/', $f->id_factura,'','target="_BLANK"');
-						echo $this->empleados_model->getLinkPrivSm('facturacion/cancelar/', $f->id_factura, 
-								"msb.confirm('Estas seguro de cancelar fáctura?', this); return false;", '', '&'.String::getVarsLink());
+						if($f->status!='ca')
+							echo $this->empleados_model->getLinkPrivSm('facturacion/cancelar/', $f->id_factura, 
+									"msb.confirm('Estas seguro de cancelar fáctura?', this); return false;", '', '&'.String::getVarsLink());
 						?>
 					</p>
 				</div>
