@@ -72,7 +72,7 @@
 			</table>
 			<table class="tblListados corner-all8 f-r" style="margin-right:1%;text-align:center;">
 				<tr>
-					<td rowspan="3">
+					<td rowspan="4">
 						<label for="cp" class="lbl-gris">Importe con letra</label>
 						<textarea name="dttotal_letra" id="dttotal_letra" rows="3" readonly="readonly" style="width:98%;"><?=$factura['total_letra']?></textarea>
 					</td>
@@ -82,6 +82,10 @@
 				<tr>
 					<td style="text-align:right;">IVA</td>
 					<td id="ta_iva" class="a-r" style="background-color:#ccc;"><?=String::formatoNumero($factura['importe_iva'])?></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">Retención ISR</td>
+					<td id="ta_isr" class="a-r" style="background-color:#ccc;"><?= String::formatoNumero((isset($factura['total_isr']))?$factura['total_isr']:'$0.00'); ?></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Total</td>
@@ -189,6 +193,7 @@
 						<option value="cheque" <?=set_select('dmetodo_pago', 'cheque', false,$factura['metodo_pago'])?>>Cheque</option>
 						<option value="tarjeta de crédito o debito" <?=set_select('dmetodo_pago', 'tarjeta de crédito o debito', false,$factura['metodo_pago'])?>>Tarjeta de crédito o debito</option>
 						<option value="depósito en cuenta" <?=set_select('dmetodo_pago', 'depósito en cuenta', false,$factura['metodo_pago'])?>>Depósito en cuenta</option>
+						<option value="transferencia" <?=set_select('dmetodo_pago', 'transferencia', false,$factura['metodo_pago'])?>>Transferencia</option>
 					</select>
 					<?php if($factura['metodo_pago']!='efectivo'){?>
 						<div class="w100" id="show_pago_digitos" >

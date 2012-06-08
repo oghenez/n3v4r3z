@@ -190,6 +190,9 @@ class aviones extends MY_Controller {
 								'rules'	=> 'max_lenght[10]'),
 						array('field'	=> 'dfecha_vence_tarjeta',
 								'label'		=> 'Fecha vecimiento tarjeta',
+								'rules'		=> 'required|max_length[10]|callback_isValidDate'),
+						array('field'	=> 'dfecha_vence_seguro',
+								'label'		=> 'Fecha vecimiento seguro',
 								'rules'		=> 'required|max_length[10]|callback_isValidDate')
 				);
 		$this->form_validation->set_rules($rules);

@@ -50,7 +50,8 @@ class aviones_model extends privilegios_model{
 					'matricula'	=> $this->input->post('fmatricula'),
 					'modelo'	=> $this->input->post('fmodelo'),
 					'tipo'		=> $this->input->post('ftipo'),
-					'fecha_vence_tarjeta'=> $this->input->post('dfecha_vence_tarjeta')
+					'fecha_vence_tarjeta'=> $this->input->post('dfecha_vence_tarjeta'),
+					'fecha_vence_seguro'=> $this->input->post('dfecha_vence_seguro')
 			);
 			$this->db->insert('aviones',$data);
 			return array(true);
@@ -65,7 +66,8 @@ class aviones_model extends privilegios_model{
 					'matricula'	=> $this->input->post('fmatricula'),
 					'modelo'	=> $this->input->post('fmodelo'),
 					'tipo'		=> $this->input->post('ftipo'),
-					'fecha_vence_tarjeta'=> $this->input->post('dfecha_vence_tarjeta')
+					'fecha_vence_tarjeta'=> $this->input->post('dfecha_vence_tarjeta'),
+					'fecha_vence_seguro'=> $this->input->post('dfecha_vence_seguro')
 			);
 			$this->db->where('id_avion',$id_avion);
 			$this->db->update('aviones',$data);

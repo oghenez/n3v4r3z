@@ -243,7 +243,7 @@ class clientes_model extends CI_Model{
 	public function getClientesAjax(){
 		$sql = '';
 		$res = $this->db->query("
-				SELECT id_cliente, nombre_fiscal, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, rfc
+				SELECT id_cliente, nombre_fiscal, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, rfc, retencion
 				FROM clientes
 				WHERE status = 'ac' AND lower(nombre_fiscal) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
 				ORDER BY nombre_fiscal ASC");

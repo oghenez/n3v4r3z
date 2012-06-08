@@ -9,6 +9,10 @@ var indice = 0; // indice para controlar los vuelos q han sido agregados
 
 var post = {}; // Contiene todos los valores de la nota de venta q se pasaran por POST
 
+var aux_isr = false;
+var total_isr = 0;
+var ttcisr = 0;
+
 $(function(){
 
 	$("#dcliente").autocomplete({
@@ -31,8 +35,11 @@ $(function(){
 			$('#fcp').val(ui.item.item.cp);
 			$('#fpais').val('México');			
 			
+			if(ui.item.item.retencion==1){
+				aux_isr = true;
+			}else aux_isr = false;
+			
 			$("#dcliente").css("background-color", "#B0FFB0");
-				
 			$('.addv').html('<a href="'+base_url+'panel/tickets/tickets_cliente/?id='+ui.item.id+'" id="btnAddTicket" class="linksm f-r" style="margin: 10px 0 20px 0;" rel="superbox[iframe][700x500]"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
 			$.superbox();
 		}
@@ -40,14 +47,19 @@ $(function(){
 	
 	$("input[type=text]:not(.not)").on("keydown", function(event){
 		if(event.which == 8 || event == 46){
-			$("#hcliente").val('');
-			
+			$("#hcliente").val('');			
 			$("#fplazo_credito").val(0);
 			$('#frfc').val('');
-			$('#fdomicilio').val('');
-			$('#fciudad').val('');
+			$('#fcalle').val('');
+			$('#fno_exterior').val('');
+			$('#fno_interior').val('');
+			$('#fcolonia').val('');
+			$('#flocalidad').val('');
+			$('#fmunicipio').val('');
+			$('#festado').val('');
+			$('#fcp').val('');
+			$('#fpais').val('');
 			$('.addv').html('<a href="javascript:void(0);" id="btnAddTicket" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
-			
 			$("#dcliente").val("").css("background-color", "#FFD9B3");
 		}
 	});
@@ -150,11 +162,14 @@ function ajax_get_total_tickets(data){
 						'	</td>'+
 						'</tr>');
 				
-				
 				subtotal	+= parseFloat(resp.tickets[i].subtotal_ticket, 2);
 				iva			+= parseFloat(resp.tickets[i].iva_ticket, 2);//parseFloat(subtotal*taza_iva, 2);
 				total		+= parseFloat(resp.tickets[i].total_ticket, 2);
 				indice++;
+			}
+			if(aux_isr){
+				total_isr = parseFloat(subtotal*0.1, 2);
+				ttcisr = total-total_isr;
 			}
 			updateTablaPrecios();
 		}
@@ -196,7 +211,13 @@ function ajax_submit_form(){
 	
 	post.subtotal		= parseFloat(subtotal,2);
 	post.iva			= parseFloat(iva,2);
-	post.total			= parseFloat(total,2);
+	post.total_isr		= parseFloat(total_isr,2);
+	
+	if(aux_isr)
+		post.total			= parseFloat(ttcisr,2);
+	else
+		post.total			= parseFloat(total,2);
+	
 	post.dtotal_letra	= $('#dttotal_letra').val();
 	
 	var count=0;
@@ -246,16 +267,28 @@ function eliminaTickets(vals){
 	iva			-= parseFloat(vals.iva, 2);
 	total		-= parseFloat(vals.total, 2);
 	
+	if(aux_isr){
+		total_isr	= parseFloat(subtotal*0.1,2);
+		ttcisr = total-total_isr;
+	}
 	updateTablaPrecios();
 }
 
 function updateTablaPrecios(){
 	$('#ta_subtotal').text(util.darFormatoNum(subtotal));
 	$('#ta_iva').text(util.darFormatoNum(iva));
-	$('#ta_total').text(util.darFormatoNum(total));
+	$('#ta_isr').text(util.darFormatoNum(total_isr));
+	if(aux_isr)
+		$('#ta_total').text(util.darFormatoNum(ttcisr));
+	else
+		$('#ta_total').text(util.darFormatoNum(total));
 	
-	if(parseFloat(total,2)!=0)
-		$('#dttotal_letra').val(util.numeroToLetra.covertirNumLetras(total.toString()));
+	if(parseFloat(total,2)!=0){
+		if(aux_isr)
+			$('#dttotal_letra').val(util.numeroToLetra.covertirNumLetras(ttcisr.toString()));
+		else
+			$('#dttotal_letra').val(util.numeroToLetra.covertirNumLetras(total.toString()));
+	}
 	else
 		$('#dttotal_letra').val('');
 }
@@ -296,6 +329,8 @@ function limpia_campos(){
 	tickets_data = {};
 	post = {};
 	indice = 0;
+	aux_isr = false;
+	total_isr = 0;
 	
 	$('.addv').html('<a href="javascript:void(0);" id="btnAddTicket" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
 }

@@ -121,7 +121,7 @@ class facturacion extends MY_Controller {
 			$this->carabiner->js(array(array('facturacion/frm_ver.js')));
 			
 			$params['info_empleado'] = $this->info_empleado['info']; //info empleado
-			$params['seo'] = array('titulo' => 'Facturas');
+			$params['seo'] = array('titulo' => 'Ver Factura');
 			$params['opcmenu_active'] = 'Facturas'; //activa la opcion del menu
 				
 			$this->load->model('facturacion_model');
@@ -284,6 +284,9 @@ class facturacion extends MY_Controller {
 						'rules'		=> 'required'),
 				array('field'	=> 'iva',
 						'label'		=> 'Iva',
+						'rules'		=> 'required'),
+				array('field'	=> 'total_isr',
+						'label'		=> 'ISR',
 						'rules'		=> 'required'),
 				array('field'	=> 'total',
 						'label'		=> 'Total',

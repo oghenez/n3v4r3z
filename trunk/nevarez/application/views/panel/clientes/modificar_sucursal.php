@@ -173,7 +173,9 @@
 							value="<?php echo (isset($info['info']->descuento)? $info['info']->descuento: ''); ?>" class="vpositive" size="30" maxlength="3"> %
 					</p>
 					<p class="w50 f-l">
-						<label for="dretencion">Retención:</label> <br>
+						<label for="dretencion">Retención ISR:</label> <br>
+						<input type="checkbox" value="1" name="dretencion" id="dretencion" <?php echo set_checkbox('dretencion', '1', ($info['info']->retencion==1)? true:false); ?>>
+						<?php /*
 						<select name="dretencion" id="dretencion">
 							<option value="0" <?php echo set_select('dretencion', '0', false, 
 								(isset($info['info']->retencion)? $info['info']->retencion: '')); ?>>No</option>
@@ -181,7 +183,7 @@
 								(isset($info['info']->retencion)? $info['info']->retencion: '')); ?>>2terceras</option>
 							<option value="100" <?php echo set_select('dretencion', '100', false, 
 								(isset($info['info']->retencion)? $info['info']->retencion: '')); ?>>100</option>
-						</select> %
+						</select> %*/?>
 					</p>
 					<div class="clear"></div>
 				</div>

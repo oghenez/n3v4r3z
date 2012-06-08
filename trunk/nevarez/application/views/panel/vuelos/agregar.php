@@ -21,12 +21,16 @@
 							<tr class="header btn-gray">
 								<td>Cliente</td>
 								<td>Datos</td>
+								<td>opc</td>
 							</tr>
 							<?php if(isset($infoc)):
 									foreach ($infoc as $c):?>
-										<tr>
+										<tr id="<?=$c['info']->id?>">
 											<td><?= $c['info']->nombre_fiscal?></td>
 											<td><?= $c['info']->calle.', '.$c['info']->colonia.', '.$c['info']->municipio.', '.$c['info']->estado?></td>
+											<td><a href="javascript:void(0);" class="linksm" 
+													onclick="msb.confirm('Estas seguro de eliminar el Cliente?', '<?=$c['info']->id?>', eliminaCliente); return false;">
+												<img src="<?=base_url()?>application/images/privilegios/delete.png" width="10" height="10"></a></td>
 										</tr>
 							<?php endforeach;endif;?>
 							
@@ -35,8 +39,11 @@
 							<?php /*<input type="hidden" name="hcliente" value="<?php echo set_value('hcliente');?>" id="hcliente">*/?>
 							
 							<?php if(isset($_POST['hids'])):
-									foreach ($_POST['hids'] as $id):?>
-										<input type="hidden" name="hids[]" value="<?= $id?>">
+									foreach ($_POST['hids'] as $id):
+										$split = explode('.', $id);
+										$nid = $split[0].''.$split[1];
+							?>
+										<input type="hidden" name="hids[]" value="<?= $id?>" id="<?=$nid?>">
 							<?php
 									endforeach;
 								  endif;
