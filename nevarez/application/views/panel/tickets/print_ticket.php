@@ -90,6 +90,10 @@
 		, valor de la mercancía recibida a mi entera satisfacción. Este pagaré es mercantil y está regido por la Ley General de Títulos Y Operaciones de Crédito 
 		en su artículo 173 parte final y artículos correlativos por no ser pagaré domiciliado. Si no es pagado antes de su vencimiento causara un interés del ____% mensual.
 	</div>
+	<br><br><br>
+	<div class="a-c f-12pt" style="font-size:12pt;">
+		_______________________________<br>FIRMA
+	</div>
 </div>
 
 </body>

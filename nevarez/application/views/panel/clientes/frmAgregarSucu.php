@@ -132,12 +132,14 @@
 		<input type="text" name="ddescuento" id="ddescuento" value="<?php echo set_value('ddescuento'); ?>" class="vpositive" size="30" maxlength="3"> %
 	</p>
 	<p class="w50 f-l">
-		<label for="dretencion">Retención:</label> <br>
+		<label for="dretencion">Retención ISR:</label> <br>
+		<input type="checkbox" value="1" name="dretencion" id="dretencion">
+		<?php /*
 		<select name="dretencion" id="dretencion">
 			<option value="0" <?php echo set_select('dretencion', '0'); ?>>No</option>
 			<option value="66.66" <?php echo set_select('dretencion', '66.66'); ?>>2terceras</option>
 			<option value="100" <?php echo set_select('dretencion', '100'); ?>>100</option>
-		</select> %
+		</select> %*/?>
 	</p>
 	<div class="clear"></div>
 </div>

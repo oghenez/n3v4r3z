@@ -72,7 +72,7 @@
 			</table>
 			<table class="tblListados corner-all8 f-r" style="margin-right:1%;text-align:center;">
 				<tr>
-					<td rowspan="3">
+					<td rowspan="4">
 						<label for="cp" class="lbl-gris">Importe con letra</label>
 						<textarea name="dttotal_letra" id="dttotal_letra" rows="3" readonly="readonly" style="width:98%;"><?php echo set_value('dttotal_letra'); ?></textarea>
 					</td>
@@ -82,6 +82,10 @@
 				<tr>
 					<td style="text-align:right;">IVA</td>
 					<td id="ta_iva" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero(set_value('dtiva', 0)); ?></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">Retención ISR</td>
+					<td id="ta_isr" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero(set_value('dtisr', 0)); ?></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Total</td>
@@ -189,6 +193,8 @@
 						<option value="cheque" <?php echo set_select('dmetodo_pago', 'cheque'); ?>>Cheque</option>
 						<option value="tarjeta de crédito o debito" <?php echo set_select('dmetodo_pago', 'tarjeta de credito o debito'); ?>>Tarjeta de crédito o debito</option>
 						<option value="depósito en cuenta" <?php echo set_select('dmetodo_pago', 'deposito en cuenta'); ?>>Depósito en cuenta</option>
+						<option value="transferencia" <?php echo set_select('dmetodo_pago', '"transferencia"'); ?>>Transferencia</option>
+						
 					</select>
 					<div class="w100" id="show_pago_digitos" style="display:none;">
 						<label for="dmetodo_pago_digitos">*Últimos 4 dígitos</label> <br>

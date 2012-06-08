@@ -100,10 +100,13 @@ class vuelos extends MY_Controller {
 	
 	public function agregar(){
 		$this->carabiner->css(array(
+				array('libs/jquery.msgbox.css', 'screen'),
 				array('general/forms.css', 'screen'),
 				array('general/tables.css', 'screen')
 		));
 		$this->carabiner->js(array(
+				array('libs/jquery.msgbox.min.js'),
+				array('general/msgbox.js'),
 				array('vuelos/frm_addmod.js')
 		));
 		
@@ -128,6 +131,12 @@ class vuelos extends MY_Controller {
 			$this->load->model('clientes_model');
 			foreach ($_POST['hids'] as $id)
 				$params['infoc'][] = $this->clientes_model->getInfoCliente($id, true);
+			
+			foreach ($params['infoc'] as $c){
+				$split = explode('.', $c['info']->id_cliente);
+				$c['info']->id = $split[0].''.$split[1];
+			}
+				
 		}
 // 		var_dump($params['infoc']);
 		if(isset($_GET['msg']{0}))

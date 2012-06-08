@@ -51,7 +51,10 @@ class cfd{
 			foreach($data["productos"] as $key => $p){
 				$cadena .= $p['cantidad'].'|'.$p['unidad'].'|'.$p['descripcion'].'|'.$p['precio_unit'].'|'.$p['importe'].'|';
 		}
-				
+		
+		if(isset($data["total_isr"]))
+			$cadena .= 'ISR|'.$data['total_isr'].'|'.$data['total_isr'].'|';
+		
 		if(count($data["ivas"])>0)
 			foreach($data["ivas"] as $key => $iva)
 				$cadena .= 'IVA|'.$iva['tasa_iva'].'|'.$iva['importe_iva'].'|';
@@ -277,7 +280,19 @@ class cfd{
 		}
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬</Conceptos>';
 		
-		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Impuestos totalImpuestosTrasladados="'.(float)$data['iva_total'].'">';
+		$attr_isr = '';
+		if(isset($data['total_isr']))
+			$attr_isr = ' totalImpuestosRetenidos="'.(float)$data['total_isr'].'"';
+		
+		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬<Impuestos totalImpuestosTrasladados="'.(float)$data['iva_total'].'"'.$attr_isr.'>';
+		if(isset($data['total_isr'])){
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Retenciones>';
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Retencion ';
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬impuesto="ISR" ';
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬importe="'.(float)$data['total_isr'].'"';
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬/>';
+			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬</Retenciones>';
+		}
 		$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Traslados>';
 		foreach($data['ivas'] as $itm){
 			$xml .= '¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬<Traslado ';
@@ -518,6 +533,8 @@ class cfd{
 			$pdf->SetXY(144, ($y+11));
 			$pdf->Cell(31, 6, 'IVA' , 1, 0, 'C',1);
 			$pdf->SetXY(144, ($y+17));
+			$pdf->Cell(31, 6, 'Retencion ISR' , 1, 0, 'C',1);
+			$pdf->SetXY(144, ($y+23));
 			$pdf->Cell(31, 6, 'Total' , 1, 0, 'C',1);
 			
 			$pdf->SetTextColor(0,0,0);
@@ -527,12 +544,14 @@ class cfd{
 			$pdf->SetXY(175, ($y+11));
 			$pdf->Cell(33, 6, String::formatoNumero($data['importe_iva'],2) , 1, 0, 'C');
 			$pdf->SetXY(175, ($y+17));
+			$pdf->Cell(33, 6, (isset($data['total_isr'])) ? String::formatoNumero($data['total_isr'],2) : '$0.00' , 1, 0, 'C');
+			$pdf->SetXY(175, ($y+23));
 			$pdf->Cell(33, 6, String::formatoNumero($data['total'],2) , 1, 0, 'C');
 			
 			//------------ TOTAL CON LETRA--------------------
 			
 			$pdf->SetXY(8, ($y+5));
-			$pdf->Cell(134, 18, '' , 1, 0, 'C');
+			$pdf->Cell(134, 24, '' , 1, 0, 'C');
 			
 			$pdf->SetFont('Arial','B',10);
 			$pdf->SetTextColor(255,255,255);
@@ -543,10 +562,10 @@ class cfd{
 			$pdf->SetFont('Arial','',12);
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetXY(9, ($y+12));
-			$pdf->MultiCell(130, 5, $data['total_letra'] , 0, 'L');
+			$pdf->MultiCell(130, 6, $data['total_letra'] , 0, 'L');
 			
 			//------------ CADENA ORIGINAL --------------------
-			$y += 25;
+			$y += 32;
 			$pdf->SetY($y);
 			$pdf->SetX(8);
 			
@@ -568,7 +587,7 @@ class cfd{
 			$pdf->SetWidths(array(200));
 			$pdf->Row(array($data['cadena_original']), false);
 			
-			//------------ CADENA ORIGINAL --------------------
+			//------------ SELLO DIGITAL --------------------
 			
 			$y = $pdf->GetY();
 			

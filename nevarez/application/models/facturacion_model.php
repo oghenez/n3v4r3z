@@ -174,6 +174,8 @@ class facturacion_model extends privilegios_model{
 					'cpais'			=> $this->input->post('fpais'), 
 					'ccp'			=> $this->input->post('fcp')
 				);
+		if(floatval($_POST['total_isr'])>0)
+			$cad_data['total_isr'] = $this->input->post('total_isr');
 		
 		$productos = array();
 		$data_t = array();
@@ -265,6 +267,7 @@ class facturacion_model extends privilegios_model{
 				'estado'		=> $this->input->post('festado'),
 				'cp'			=> $this->input->post('fcp'),
 				'pais'			=> $this->input->post('fpais'),
+				'total_isr'		=> $this->input->post('total_isr'),
 		);
 		
 		if($_POST['dforma_pago']==1)
@@ -362,6 +365,9 @@ class facturacion_model extends privilegios_model{
 					'plazo_credito'	=> $res_q1[0]->plazo_credito,
 					'status'		=> $res_q1[0]->status
 		);
+		
+		if(floatval($res_q1[0]->total_isr)>0)
+			$data['total_isr'] = $res_q1[0]->total_isr;
 		
 		if($ivas){
 			$ivas = $this->getIvas($id_factura);

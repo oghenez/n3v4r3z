@@ -13,16 +13,17 @@ $(function(){
 		minLength: 1,
 		selectFirst: true,
 		select: function( event, ui ) {
-//			$("#hcliente").val(ui.item.id);
-//			$("#dcliente_info").val(createInfoCliente(ui.item.item));
-//			$("#dplazo_credito").val(ui.item.item.dias_credito);
+			split = ui.item.id.split('.');
+			id=split[0]+''+split[1];
+			opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
+							'onclick="msb.confirm(\'Estas seguro de eliminar el Cliente?\', \''+id+'\', eliminaCliente); return false;">'+
+							'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10"></a>';
 			
-			tr = '<tr><td>'+ui.item.item.nombre_fiscal+'</td><td>'+createInfoCliente(ui.item.item)+'</td></tr>';
+			tr = '<tr id="'+id+'"><td>'+ui.item.item.nombre_fiscal+'</td><td>'+createInfoCliente(ui.item.item)+'</td><td>'+opc_elimi+'</td></tr>';
 			$('#tbl_clientes tr:first').after(tr);
 			
-			hidde = '<input type="hidden" name="hids[]" value="'+ui.item.id+'">';
+			hidde = '<input type="hidden" name="hids[]" value="'+ui.item.id+'" id="'+id+'">';
 			$('#hidde-ids').append(hidde);
-			
 			$("#dcliente").css("background-color", "#B0FFB0");
 		}
 	});
@@ -113,3 +114,7 @@ function createInfoPiloto(item){
 	return info;
 }
 
+function eliminaCliente(id){
+	$("tr#"+id).remove();
+	$("input#"+id).remove();
+}

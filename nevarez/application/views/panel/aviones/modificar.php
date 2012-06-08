@@ -17,6 +17,10 @@
 				<label for="dfecha_vence_tarjeta">*Fecha vencimiento tarjeta</label><br>
 				<input type="text" name="dfecha_vence_tarjeta" id="dfecha_vence_tarjeta" value="<?= (isset($aviones[0]->fecha_vence_tarjeta)? $aviones[0]->fecha_vence_tarjeta: ''); ?>" size="30" maxlength="10">
 			</p>
+			<p class="f-l w100">
+				<label for="dfecha_vence_seguro">*Fecha vencimiento seguro</label><br>
+				<input type="text" name="dfecha_vence_seguro" id="dfecha_vence_seguro" value="<?= (isset($aviones[0]->fecha_vence_seguro)? $aviones[0]->fecha_vence_seguro: ''); ?>" size="30" maxlength="10">
+			</p>
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r" style="margin-right:55px;">
 		</div>
 	</form>
