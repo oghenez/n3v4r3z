@@ -7,8 +7,26 @@ $(function(){
 	 });
 
 
-	/*** Detalle facturas ***/
+	/**************************/
+	/**** Detalle facturas ***/
+	/**************************/
 	var estado = util.quitarFormatoNum($("#dtalle_total_saldo").text())=='0'? 'Pagada': 'Pendiente';
 	$("#inf_fact_estado").text(estado);
+	
+	//Activamos el superbox
+	if($.superbox != undefined){
+		$.superbox.settings = {
+			beforeHide: function(){
+				recargar();
+			}
+		};
+		$.superbox();
+		$("#superbox p.close").css("display", "none");
+		$("##superbox #superbox-innerbox").css("padding", "0");
+	}
 });
 
+
+function recargar(){
+	window.location = location.href;
+}

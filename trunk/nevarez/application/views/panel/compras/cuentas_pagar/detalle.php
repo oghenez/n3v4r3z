@@ -36,6 +36,20 @@
 	</fieldset>
 	<div class="clear"></div>
 	
+	<div class="w40 f-r a-r" style="font-size: 1.1em;">
+		<?php
+		$status = (isset($cuentasp['compra']->status)? $cuentasp['compra']->status: 'pa');
+		
+		if($status == 'p'){
+			$tien = $this->empleados_model->getLinkPrivSm('compras/pagar/', $this->input->get('id_compra'), '', ' rel="superbox[iframe][800x500]"');
+			if($tien!='')
+				echo '<a href="'.base_url('panel/compras/pagar/?id='.$this->input->get('id_compra').'&tipo=abono').'" class="linksm" rel="superbox[iframe][800x500]">
+				<img src="'.base_url('application/images/privilegios/add.png').'" width="10" height="10"> Abonar</a>';
+			echo $tien;
+		}
+		?>
+	</div>
+	
 	<table class="tblListados corner-all8">
 		<tr>
 			<td colspan="2"></td>

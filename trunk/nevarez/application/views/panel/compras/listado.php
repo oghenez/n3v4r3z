@@ -1,6 +1,6 @@
 
 <div id="contentAll" class="f-l">
-	<form action="<?php echo base_url('panel/compras'); ?>" method="get" class="frmfiltros corner-all8 btn-gray">
+	<form action="<?php echo base_url('panel/compras'); ?>" method="get" id="frmFiltrosCompras" class="frmfiltros corner-all8 btn-gray">
 		<label for="ffecha">Fecha:</label> 
 		<input type="text" name="ffecha" id="ffecha" value="<?php echo $this->input->get('ffecha'); ?>" size="10">
 		
@@ -45,7 +45,9 @@
 				<div class="submenul">
 					<p class="corner-bottom8">
 						<?php 
-						echo $this->empleados_model->getLinkPrivSm('compras/ver/', $comp->id_compra, '', '', '&gasto='.$comp->is_gasto); 
+						echo $this->empleados_model->getLinkPrivSm('compras/ver/', $comp->id_compra, '', '', '&gasto='.$comp->is_gasto);
+						if($comp->status == 'p')
+							echo $this->empleados_model->getLinkPrivSm('compras/pagar/', $comp->id_compra, '', ' rel="superbox[iframe][800x500]"');
 						echo $this->empleados_model->getLinkPrivSm('compras/eliminar/', $comp->id_compra, 
 								"msb.confirm('Estas seguro de eliminar la compra? <br>Ya no se podrá revertir el cambio', this); return false;");
 						?>

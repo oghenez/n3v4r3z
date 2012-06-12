@@ -7,7 +7,7 @@ class productos extends MY_Controller {
 	 * @var unknown_type
 	 */
 	private $excepcion_privilegio = array('productos/ajax_productos_familia/', 'productos/ajax_familia/', 
-			'productos/ajax_productos_tbl/', 'productos/ajax_productos_addmod/');
+			'productos/ajax_productos_tbl/', 'productos/ajax_productos_addmod/', 'productos/ajax_get_productos/');
 	
 	
 	public function _remap($method){
@@ -363,6 +363,18 @@ class productos extends MY_Controller {
 		$params['productosr'] = $this->productos_model->getProductosFamilia('30', false, $sql, 'nombre ASC'); //productos registrados
 
 		$this->load->view('panel/productos/agregar_produc_listado', $params);
+	}
+	
+	
+	/**
+	 * Obtiene el listado de productos para el autocomplete usando ajax,
+	 * busca por codigo o por nombre de producto
+	 */
+	public function ajax_get_productos(){
+		$this->load->model('productos_model');
+		$params = $this->productos_model->getProductosAjax();
+	
+		echo json_encode($params);
 	}
 	
 	
