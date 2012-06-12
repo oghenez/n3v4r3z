@@ -275,4 +275,45 @@ class productos_model extends CI_Model{
 		return array(true, '');
 	}
 	
+	/**
+	 * Obtiene el listado de proveedores para usar ajax
+	 */
+	public function getProductosAjax(){
+		$sql = $order = '';
+		if($this->input->get('tipo') == 'codigo'){
+			$sql = "lower(codigo) LIKE '".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
+			$order = "codigo";
+		}else{
+			$sql = "lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
+			$order = "nombre";
+		}
+	
+		$precio = '';
+		if(isset($_GET['cliente']{
+			0})){
+				$precio = ", get_precio_producto('".$this->input->get('cliente')."', id_producto) AS precio";
+			}
+	
+			$res = $this->db->query("
+					SELECT id_producto, codigo, nombre".$precio."
+					FROM productos
+					WHERE status = 'ac' AND ".$sql."
+					ORDER BY ".$order." ASC
+					LIMIT 100");
+	
+			$response = array();
+			if($res->num_rows() > 0){
+				foreach($res->result() as $itm){
+					$response[] = array(
+							'id' => $itm->id_producto,
+							'label' => $itm->{$order},
+							'value' => $itm->{$order},
+							'item' => $itm,
+							);
+				}
+			}
+	
+			return $response;
+	}
+	
 }

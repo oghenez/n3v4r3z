@@ -1,5 +1,8 @@
 
 <div id="contentAll" class="f-l">
+<?php
+if($pagar_compra == false){ 
+?>
 	<form action="<?php echo base_url('panel/compras/agregar'); ?>" method="post" class="frm_addmod">
 		<div class="frmsec-left w80 f-l b-r">
 			<p class="w50 f-l">
@@ -141,15 +144,20 @@
 						value="<?php echo set_value('dplazo_credito', $plazo_credito); ?>" size="15" min="0" max="120"> días
 				</p>
 			</div>
-				
+			
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
 		</div>
 	</form>
+<?php 
+}else{
+	echo '<iframe src="'.base_url('panel/compras/pagar/?id='.$id_compraa).'" style="width:100%; height:500px;">Pagar compra</iframe>';
+}
+?>
 </div>
 
 
 <!-- Bloque de alertas -->
-<div id="container" style="display:none">
+<div id="container" style="display:none;">
 	<div id="withIcon">
 		<a class="ui-notify-close ui-notify-cross" href="#">x</a>
 		<div style="float:left;margin:0 10px 0 0"><img src="#{icon}" alt="warning" width="64" height="64"></div>

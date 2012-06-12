@@ -25,5 +25,21 @@ $(function(){
 		}
 	});
 	
+	
+	//Activamos el superbox
+	if($.superbox != undefined){
+		$.superbox.settings = {
+			beforeHide: function(){
+				recargar();
+			}
+		};
+		$.superbox();
+		$("#superbox p.close").css("display", "none");
+		$("##superbox #superbox-innerbox").css("padding", "0");
+	}
 });
 
+
+function recargar(){
+	$("#frmFiltrosCompras").submit();
+}

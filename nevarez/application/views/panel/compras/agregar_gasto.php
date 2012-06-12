@@ -1,5 +1,8 @@
 
 <div id="contentAll" class="f-l">
+<?php
+if($pagar_compra == false){ 
+?>
 	<form action="<?php echo base_url('panel/compras/agregar_gasto'); ?>" method="post" class="frm_addmod">
 		<div class="frmsec-left w80 f-l b-r">
 			<input type="hidden" name="dis_gasto" id="dis_gasto" value="t">
@@ -74,6 +77,11 @@
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">
 		</div>
 	</form>
+<?php 
+}else{
+	echo '<iframe src="'.base_url('panel/compras/pagar/?id='.$id_compraa).'" style="width:100%; height:500px;">Pagar compra</iframe>';
+}
+?>
 </div>
 
 

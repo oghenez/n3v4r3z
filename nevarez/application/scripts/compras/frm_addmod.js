@@ -1,4 +1,4 @@
-$(function(){
+$(document).ready(function(){
 	//Si existe entro a la opcion de ver compra
 	//de lo contrario entra a agregar compra o gasto
 	if($("#view").length == 0){
@@ -248,4 +248,10 @@ function limpiaProducto(){
 	$("#a_iva").val("");
 }
 
+
+
+
+function recargar(){
+	window.location = window.location.href+"?msg=4";
+}
 

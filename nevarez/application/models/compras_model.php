@@ -36,7 +36,7 @@ class compras_model extends CI_Model{
 				SELECT c.id_compra, Date(c.fecha) AS fecha, c.serie, c.folio, p.nombre, c.is_gasto, c.status
 				FROM compras AS c INNER JOIN proveedores AS p ON p.id_proveedor = c.id_proveedor
 				WHERE c.status <> 'ca' AND c.status <> 'n'".$sql."
-				ORDER BY Date(c.fecha), c.serie, c.folio ASC
+				ORDER BY (Date(c.fecha), c.serie, c.folio) ASC
 				", $params, true);
 		$res = $this->db->query($query['query']);
 		
@@ -128,11 +128,11 @@ class compras_model extends CI_Model{
 		}
 		
 		//Si es a contado se paga y se agrega un abono
-		if($status == 'pa'){
+		/*if($status == 'pa'){
 			$this->addAbono($id_compra, "Pago al contado.");
-		}
+		}*/
 		
-		return array(true, '');
+		return array(true, $status, $id_compra);
 	}
 	
 	/**
@@ -248,16 +248,16 @@ class compras_model extends CI_Model{
 	 * @param unknown_type $concepto
 	 */
 	public function addAbono($id_compra=null, $concepto=null){
-		$id_compra = $id_compra==null? $this->input->post('id'): $id_compra;
+		$id_compra = $id_compra==null? $this->input->get('id'): $id_compra;
 		$concepto = $concepto==null? $this->input->post('dconcepto'): $concepto;
 		
 		$data = $this->obtenTotalAbonosC($id_compra);
 		if($data->abonos < $data->total){ //Evitar que se agreguen abonos si esta pagada
 			$pagada = false;
 			//compruebo si se pasa el abono al total de la factura y activa a pagado
-			if(($this->input->post('dttotal')+$data->abonos) >= $data->total){
-				if(($this->input->post('dttotal')+$data->abonos) > $data->total)
-					$_POST['dttotal'] = $this->input->post('dttotal') - (($this->input->post('dttotal')+$data->abonos) - $data->total);
+			if(($this->input->post('dmonto')+$data->abonos) >= $data->total){
+				if(($this->input->post('dmonto')+$data->abonos) > $data->total)
+					$_POST['dmonto'] = $this->input->post('dmonto') - (($this->input->post('dmonto')+$data->abonos) - $data->total);
 				$pagada = true;
 			}
 			
@@ -267,7 +267,7 @@ class compras_model extends CI_Model{
 				'id_compra' => $id_compra,
 				'fecha' => $this->input->post('dfecha'),
 				'concepto' => $concepto,
-				'total' => $this->input->post('dttotal')
+				'total' => $this->input->post('dmonto')
 			);
 			$this->db->insert('compras_abonos', $data_abono);
 			
@@ -275,9 +275,13 @@ class compras_model extends CI_Model{
 				$this->db->update('compras', array('status' => 'pa'), "id_compra = '".$id_compra."'");
 			}
 			
+			//Registramos la Operacion en Bancos
+			$this->load->model('banco_model');
+			$respons = $this->banco_model->addOperacion($this->input->post('dcuenta'));
+			
 			return array(true, 'Se agregó el abono correctamente.', $id_abono);
 		}
-		return array(true, 'Se agregó el abono correctamente.', $id_abono);
+		return array(true, 'La compra ya esta pagada.', '');
 	}
 	
 	public function deleteAbono($id_abono, $id_compra){

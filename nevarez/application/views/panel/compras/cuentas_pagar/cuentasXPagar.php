@@ -19,8 +19,8 @@
 	<div class="w100 am-c">
 		<a href="<?php echo base_url('panel/cuentas_pagar/cxp_pdf/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
 			<img src="<?php echo base_url('application/images/privilegios/pdf.png'); ?>" width="20" height="20"> Imprimir</a>
-		<a href="<?php echo base_url('panel/cuentas_pagar/cxp_xls/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
-			<img src="<?php echo base_url('application/images/privilegios/xls.png'); ?>" width="20" height="20"> Excel</a>
+		<!-- <a href="<?php echo base_url('panel/cuentas_pagar/cxp_xls/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
+			<img src="<?php echo base_url('application/images/privilegios/xls.png'); ?>" width="20" height="20"> Excel</a> -->
 	</div>
 	
 	<table class="tblListados corner-all8">

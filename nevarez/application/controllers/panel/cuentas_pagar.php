@@ -1,12 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class compras extends MY_Controller {
+class cuentas_pagar extends MY_Controller {
 	/**
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('compras/ajax_productos_familia/');
+	private $excepcion_privilegio = array(
+			'cuentas_pagar/cxp_pdf/', 'cuentas_pagar/cxp_xls/',
+			'cuentas_pagar/cdp_pdf/', 'cuentas_pagar/cdp_xls/',
+			'cuentas_pagar/detalle_pdf/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -35,20 +38,20 @@ class compras extends MY_Controller {
 			redirect(base_url('panel/home'));
 	}
 	
+	/************ CUENTAS X PAGAR *************/
 	/**
-	 * Default. Mustra el listado de compras para administrarlos
+	 * Default. Mustra el listado de proveedores a los q se les debe
+	 * Es cuentas por pagar
 	 */
 	public function index(){
 		$this->carabiner->css(array(
 			array('libs/jquery.msgbox.css', 'screen'),
-			array('libs/jquery.superbox.css', 'screen'),
 			array('general/forms.css', 'screen'),
 			array('general/tables.css', 'screen')
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
-			array('libs/jquery.superbox.js'),
-			array('compras/listado.js'),
+			array('compras/cuentas_pagar/listados.js'),
 			array('general/msgbox.js')
 		));
 		$this->load->library('pagination');
@@ -56,20 +59,146 @@ class compras extends MY_Controller {
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 		$params['opcmenu_active'] = 'Compras'; //activa la opcion del menu
 		$params['seo'] = array(
-			'titulo' => 'Administrar compras y gastos'
+			'titulo' => 'Cuentas por pagar'
 		);
 		
-		$this->load->model('compras_model');
-		$params['compras'] = $this->compras_model->getCompras();
+		$this->load->model('cuentas_pagar_model');
+		$params['cuentasp'] = $this->cuentas_pagar_model->getCuentasXPagarData();
 		
 		if(isset($_GET['msg']{0}))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
-		$this->load->view('panel/compras/listado', $params);
+		$this->load->view('panel/compras/cuentas_pagar/cuentasXPagar', $params);
 		$this->load->view('panel/footer');
 	}
+	
+	/**
+	 * Descarga el listado de cuentas por pagar en formato pdf
+	 */
+	public function cxp_pdf(){
+		$this->load->model('cuentas_pagar_model');
+		$this->cuentas_pagar_model->cuentasXPagarPdf();
+	}
+	
+	
+	/************ CUENTA DEL PROVEEDOR *************/
+	/**
+	 * Muestra el listado de compras de un proveedor seleccionado, 
+	 * muestra el saldo de acuerdo al rango de fechas
+	 */
+	public function cuenta_proveedor(){
+		$this->carabiner->css(array(
+				array('libs/jquery.msgbox.css', 'screen'),
+				array('general/forms.css', 'screen'),
+				array('general/tables.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('libs/jquery.msgbox.min.js'),
+				array('compras/cuentas_pagar/listados.js'),
+				array('general/msgbox.js')
+		));
+		$this->load->library('pagination');
+		
+		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Compras'; //activa la opcion del menu
+		$params['seo'] = array(
+				'titulo' => 'Cuenta de '
+		);
+		
+		if(isset($_GET['id_proveedor']{0})){
+			$this->load->model('cuentas_pagar_model');
+			$params['cuentasp'] = $this->cuentas_pagar_model->getCuentaProveedorData();
+			
+			$params['seo']['titulo'] .= $params['cuentasp']['proveedor']->nombre;
+			
+			if(isset($_GET['msg']{0}))
+				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		}else
+			$params['frm_errors'] = $this->showMsgs(1);
+	
+		$this->load->view('panel/header', $params);
+		$this->load->view('panel/general/menu', $params);
+		$this->load->view('panel/compras/cuentas_pagar/cuentaProveedor', $params);
+		$this->load->view('panel/footer');
+	}
+	
+	/**
+	 * Muestra el listado de compras en PDF de un proveedor seleccionado,
+	 * muestra el saldo de acuerdo al rango de fechas
+	 */
+	public function cdp_pdf(){
+		$this->load->model('cuentas_pagar_model');
+		$this->cuentas_pagar_model->cuentaProveedorPdf();
+	}
+	
+	/**
+	 * Muestra el listado de compras en XLS de un proveedor seleccionado,
+	 * muestra el saldo de acuerdo al rango de fechas
+	 */
+	public function cdp_xls(){
+		$this->load->model('cuentas_pagar_model');
+		$this->cuentas_pagar_model->cuentaProveedorExcel();
+	}
+	
+	
+	/******* DETALLE DE FACTURAS *******/
+	/**
+	 * Muestra el listado de abonos para una compra determinada,
+	 * muestra el saldo de acuerdo al rango de fechas
+	 */
+	public function detalle(){
+		$this->carabiner->css(array(
+				array('libs/jquery.msgbox.css', 'screen'),
+				array('libs/jquery.superbox.css', 'screen'),
+				array('general/forms.css', 'screen'),
+				array('general/tables.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('libs/jquery.msgbox.min.js'),
+				array('libs/jquery.superbox.js'),
+				array('compras/cuentas_pagar/listados.js'),
+				array('general/msgbox.js'),
+				array('general/util.js')
+		));
+		$this->load->library('pagination');
+	
+		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Compras'; //activa la opcion del menu
+		$params['seo'] = array(
+				'titulo' => 'Detalle de factura '
+		);
+	
+		if(isset($_GET['id_proveedor']{0}) && isset($_GET['id_compra']{0})){
+			$this->load->model('cuentas_pagar_model');
+			$params['cuentasp'] = $this->cuentas_pagar_model->getDetalleFacturaData();
+				
+			$params['seo']['titulo'] .= $params['cuentasp']['compra']->serie.'-'.$params['cuentasp']['compra']->folio;
+				
+			if(isset($_GET['msg']{0}))
+				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		}else
+			$params['frm_errors'] = $this->showMsgs(1);
+
+		$this->load->view('panel/header', $params);
+		$this->load->view('panel/general/menu', $params);
+		$this->load->view('panel/compras/cuentas_pagar/detalle', $params);
+		$this->load->view('panel/footer');
+	}
+	
+	/**
+	 * Muestra el listado de abonos en PDF para una compra determinada,
+	 * muestra el saldo de acuerdo al rango de fechas
+	 */
+	public function detalle_pdf(){
+		$this->load->model('cuentas_pagar_model');
+		$this->cuentas_pagar_model->detalleFacturaPdf();
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Agrega una compra a la bd
@@ -93,7 +222,6 @@ class compras extends MY_Controller {
 		$params['seo'] = array(
 			'titulo' => 'Agregar Compra'
 		);
-		$params['pagar_compra'] = false;
 		
 		$this->configAddModCompra();
 		
@@ -103,13 +231,8 @@ class compras extends MY_Controller {
 			$this->load->model('compras_model');
 			$respons = $this->compras_model->addCompra();
 			
-			if($respons[0]){
-				if($respons[1] == 'pa'){
-					$params['pagar_compra'] = true;
-					$params['id_compraa'] = $respons[2];
-				}else
-					redirect(base_url('panel/compras/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
-			}
+			if($respons[0])
+				redirect(base_url('panel/compras/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
 		}
 		
 		$params['fecha'] = date("Y-m-d");
@@ -146,7 +269,6 @@ class compras extends MY_Controller {
 		$params['seo'] = array(
 				'titulo' => 'Agregar Gasto'
 		);
-		$params['pagar_compra'] = false;
 	
 		$this->configAddModCompra();
 	
@@ -155,26 +277,22 @@ class compras extends MY_Controller {
 		}else{
 			$this->load->model('compras_model');
 			$respons = $this->compras_model->addCompra();
-			
-			if($respons[0]){
-				if($respons[1] == 'pa'){
-					$params['pagar_compra'] = true;
-					$params['id_compraa'] = $respons[2];
-				}else
-					redirect(base_url('panel/compras/agregar_gasto/?'.String::getVarsLink(array('msg')).'&msg=4'));
-			}
+				
+			if($respons[0])
+				redirect(base_url('panel/compras/agregar_gasto/?'.String::getVarsLink(array('msg')).'&msg=4'));
 		}
 	
 		$params['fecha'] = date("Y-m-d");
 		$params['plazo_credito'] = 7;
 	
-		if(isset($_GET['msg']{0}))
-			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		if(isset($_GET['msg']{
+			0}))
+				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 	
-		$this->load->view('panel/header', $params);
-		$this->load->view('panel/general/menu', $params);
-		$this->load->view('panel/compras/agregar_gasto', $params);
-		$this->load->view('panel/footer');
+			$this->load->view('panel/header', $params);
+			$this->load->view('panel/general/menu', $params);
+			$this->load->view('panel/compras/agregar_gasto', $params);
+			$this->load->view('panel/footer');
 	}
 	
 	/**
@@ -242,104 +360,6 @@ class compras extends MY_Controller {
 	}
 	
 	
-	/***** ABONOS A COMPRAS ******/
-	/**
-	 * Paga totalmente una compra o agrega abonos, y Agrega una operacion en bancos, 
-	 * se puede usar en superbox
-	 */
-	public function pagar(){
-		$this->carabiner->css(array(
-				array('general/forms.css', 'screen')
-		));
-		$this->carabiner->js(array(
-				array('libs/jquery.numeric.js'),
-				array('banco/estados_cuenta.js')
-		));
-	
-		$params['seo'] = array(
-				'titulo' => 'Pagar compra'
-		);
-		
-		//Config de pagar o abonar
-		$msg_titulo = 'Pagar Compra!';
-		$view = 'pagar_compra';
-		$msg_ok = 'La compra se pago correctamente.';
-		if(isset($_GET['tipo']{0})){
-			$params['seo']['titulo'] = 'Agregar abono';
-			$msg_titulo = 'Agregar Abono!';
-			$view = 'abonar_compra';
-			$msg_ok = 'El abono se agrego correctamente.';
-		}
-	
-		if(isset($_GET['id']{0})){
-			$this->load->model('compras_model');
-			$this->load->library('form_validation');
-			$rules = array(
-				array('field'	=> 'dfecha',
-						'label'	=> 'Fecha',
-						'rules'	=> 'required|max_length[10]|callback_isValidDate'),
-				array('field'	=> 'dconcepto',
-						'label'	=> 'Concepto',
-						'rules'	=> 'required|max_length[120]'),
-				array('field'	=> 'dmonto',
-						'label'	=> 'Monto',
-						'rules'	=> 'required|numeric'),
-				array('field'	=> 'dcuenta',
-						'label'	=> 'Cuenta',
-						'rules'	=> 'required|max_length[25]'),
-				array('field'	=> 'dtipo',
-						'label'	=> 'Tipo',
-						'rules'	=> 'required|max_length[2]'),
-				array('field'	=> 'dactor',
-						'label'	=> 'Proveedor',
-						'rules'	=> 'required'),
-				array('field'	=> 'did_actor',
-						'label'	=> 'Proveedor',
-						'rules'	=> 'required|max_length[25]'),
-				array('field'	=> 'dforma_pago',
-					'label'	=> 'Forma de pago',
-					'rules'	=> ''));
-			$this->form_validation->set_rules($rules);
-			if($this->form_validation->run() == FALSE){
-				$params['frm_errors'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()), $msg_titulo);
-			}else{
-				$respons = $this->compras_model->addAbono();
-
-				if($respons[0]){
-					$params['load_operaciones'] = true;
-					$params['frm_errors'] = $this->showMsgs(6, $msg_ok, $msg_titulo);
-				}
-			}
-			
-			//Cuentas bancarias
-			$this->load->model('banco_model');
-			$params['cuentas'] = $this->banco_model->obtenCuentas(100);
-			
-			//Info compra
-			$params['compra'] = $this->compras_model->getInfoCompra($_GET['id'], true);
-			$this->load->model('proveedores_model');
-			$params['prov'] = $this->proveedores_model->getInfoProveedor($params['compra']['info']->id_proveedor, true);
-
-			if(isset($_GET['msg']{0}))
-				$params['frm_errors'] = $this->showMsgs($_GET['msg'], '', $msg_titulo);
-		}else
-			$params['frm_errors'] = $this->showMsgs(1);
-
-		$this->load->view('panel/compras/'.$view, $params);
-	}
-	
-	public function delete_abono(){
-		if(isset($_GET['id']{0}) && isset($_GET['id_compra']{0})){
-			$this->load->model('compras_model');
-			$respons = $this->compras_model->deleteAbono($_GET['id'], $_GET['id_compra']);
-				
-			if($respons[0])
-				redirect(base_url('panel/cuentas_pagar/detalle/?'.String::getVarsLink(array('id', 'msg')).'&msg=3'));
-		}else
-			$params['frm_errors'] = $this->showMsgs(1);
-	}
-	
-	
 	/**
 	 * Configura los metodos de agregar y modificar
 	 */
@@ -366,7 +386,7 @@ class compras extends MY_Controller {
 					'rules'		=> 'required|numeric'),
 			array('field'	=> 'dttotal',
 					'label'		=> 'Total',
-					'rules'		=> 'required|numeric|callback_val_total'),
+					'rules'		=> 'required|numeric'),
 			array('field'	=> 'dconcepto',
 					'label'		=> 'Concepto',
 					'rules'		=> 'max_length[200]'),
@@ -425,14 +445,6 @@ class compras extends MY_Controller {
 		return true;
 	}
 	
-	public function val_total($str){
-		if($str <= 0){
-			$this->form_validation->set_message('val_total', 'El Total no puede ser 0, verifica los datos ingresados.');
-			return false;
-		}
-		return true;
-	}
-	
 	
 	/**
 	 * Muestra mensajes cuando se realiza alguna accion
@@ -451,7 +463,7 @@ class compras extends MY_Controller {
 				$icono = 'error';
 			break;
 			case 3:
-				$txt = 'La compra se modifico correctamente.';
+				$txt = 'El abono se elimino correctamente.';
 				$icono = 'ok';
 			break;
 			case 4:
@@ -460,10 +472,6 @@ class compras extends MY_Controller {
 			break;
 			case 5:
 				$txt = 'La compra se cancelo correctamente.';
-				$icono = 'ok';
-			break;
-			case 6:
-				$txt = $msg;
 				$icono = 'ok';
 			break;
 		}
