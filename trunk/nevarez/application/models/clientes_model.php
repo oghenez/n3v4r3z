@@ -246,7 +246,8 @@ class clientes_model extends CI_Model{
 				SELECT id_cliente, nombre_fiscal, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, rfc, retencion
 				FROM clientes
 				WHERE status = 'ac' AND lower(nombre_fiscal) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
-				ORDER BY nombre_fiscal ASC");
+				ORDER BY nombre_fiscal ASC
+				LIMIT 20");
 	
 		$response = array();
 		if($res->num_rows() > 0){

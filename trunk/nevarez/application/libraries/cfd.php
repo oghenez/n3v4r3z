@@ -334,8 +334,8 @@ class cfd{
 			$pdf->SetDrawColor(140,140,140);
 			// ----------- FOLIO ------------------
 			$pdf->SetFont('Arial','',13);
-			$pdf->SetXY(163, ($y-29));
-			$pdf->Cell(38, 7, 'Factura' , 0, 0, 'C');
+			$pdf->SetXY(164, ($y-29));
+			$pdf->Cell(38, 7, 'Recibo de honorarios' , 0, 0, 'C');
 			
 			$pdf->SetXY(158, ($y-22));
 			$pdf->Cell(50, 13, '' , 1, 0, 'C');
