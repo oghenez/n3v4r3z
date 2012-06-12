@@ -45,7 +45,7 @@ class facturacion_model extends privilegios_model{
 				SELECT f.id_factura, f.serie, f.folio, f.fecha, f.condicion_pago, nombre as cliente, f.status
 				FROM facturacion as f
 				WHERE $sql
-				ORDER BY DATE(f.fecha) DESC
+				ORDER BY (f.id_factura, DATE(f.fecha)) DESC
 				", $params, true);
 				$res = $this->db->query($query['query']);
 	
@@ -65,7 +65,7 @@ class facturacion_model extends privilegios_model{
 									FROM facturacion as f
 									RIGHT JOIN facturacion_series_folios as fsf ON f.serie=fsf.serie
 									WHERE fsf.id_serie_folio = '$id_serie_folio'
-									ORDER BY f.fecha DESC LIMIT 1
+									ORDER BY (f.id_factura, f.fecha) DESC LIMIT 1
 				");
 		$result = $query->result();
 

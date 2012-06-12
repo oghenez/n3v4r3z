@@ -46,9 +46,9 @@
 							<p class="f-l">
 								<label for="a_iva">IVA:</label> <br>
 								<select name="a_iva" id="a_iva">
+									<option value="0">0%</option>
 									<option value="0.16">16%</option>
 									<option value="0.1">10%</option>
-									<option value="0">0%</option>
 								</select>
 							</p>
 							<a href="javascript:void(0);" id="btnAddProducto" class="linksm f-l" style="margin: 30px 0 0 20px;">
