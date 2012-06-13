@@ -138,9 +138,7 @@
 			<div class="frmbox-r p5-tb corner-right8">
 				<label for="dtipo_usuario">Tipo usuario:</label> <br>
 				<select name="dtipo_usuario" id="dtipo_usuario" class="w90">
-					<option value="vendedor" <?php echo set_select('dtipo_usuario', 'vendedor'); ?>>Vendedor</option>
-					<option value="taller" <?php echo set_select('dtipo_usuario', 'taller'); ?>>Taller</option>
-					<option value="secretaria" <?php echo set_select('dtipo_usuario', 'secretaria'); ?>>Secretaria</option>
+					<option value="empleado" <?php echo set_select('dtipo_usuario', 'empleado'); ?>>Empleado</option>
 					<option value="admin" <?php echo set_select('dtipo_usuario', 'admin'); ?>>Admin</option>
 				</select>
 				<br>

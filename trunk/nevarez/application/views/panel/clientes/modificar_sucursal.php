@@ -152,18 +152,8 @@
 					
 					<p class="w50">
 						<label for="ddias_credito">Dias credito:</label> <br>
-						<select name="ddias_credito" id="ddias_credito">
-							<option value="7" <?php echo set_select('ddias_credito', '7', false, 
-								(isset($info['info']->dias_credito)? $info['info']->dias_credito: '')); ?>>7 Dias</option>
-							<option value="15" <?php echo set_select('ddias_credito', '15', false, 
-								(isset($info['info']->dias_credito)? $info['info']->dias_credito: '')); ?>>15 Dias</option>
-							<option value="30" <?php echo set_select('ddias_credito', '30', false, 
-								(isset($info['info']->dias_credito)? $info['info']->dias_credito: '')); ?>>30 Dias</option>
-							<option value="60" <?php echo set_select('ddias_credito', '60', false, 
-								(isset($info['info']->dias_credito)? $info['info']->dias_credito: '')); ?>>60 Dias</option>
-							<option value="90" <?php echo set_select('ddias_credito', '90', false, 
-								(isset($info['info']->dias_credito)? $info['info']->dias_credito: '')); ?>>90 Dias</option>
-						</select>
+						<input type="number" name="ddias_credito" id="ddias_credito" class="vpositive" 
+							value="<?php echo (isset($info['info']->dias_credito)? $info['info']->dias_credito: 0); ?>" size="15" min="0" max="120"> dias
 					</p>
 					<div class="clear"></div>
 					

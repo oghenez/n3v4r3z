@@ -2,7 +2,7 @@
 
 class MYpdf extends FPDF {
 	var $show_head = true;
-	var $titulo1 = 'Red Fire de Colima';
+	var $titulo1 = 'Vuelos Fumigación Nevarez';
 	var $titulo2 = '';
 	var $titulo3 = '';
 	
