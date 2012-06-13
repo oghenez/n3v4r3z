@@ -176,7 +176,6 @@ class productos extends MY_Controller {
 		
 		$this->load->view('panel/productos/modificar_familia', $params);
 	}
-	
 	/**
 	 * Desactiva una familia y los productos de la misma
 	 */
@@ -186,8 +185,7 @@ class productos extends MY_Controller {
 			$this->productos_model->desactivarFamilia();
 			$params['msg'] = $this->showMsgs(5, '', 'Familias!');
 		}else
-			$params['msg'] = $this->showMsgs(1, '', 'Familias!');
-		
+			$params['msg'] = $this->showMsgs(1, '', 'Familias!');		
 		echo json_encode($params);
 	}
 	

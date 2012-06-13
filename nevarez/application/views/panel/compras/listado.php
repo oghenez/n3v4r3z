@@ -47,7 +47,7 @@
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('compras/ver/', $comp->id_compra, '', '', '&gasto='.$comp->is_gasto);
 						if($comp->status == 'p')
-							echo $this->empleados_model->getLinkPrivSm('compras/pagar/', $comp->id_compra, '', ' rel="superbox[iframe][800x500]"');
+							echo $this->empleados_model->getLinkPrivSm('compras/pagar/', $comp->id_compra, '', ' rel="superbox[iframe][600x300]"');
 						echo $this->empleados_model->getLinkPrivSm('compras/eliminar/', $comp->id_compra, 
 								"msb.confirm('Estas seguro de eliminar la compra? <br>Ya no se podrá revertir el cambio', this); return false;");
 						?>

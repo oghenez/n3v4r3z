@@ -36,6 +36,7 @@
 			</p>
 			<div class="clear"></div>
 			
+			<?php /*
 			<p class="w50 f-l">
 				<label for="dcuenta">Cuenta:</label> <br>
 				<select name="dcuenta" id="dcuenta">
@@ -55,7 +56,7 @@
 					<option value="transferencia" <?php echo set_select('dforma_pago', 'transferencia'); ?>>Transferencia</option>
 					<option value="deposito" <?php echo set_select('dforma_pago', 'deposito'); ?>>Deposito</option>
 				</select>
-			</p>
+			</p>*/?>
 			
 			<input type="hidden" name="dtipo" value="sa">
 			<input type="hidden" name="dactor" value="<?php echo (isset($prov['info']->nombre)? $prov['info']->nombre: ''); ?>">

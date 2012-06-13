@@ -188,12 +188,8 @@
 			<div class="frmbox-r p5-tb corner-right8">
 				<label for="dtipo_usuario">Tipo usuario:</label> <br>
 				<select name="dtipo_usuario" id="dtipo_usuario" class="w90">
-					<option value="vendedor" <?php echo set_select('dtipo_usuario', 'vendedor', false, 
-							(isset($empleado['info']->tipo_usuario)? $empleado['info']->tipo_usuario: '')); ?>>Vendedor</option>
-					<option value="taller" <?php echo set_select('dtipo_usuario', 'taller', false, 
-							(isset($empleado['info']->tipo_usuario)? $empleado['info']->tipo_usuario: '')); ?>>Taller</option>
-					<option value="secretaria" <?php echo set_select('dtipo_usuario', 'secretaria', false, 
-							(isset($empleado['info']->tipo_usuario)? $empleado['info']->tipo_usuario: '')); ?>>Secretaria</option>
+					<option value="empleado" <?php echo set_select('dtipo_usuario', '"empleado"', false, 
+							(isset($empleado['info']->tipo_usuario)? $empleado['info']->tipo_usuario: '')); ?>>Empleado</option>
 					<option value="admin" <?php echo set_select('dtipo_usuario', 'admin', false, 
 							(isset($empleado['info']->tipo_usuario)? $empleado['info']->tipo_usuario: '')); ?>>Admin</option>
 				</select>

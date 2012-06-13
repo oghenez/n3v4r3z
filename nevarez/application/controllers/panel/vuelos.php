@@ -107,7 +107,8 @@ class vuelos extends MY_Controller {
 		$this->carabiner->js(array(
 				array('libs/jquery.msgbox.min.js'),
 				array('general/msgbox.js'),
-				array('vuelos/frm_addmod.js')
+				array('vuelos/frm_addmod.js'),
+				array('libs/jquery-ui-timepicker-addon.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -207,7 +208,7 @@ class vuelos extends MY_Controller {
 						'rules'		=> 'required|max_length[25]'),
 				array('field'	=> 'dfecha',
 						'label'		=> 'Fecha',
-						'rules'		=> 'required|max_length[10]'),
+						'rules'		=> 'required|max_length[16]'),
 				array('field'	=> 'dcliente',
 						'label'		=> '',
 						'rules'		=> ''),

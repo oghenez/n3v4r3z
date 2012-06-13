@@ -104,10 +104,10 @@ class compras extends MY_Controller {
 			$respons = $this->compras_model->addCompra();
 			
 			if($respons[0]){
-				if($respons[1] == 'pa'){
-					$params['pagar_compra'] = true;
-					$params['id_compraa'] = $respons[2];
-				}else
+// 				if($respons[1] == 'pa'){
+// 					$params['pagar_compra'] = true;
+// 					$params['id_compraa'] = $respons[2];
+// 				}else
 					redirect(base_url('panel/compras/agregar/?'.String::getVarsLink(array('msg')).'&msg=4'));
 			}
 		}
@@ -284,9 +284,9 @@ class compras extends MY_Controller {
 				array('field'	=> 'dmonto',
 						'label'	=> 'Monto',
 						'rules'	=> 'required|numeric'),
-				array('field'	=> 'dcuenta',
-						'label'	=> 'Cuenta',
-						'rules'	=> 'required|max_length[25]'),
+// 				array('field'	=> 'dcuenta',
+// 						'label'	=> 'Cuenta',
+// 						'rules'	=> 'required|max_length[25]'),
 				array('field'	=> 'dtipo',
 						'label'	=> 'Tipo',
 						'rules'	=> 'required|max_length[2]'),
@@ -312,8 +312,8 @@ class compras extends MY_Controller {
 			}
 			
 			//Cuentas bancarias
-			$this->load->model('banco_model');
-			$params['cuentas'] = $this->banco_model->obtenCuentas(100);
+// 			$this->load->model('banco_model');
+// 			$params['cuentas'] = $this->banco_model->obtenCuentas(100);
 			
 			//Info compra
 			$params['compra'] = $this->compras_model->getInfoCompra($_GET['id'], true);

@@ -128,9 +128,10 @@ class compras_model extends CI_Model{
 		}
 		
 		//Si es a contado se paga y se agrega un abono
-		/*if($status == 'pa'){
+		if($status == 'pa'){
+			$_POST['dmonto'] = $this->input->post('dttotal');
 			$this->addAbono($id_compra, "Pago al contado.");
-		}*/
+		}
 		
 		return array(true, $status, $id_compra);
 	}
@@ -165,45 +166,11 @@ class compras_model extends CI_Model{
 					'importe_iva' => $_POST['dpimporte_iva'][$key],
 					'total' => ($_POST['dpimporte'][$key]+$_POST['dpimporte_iva'][$key]),
 				);
-				
-				//obtengo e inserto los productos base que consume el producto a registrar
-				$prod_inv = $this->productosInventario($producto, $_POST['dpcantidad'][$key], $_POST['dpprecio_unitario'][$key]);
-				foreach($prod_inv as $prod){
-					$res = $this->db->select("id_producto")
-						->from("compras_productos_inv")
-						->where( array( 'id_compra' => $id_compra, 'id_producto' => $prod['id_producto']))
-					->get();
-					
-					$importe = String::float($prod['cantidad']*$prod['pu']);
-					$importe_iva = String::float($_POST['dptaza_iva'][$key]*$importe);
-					if($res->num_rows() > 0){
-						//si ya se agrego se actualiza los datos del producto base
-						$this->db->query("UPDATE compras_productos_inv 
-								SET cantidad = cantidad+".$prod['cantidad'].", importe = importe+".$importe.", 
-									importe_iva = importe_iva+".$importe_iva.", total = total+".($importe+$importe_iva)." 
-								WHERE id_compra = '".$id_compra."' AND id_producto = '".$prod['id_producto']."'");
-					}else{
-						//si el producto base aun no existe se inserta
-						$data_productos_inv = array(
-							'id_compra' => $id_compra,
-							'id_producto' => $prod['id_producto'],
-							'taza_iva' => $_POST['dptaza_iva'][$key],
-							'cantidad' => $prod['cantidad'],
-							'precio_unitario' => $prod['pu'],
-							'importe' => $importe,
-							'importe_iva' => $importe_iva,
-							'total' => ($importe+$importe_iva),
-						);
-						$this->db->insert('compras_productos_inv', $data_productos_inv);
-					}
-					$res->free_result();
-				}
 			}
 
 			if(count($data_productos) > 0){
 				if($tipo != 'add' && $this->input->post('dpupdate') == 'si'){
 					$this->db->delete('compras_productos', "id_compra = '".$id_compra."'");
-					$this->db->delete('compras_productos_inv', "id_compra = '".$id_compra."'");
 				}
 				//se insertan los productos de la compra	
 				$this->db->insert_batch('compras_productos', $data_productos);
@@ -273,12 +240,7 @@ class compras_model extends CI_Model{
 			
 			if($pagada){
 				$this->db->update('compras', array('status' => 'pa'), "id_compra = '".$id_compra."'");
-			}
-			
-			//Registramos la Operacion en Bancos
-			$this->load->model('banco_model');
-			$respons = $this->banco_model->addOperacion($this->input->post('dcuenta'));
-			
+			}			
 			return array(true, 'Se agregó el abono correctamente.', $id_abono);
 		}
 		return array(true, 'La compra ya esta pagada.', '');

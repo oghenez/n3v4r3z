@@ -32,6 +32,7 @@
 					echo set_value('dconcepto', 'Pago total de la compra ('.$ff.')'); ?>" size="48" maxlength="120">
 			</p>
 			
+			<?php /*
 			<p class="w50 f-l">
 				<label for="dcuenta">Cuenta:</label> <br>
 				<select name="dcuenta" id="dcuenta">
@@ -51,7 +52,7 @@
 					<option value="transferencia" <?php echo set_select('dforma_pago', 'transferencia'); ?>>Transferencia</option>
 					<option value="deposito" <?php echo set_select('dforma_pago', 'deposito'); ?>>Deposito</option>
 				</select>
-			</p>
+			</p>*/?>
 			
 			<input type="hidden" name="dmonto" value="<?php echo (isset($compra['info']->total)? $compra['info']->total: ''); ?>" class="vpositive">
 			<input type="hidden" name="dtipo" value="sa">
