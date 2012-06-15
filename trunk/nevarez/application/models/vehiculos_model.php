@@ -55,4 +55,30 @@ class vehiculos_model extends privilegios_model{
 		return array(false);
 	}
 	
+	public function ajax_get_vehiculos(){
+		$sql = '';
+		$res = $this->db->query("
+				SELECT id_vehiculo as id, (nombre || ' (' || placas || ')') as nombre
+				FROM vehiculos
+				WHERE status='ac' AND lower(placas) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
+				ORDER BY nombre ASC
+				LIMIT 20
+				");
+	
+		$response = array();
+		if($res->num_rows() > 0){
+			foreach($res->result() as $itm){
+				$response[] = array(
+						'id' => $itm->id,
+						'label' => $itm->nombre,
+						'value' => $itm->nombre,
+						'item' => $itm,
+				);
+			}
+		}
+	
+		return $response;
+	}
+	
+	
 }

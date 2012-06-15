@@ -7,7 +7,7 @@ class vehiculo extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('vehiculo/ajaxVehiculos/');
+	private $excepcion_privilegio = array('vehiculo/ajaxVehiculos/','vehiculo/ajax_get_vehiculos/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -184,6 +184,16 @@ class vehiculo extends MY_Controller {
 	private function ajaxVehiculos(){
 		$params['datos_v'] = array('vehiculos' => $this->vehiculos_model->getVehiculos());
 		$this->load->view('panel/vehiculos/listado',$params);
+	}
+	
+	/**
+	 * Obtiene lostado de aviones para el autocomplete, ajax
+	 */
+	public function ajax_get_vehiculos(){
+		$this->load->model('vehiculos_model');
+		$params = $this->vehiculos_model->ajax_get_vehiculos();
+	
+		echo json_encode($params);
 	}
 	
 	/**
