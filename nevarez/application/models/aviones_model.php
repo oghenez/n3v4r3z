@@ -91,7 +91,9 @@ class aviones_model extends privilegios_model{
 				SELECT id_avion, matricula, modelo, tipo
 				FROM aviones
 				WHERE status = 'ac' AND lower(matricula) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
-				ORDER BY matricula ASC");
+				ORDER BY matricula ASC
+				LIMIT 20
+				");
 	
 		$response = array();
 		if($res->num_rows() > 0){

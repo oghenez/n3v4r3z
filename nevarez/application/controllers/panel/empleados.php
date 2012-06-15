@@ -3,6 +3,12 @@
 
 class empleados extends MY_Controller {
 	
+	/**
+	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
+	 * @var unknown_type
+	 */
+	private $excepcion_privilegio = array('empleados/ajax_get_trabajadores/');
+	
 	public function _remap($method){
 		$this->carabiner->css(array(
 				array('libs/jquery-ui.css', 'screen'),
@@ -20,6 +26,7 @@ class empleados extends MY_Controller {
 		
 		$this->load->model("empleados_model");
 		if($this->empleados_model->checkSession()){
+			$this->empleados_model->excepcion_privilegio = $this->excepcion_privilegio;
 			$this->info_empleado = $this->empleados_model->getInfoEmpleado($_SESSION['id_empleado'], true);
 			if($this->empleados_model->tienePrivilegioDe('', get_class($this).'/'.$method.'/')){
 				$this->{$method}();
@@ -227,7 +234,15 @@ class empleados extends MY_Controller {
 		echo json_encode($params);
 	}
 	
+	/**
+	 * Obtiene lostado de aviones para el autocomplete, ajax
+	 */
+	public function ajax_get_trabajadores(){
+		$this->load->model('empleados_model');
+		$params = $this->empleados_model->ajax_get_trabajadores();
 	
+		echo json_encode($params);
+	}
 	
 	
 	/**

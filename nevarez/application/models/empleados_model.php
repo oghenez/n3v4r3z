@@ -285,4 +285,33 @@ class empleados_model extends privilegios_model{
 		}
 		return false;
 	}
+	
+	public function ajax_get_trabajadores(){
+		$sql = '';
+		$res = $this->db->query("
+				(SELECT id_empleado as id, (nombre || ' ' || apellido_paterno) as nombre, 'tr' as tipo_trabajador
+				FROM empleados
+				WHERE status='contratado' AND tipo_usuario='empleado' AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%')
+				UNION
+				(SELECT id_proveedor as id, nombre, 'pi' as tipo_trabajador
+				FROM proveedores
+				WHERE status='ac' AND tipo='pi' AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%')
+				ORDER BY nombre ASC
+				LIMIT 20
+				");
+	
+		$response = array();
+		if($res->num_rows() > 0){
+			foreach($res->result() as $itm){
+				$response[] = array(
+						'id' => $itm->id,
+						'label' => $itm->nombre,
+						'value' => $itm->nombre,
+						'item' => $itm,
+				);
+			}
+		}
+	
+		return $response;
+	}
 }

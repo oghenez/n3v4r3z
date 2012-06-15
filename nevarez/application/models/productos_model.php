@@ -278,42 +278,62 @@ class productos_model extends CI_Model{
 	/**
 	 * Obtiene el listado de proveedores para usar ajax
 	 */
-	public function getProductosAjax(){
+	public function getProductosAjax(){		
 		$sql = $order = '';
 		if($this->input->get('tipo') == 'codigo'){
-			$sql = "lower(codigo) LIKE '".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
-			$order = "codigo";
+			$sql = "lower(p.codigo) LIKE '".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
+			$order = "p.codigo";
+			$val="codigo";
 		}else{
-			$sql = "lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
-			$order = "nombre";
+			$sql = "lower(p.nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'";
+			$order = "p.nombre";
+			$val="nombre";
 		}
 	
 		$precio = '';
-		if(isset($_GET['cliente']{
-			0})){
-				$precio = ", get_precio_producto('".$this->input->get('cliente')."', id_producto) AS precio";
-			}
-	
-			$res = $this->db->query("
-					SELECT id_producto, codigo, nombre".$precio."
-					FROM productos
-					WHERE status = 'ac' AND ".$sql."
-					ORDER BY ".$order." ASC
-					LIMIT 100");
-	
-			$response = array();
-			if($res->num_rows() > 0){
-				foreach($res->result() as $itm){
-					$response[] = array(
-							'id' => $itm->id_producto,
-							'label' => $itm->{$order},
-							'value' => $itm->{$order},
-							'item' => $itm,
-							);
+		if(isset($_GET['cliente']{0})){
+			$precio = ", get_precio_producto('".$this->input->get('cliente')."', p.id_producto) AS precio";
+		}
+		
+		$inner_join = '';
+		if(isset($_GET['asig'])){ // Si entra aqui se filtrarian los producto para la familia deseada por ejemplo: Avion, Trabajadores, Vehiculos
+			if($_GET['asig']!='ni'){
+				switch($_GET['asig']){
+					case 'av':
+						$tipo = 'avion';
+						break;
+					case 'tr':
+						$tipo = 'trabajador';
+						break;
+					case 've':
+						$tipo = 'vehiculo';
+						break;
 				}
-			}
+				$inner_join = "INNER JOIN productos_familias as pf ON p.id_familia=pf.id_familia AND pf.tipo='$tipo'";
+			}	
+		}
 	
-			return $response;
+		$res = $this->db->query("
+				SELECT p.id_producto, p.codigo, p.nombre".$precio.", pu_ultima_compra(p.id_producto) as pu
+				FROM productos as p
+				$inner_join
+				WHERE p.status = 'ac' AND ".$sql."
+				ORDER BY ".$order." ASC
+				LIMIT 100");
+
+		$response = array();
+		if($res->num_rows() > 0){
+			foreach($res->result() as $itm){
+				$response[] = array(
+						'id' => $itm->id_producto,
+						'label' => $itm->{$val},
+						'value' => $itm->{$val},
+						'item' => $itm,
+						);
+			}
+		}
+
+		return $response;
 	}
 	
 }

@@ -102,8 +102,6 @@ function createInfoProveedor(item){
 	return info;
 }
 
-
-
 /***** Productos ****/
 /**
  * Agrega productos a la lista
@@ -247,9 +245,6 @@ function limpiaProducto(){
 	$("#a_nombre").val("");
 	$("#a_iva").val("");
 }
-
-
-
 
 function recargar(){
 	window.location = window.location.href+"?msg=4";
