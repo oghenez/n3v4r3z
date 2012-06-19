@@ -2,7 +2,7 @@
 
 class MYpdf extends FPDF {
 	var $show_head = true;
-	var $titulo1 = 'Vuelos Fumigación Nevarez';
+	var $titulo1 = 'Red Fire de Colima';
 	var $titulo2 = '';
 	var $titulo3 = '';
 	
@@ -189,6 +189,7 @@ class MYpdf extends FPDF {
     /*Crear tablas*/
     var $widths;
     var $aligns;
+    var $links;
     
     function SetWidths($w){
     	$this->widths=$w;
@@ -198,30 +199,49 @@ class MYpdf extends FPDF {
     	$this->aligns=$a;
     }
     
-    function Row($data, $header=false){
+    function SetMyLinks($a){
+    	$this->links=$a;
+    }
+    
+    function Row($data, $header=false, $bordes=true){
     	$nb=0;
     	for($i=0;$i<count($data);$i++)
     		$nb=max($nb,$this->NbLines($this->widths[$i],$data[$i]));
-    		$h=$this->FontSize*$nb+4;
+    		$h=$this->FontSize*$nb+3;
+    		if($header)
+    			$h += 2;
     		$this->CheckPageBreak($h);
     		for($i=0;$i<count($data);$i++){
-    		$w=$this->widths[$i];
-    		$a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
-    		$x=$this->GetX();
-    		$y=$this->GetY();
-    		if($header)
-    			$this->Rect($x,$y,$w,$h,'DF');
-    			else
-    				$this->Rect($x,$y,$w,$h);
-    				$this->SetXY($x,$y+3);
+	    		$w=$this->widths[$i];
+	    		$a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+	    		$x=$this->GetX();
+	    		$y=$this->GetY();
+	    		
+	    		if($header && $bordes)
+	    			$this->Rect($x,$y,$w,$h,'DF');
+	    		elseif($bordes)
+	    			$this->Rect($x,$y,$w,$h);
+	    		
+	    		if($header)
+	    			$this->SetXY($x,$y+3);
+	    		else	
+	    			$this->SetXY($x,$y+2);
+    			
+	    		if(isset($this->links[$i]{0})){
+	    			$this->SetTextColor(35, 95, 185);
+	    			$this->Cell($w, $this->FontSize, $data[$i], 0, strlen($data[$i]), $a, false, $this->links[$i]);
+	    			$this->SetTextColor(0,0,0);
+	    		}else
     				$this->MultiCell($w,$this->FontSize, $data[$i],0,$a);
-    				$this->SetXY($x+$w,$y);
+    			
+    			$this->SetXY($x+$w,$y);
     		}
     		$this->Ln($h);
     }
     
-    function CheckPageBreak($h){
-    	if($this->GetY()+$h>$this->PageBreakTrigger)
+    function CheckPageBreak($h, $limit=0){
+    	$limit = $limit==0? $this->PageBreakTrigger: $limit;
+    	if($this->GetY()+$h>$limit)
     		$this->AddPage($this->CurOrientation);
     }
     
