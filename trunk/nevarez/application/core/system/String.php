@@ -279,6 +279,23 @@ class String{
 	
 	/**** FUNCIONES DE FECHA ****/
 	/**
+	 * Le suma ndias a una fecha dada regresandola en el formato que sea especificado
+	 * @param $fecha:string
+	 *				Corresponde a la fecha a la que se le sumaran los d�as
+	 * @param $ndias:integer
+	 *				Es el numero de dias que se le sumaran a la fecha
+	 * @param $formato:string (opcional)
+	 *				Es el formato en el que sera devuelto la fecha resultante (default Y-m-d)
+	 * @return date
+	 */
+	public static function suma_fechas($fecha,$ndias,$formato = "Y-m-d"){
+		if($ndias>=0)
+			return date($formato, strtotime($fecha." + ".$ndias." days"));
+		else
+			return date($formato, strtotime($fecha." ".$ndias." day"));
+	}
+	
+	/**
 	 * mes()
 	 *
 	 * Devuelve la cadena de texto asociada al número de mes
