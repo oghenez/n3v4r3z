@@ -31,7 +31,7 @@ class salidas_model extends CI_Model{
 				SELECT s.id_salida, Date(s.fecha) AS fecha, s.folio, s.tipo_salida, s.status
 				FROM salidas as s
 				WHERE s.status <> 'ca' $sql
-				ORDER BY (Date(s.fecha), s.folio) ASC
+				ORDER BY (Date(s.fecha), s.folio) DESC
 				", $params, true);
 		
 		$res = $this->db->query($query['query']);
@@ -66,10 +66,11 @@ class salidas_model extends CI_Model{
 			
 			//productos
 			$res = $this->db
-				->select('p.id_producto, p.codigo, p.nombre, sp.taza_iva, sp.cantidad, sp.precio_unitario, 
-						sp.importe, sp.importe_iva, sp.total')
+				->select('p.id_producto, p.codigo, p.nombre, sp.taza_iva, sp.cantidad, sp.precio_unitario,
+						sp.importe, sp.importe_iva, sp.total, pu.abreviatura')
 				->from('salidas_productos AS sp')
 					->join('productos AS p', 'p.id_producto = sp.id_producto', 'inner')
+					->join('productos_unidades AS pu', 'pu.id_unidad = p.id_unidad', 'inner')
 				->where("sp.id_salida = '".$id."'")
 			->get();
 			if($res->num_rows() > 0){
@@ -104,36 +105,54 @@ class salidas_model extends CI_Model{
 	 * Agrega una compra a la bd
 	 */
 	public function addSalida(){
-		$id_salida = BDUtil::getId();
-		$data = array(
-			'id_salida' => $id_salida,
-			'folio' => $this->input->post('dfolio'),
-			'fecha' => $this->input->post('dfecha') ,
-			'tipo_salida' => $this->input->post('dtipo_salida'),
-			'status' => $this->input->post('dtipo'),
-			'id_usuario' => $_SESSION['id_empleado']
-		);
-		
-		switch($_POST['dtipo_salida']){
-			case 'av':
-					$data['id_avion'] = $this->input->post('did_avion');
-				break;
-			case 'tr':
-				$data['id_trabajador'] = $this->input->post('did_trabajador');
-				$data['tipo_trabajador'] = $this->input->post('dtipo_trabajador');
-				$data['fecha_entrega'] = $this->input->post('dfecha_entrega');
-				break;
-			case 've':
-				$data['id_vehiculo'] = $this->input->post('did_vehiculo');
-				break;
+		$existen = true;
+		$msg = 'La cantidad solicitada de el/los productos ';
+		// Valida que los productos tengan existencias
+		foreach($_POST['dpid_producto'] as $key => $producto){
+			$sql = $this->db->select("nombre, existencia_producto('$producto') as existentes")->
+								from("productos")->
+								where("id_producto",$producto)->
+								get()->row();
+			if($sql->existentes < $_POST['dpcantidad'][$key]){
+				$existen = false;
+				$msg .= $sql->nombre.', '; 
+			}
 		}
-		$this->db->insert('salidas', $data);
 		
-		//productos para las compras
-		if(isset($_POST['dpid_producto'])){
-			$this->addProductos($id_salida);
-		}		
-		return array(true, $id_salida);
+		if($existen){
+		
+			$id_salida = BDUtil::getId();
+			$data = array(
+				'id_salida' => $id_salida,
+				'folio' => $this->input->post('dfolio'),
+				'fecha' => $this->input->post('dfecha') ,
+				'tipo_salida' => $this->input->post('dtipo_salida'),
+				'status' => $this->input->post('dtipo'),
+				'id_usuario' => $_SESSION['id_empleado']
+			);
+			
+			switch($_POST['dtipo_salida']){
+				case 'av':
+						$data['id_avion'] = $this->input->post('did_avion');
+					break;
+				case 'tr':
+					$data['id_trabajador'] = $this->input->post('did_trabajador');
+					$data['tipo_trabajador'] = $this->input->post('dtipo_trabajador');
+					$data['fecha_entrega'] = $this->input->post('dfecha_entrega');
+					break;
+				case 've':
+					$data['id_vehiculo'] = $this->input->post('did_vehiculo');
+					break;
+			}
+			$this->db->insert('salidas', $data);
+			
+			//productos para las compras
+			if(isset($_POST['dpid_producto'])){
+				$this->addProductos($id_salida);
+			}
+			return array(true, $id_salida);
+		}
+		else return array(false, 'msg' => $msg.' es mayor a las existencias');
 	}
 	
 	/**
@@ -152,9 +171,25 @@ class salidas_model extends CI_Model{
 	 */
 	public function addProductos($id_salida, $tipo='add'){
 		if(is_array($_POST['dpid_producto'])){
+			
+			$tr_nombre='';
+			if($_POST['dtipo_salida']=='tr'){
+				if($_POST['dtipo_trabajador']=='tr')
+					$tr_nombre = $this->db->select("(nombre || ' ' || apellido_paterno) as nombre")->
+											from("empleados")->
+											where("id_empleado",$_POST['did_trabajador'])->
+											get()->row()->nombre;
+				elseif($_POST['dtipo_trabajador']=='pi')
+					$tr_nombre = $this->db->select("nombre")->
+											from("proveedores")->
+											where("id_proveedor",$_POST['did_trabajador'])->
+											get()->row()->nombre;
+			}
+			
 			$data_productos = array();
+			$data_alertas = array();
 			foreach($_POST['dpid_producto'] as $key => $producto){
-				//Datos de los productos de la compra
+				//Datos de los productos de la salida
 				$data_productos[] = array(
 					'id_salida' => $id_salida,
 					'id_producto' => $producto,
@@ -165,14 +200,30 @@ class salidas_model extends CI_Model{
 					'importe_iva' => $_POST['dpimporte_iva'][$key],
 					'total' => ($_POST['dpimporte'][$key]+$_POST['dpimporte_iva'][$key]),
 				);
+				
+				if($_POST['dtipo_salida']=='tr'){				
+					$pr_nombre = $this->db->select("nombre")->
+											from("productos")->
+											where("id_producto",$producto)->
+											get()->row()->nombre;
+					
+					$id_alerta = BDUtil::getId();
+					$data_alertas[] = array(
+							'id_alerta' => $id_alerta,
+							'tabla_obj' => 'salidas_productos',
+							'id_obj1' => $id_salida,
+							'id_obj2' => $producto,
+							'descripcion' => "Prestamo Herramienta {$_POST['dpcantidad'][$key]} $pr_nombre a $tr_nombre",
+							'fecha_vencimiento' => $this->input->post('dfecha_entrega')
+						);
+				}
 			}
 
 			if(count($data_productos) > 0){
-// 				if($tipo != 'add' && $this->input->post('dpupdate') == 'si'){
-// 					$this->db->delete('salidas_productos', "id_salida = '".$id_compra."'");
-// 				}
-				//se insertan los productos de la compra	
 				$this->db->insert_batch('salidas_productos', $data_productos);
+				
+				if(count($data_alertas) > 0)
+					$this->db->insert_batch('alertas', $data_alertas);
 			}
 			
 			return array(true, '');

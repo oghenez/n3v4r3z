@@ -97,9 +97,10 @@ class salidas extends MY_Controller {
 			$this->load->model('salidas_model');
 			$respons = $this->salidas_model->addSalida();
 			
-			if($respons[0]){
-					redirect(base_url('panel/salidas/agregar/?'.String::getVarsLink(array('msg')).'id='.$respons[1].'&msg=4'));
-			}
+			if($respons[0])
+				redirect(base_url('panel/salidas/agregar/?'.String::getVarsLink(array('msg')).'id='.$respons[1].'&msg=4'));	
+			else 
+				$params['frm_errors'] = $this->showMsgs(2,$respons['msg']);
 		}
 		
 		$params['folio'] = $this->db->query("SELECT COALESCE(MAX(folio)+1,1) as folio FROM salidas")->row()->folio;
@@ -315,9 +316,9 @@ class salidas extends MY_Controller {
 			}				
 			// ----------- TABLA CON LOS PRODUCTOS ------------------
 			$pdf->SetY($y+33);
-			$aligns = array('C', 'C', 'C');
-			$widths = array(25, 127, 33);
-			$header = array('Cantidad', 'Descripción', 'Importe');
+			$aligns = array('C', 'C');
+			$widths = array(40, 145);
+			$header = array('Cantidad', 'Descripción');
 			foreach($res['productos'] as $key => $item){
 				$band_head = false;
 				if($pdf->GetY() >= 200 || $key==0){ //salta de pagina si exede el max
@@ -338,7 +339,7 @@ class salidas extends MY_Controller {
 				
 				$subtotal += floatval($item->importe);
 				$iva += floatval($item->importe_iva);
-				$datos = array($item->cantidad, $item->nombre,String::formatoNumero($item->importe));
+				$datos = array($item->cantidad.' '.$item->abreviatura, $item->nombre);
 					
 				$pdf->SetX(15);
 				$pdf->SetAligns($aligns);
@@ -348,40 +349,40 @@ class salidas extends MY_Controller {
 				
 			//------------ SUBTOTAL, IVA ,TOTAL --------------------
 			
-			$total= floatval($subtotal + $iva);
-			$y = $pdf->GetY();
-			$pdf->SetFont('Arial','B',10);
-			$pdf->SetTextColor(255,255,255);
-			$pdf->SetFillColor(160,160,160);
+// 			$total= floatval($subtotal + $iva);
+// 			$y = $pdf->GetY();
+// 			$pdf->SetFont('Arial','B',10);
+// 			$pdf->SetTextColor(255,255,255);
+// 			$pdf->SetFillColor(160,160,160);
 				
-			$pdf->SetXY(144, ($y+5));
-			$pdf->Cell(23, 8, 'Subtotal' , 1, 0, 'C',1);
-			$pdf->SetXY(144, ($y+13));
-			$pdf->Cell(23, 8, 'IVA' , 1, 0, 'C',1);
-			$pdf->SetXY(144, ($y+21));
-			$pdf->Cell(23, 8, 'Total' , 1, 0, 'C',1);
+// 			$pdf->SetXY(144, ($y+5));
+// 			$pdf->Cell(23, 8, 'Subtotal' , 1, 0, 'C',1);
+// 			$pdf->SetXY(144, ($y+13));
+// 			$pdf->Cell(23, 8, 'IVA' , 1, 0, 'C',1);
+// 			$pdf->SetXY(144, ($y+21));
+// 			$pdf->Cell(23, 8, 'Total' , 1, 0, 'C',1);
 				
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFillColor(255,255,255);
-			$pdf->SetXY(167, ($y+5));
-			$pdf->Cell(33, 8, String::formatoNumero($subtotal,2) , 1, 0, 'C');
-			$pdf->SetXY(167, ($y+13));
-			$pdf->Cell(33, 8, String::formatoNumero($iva,2) , 1, 0, 'C');
-			$pdf->SetXY(167, ($y+21));
-			$pdf->Cell(33, 8, String::formatoNumero($total,2) , 1, 0, 'C');
+// 			$pdf->SetTextColor(0,0,0);
+// 			$pdf->SetFillColor(255,255,255);
+// 			$pdf->SetXY(167, ($y+5));
+// 			$pdf->Cell(33, 8, String::formatoNumero($subtotal,2) , 1, 0, 'C');
+// 			$pdf->SetXY(167, ($y+13));
+// 			$pdf->Cell(33, 8, String::formatoNumero($iva,2) , 1, 0, 'C');
+// 			$pdf->SetXY(167, ($y+21));
+// 			$pdf->Cell(33, 8, String::formatoNumero($total,2) , 1, 0, 'C');
 				
 // 			//------------ TOTAL CON LETRA--------------------
 				
-			$pdf->SetXY(15, ($y+5));
-			$pdf->Cell(125, 24, '' , 1, 0, 'C');
+// 			$pdf->SetXY(15, ($y+5));
+// 			$pdf->Cell(125, 24, '' , 1, 0, 'C');
 				
-			$pdf->SetFont('Arial','B',13);
-			$pdf->SetXY(15, ($y+5));
-			$pdf->Cell(60, 8, 'IMPORTE CON LETRA' , 0, 0, 'L');
+// 			$pdf->SetFont('Arial','B',13);
+// 			$pdf->SetXY(15, ($y+5));
+// 			$pdf->Cell(60, 8, 'IMPORTE CON LETRA' , 0, 0, 'L');
 				
-			$pdf->SetFont('Arial','',12);
-			$pdf->SetXY(15, ($y+13));
-			$pdf->Cell(125, 16, String::num2letras($total) , 0, 0, 'C');
+// 			$pdf->SetFont('Arial','',12);
+// 			$pdf->SetXY(15, ($y+13));
+// 			$pdf->Cell(125, 16, String::num2letras($total) , 0, 0, 'C');
 				
 			$pdf->Output('salida.pdf', 'I');
 		}

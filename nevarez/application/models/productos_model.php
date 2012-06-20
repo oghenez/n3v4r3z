@@ -295,7 +295,7 @@ class productos_model extends CI_Model{
 			$precio = ", get_precio_producto('".$this->input->get('cliente')."', p.id_producto) AS precio";
 		}
 		
-		$inner_join = '';
+		$tipo_familia = "AND pf.tipo<>'venta'";
 		if(isset($_GET['asig'])){ // Si entra aqui se filtrarian los producto para la familia deseada por ejemplo: Avion, Trabajadores, Vehiculos
 			if($_GET['asig']!='ni'){
 				switch($_GET['asig']){
@@ -309,14 +309,14 @@ class productos_model extends CI_Model{
 						$tipo = 'vehiculo';
 						break;
 				}
-				$inner_join = "INNER JOIN productos_familias as pf ON p.id_familia=pf.id_familia AND pf.tipo='$tipo'";
+				$tipo_familia = "AND pf.tipo='$tipo'";
 			}	
 		}
 	
 		$res = $this->db->query("
 				SELECT p.id_producto, p.codigo, p.nombre".$precio.", pu_ultima_compra(p.id_producto) as pu
 				FROM productos as p
-				$inner_join
+				INNER JOIN productos_familias as pf ON p.id_familia=pf.id_familia $tipo_familia
 				WHERE p.status = 'ac' AND ".$sql."
 				ORDER BY ".$order." ASC
 				LIMIT 100");
