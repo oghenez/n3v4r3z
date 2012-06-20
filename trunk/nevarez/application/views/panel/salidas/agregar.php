@@ -147,7 +147,7 @@
 				<input type="date" name="dfecha" id="dfecha" value="<?php echo set_value('dfecha', $fecha); ?>" maxlength="10"> <br><br>
 				
 				<label for="dfolio">*Folio:</label> <br>
-				<input type="number" name="dfolio" id="dfolio" class="vpositive" value="<?php echo set_value('dfolio', $folio); ?>" size="15">
+				<input type="number" name="dfolio" id="dfolio" class="vpositive" value="<?php echo set_value('dfoli', $folio); ?>" size="15" readonly>
 			</div>
 			
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all">

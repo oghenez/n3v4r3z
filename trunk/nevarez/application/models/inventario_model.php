@@ -29,7 +29,7 @@ class inventario_model extends CI_Model{
 					$total_compra += ($cantidad * $_POST['precio_u'][$key]);
 				}else{ //se agrega una venta
 					$ordenest[] = array(
-						'id_ordent' 	=> '',
+						'id_salida' 	=> '',
 						'id_producto' 	=> $prod,
 						'cantidad' 		=> $cantidad,
 						'precio_unitario' => $_POST['precio_u'][$key],
@@ -57,27 +57,27 @@ class inventario_model extends CI_Model{
 			//productos de la compra
 			foreach($compras as $key => $co)
 				$compras[$key]['id_compra'] = $id_compra;
-			$this->db->insert_batch('compras_productos_inv', $compras);
+			$this->db->insert_batch('compras_productos', $compras);//compras_productos_inv
 		}
 		
 		//Agregamos una orden t para nivelar
 		if(count($ordenest) > 0){
 			$id_ordent = BDUtil::getId();
 			$ordent = array(
-				'id_ordent' => $id_ordent,
-				'id_cliente' => '1',
-				'id_vendedor' => $_SESSION['id_empleado'],
+				'id_salida' => $id_ordent,
+// 				'id_cliente' => '1',
+// 				'id_vendedor' => $_SESSION['id_empleado'],
 				'id_usuario' => $_SESSION['id_empleado'],
-				'subtotal' => $total_ordent,
-				'total' => $total_ordent,
+// 				'subtotal' => $total_ordent,
+// 				'total' => $total_ordent,
 				'status' => 'n'
 			);
-			$this->db->insert('ordenest', $ordent);
+			$this->db->insert('salidas', $ordent);
 				
 			//productos de la orden t
 			foreach($ordenest as $key => $co)
 				$ordenest[$key]['id_ordent'] = $id_ordent;
-			$this->db->insert_batch('ordenest_productos_inv', $ordenest);
+			$this->db->insert_batch('salidas_productos', $ordenest);
 		}
 	}
 	
@@ -124,7 +124,7 @@ class inventario_model extends CI_Model{
 				cp.cantidad, cp.cantidad AS cantidad_disponible, cp.precio_unitario,
 				cp.importe, '' AS cantidads, '' AS cantidad_disponibles, '' AS precio_unitarios, '' AS importes 
 			FROM compras AS co 
-				INNER JOIN compras_productos_inv AS cp ON co.id_compra = cp.id_compra 
+				INNER JOIN compras_productos AS cp ON co.id_compra = cp.id_compra 
 				INNER JOIN productos AS p ON cp.id_producto = p.id_producto 
 				INNER JOIN productos_unidades AS pu ON p.id_unidad = pu.id_unidad 
 			WHERE co.status IN ('p','pa','n') ".$condicion." ORDER BY fecha ASC,co.id_compra ASC");
@@ -135,8 +135,8 @@ class inventario_model extends CI_Model{
 				pu.abreviatura AS abreviaturas, '' AS cantidad, '' AS cantidad_disponible, 
 				'' AS precio_unitario, '' AS importe, sp.cantidad AS cantidads, 
 				sp.cantidad AS cantidad_disponibles
-			FROM ordenest AS s
-				INNER JOIN ordenest_productos_inv AS sp ON s.id_ordent = sp.id_ordent
+			FROM salidas AS s
+				INNER JOIN salidas_productos AS sp ON s.id_salida = sp.id_salida
 				INNER JOIN productos AS p ON sp.id_producto = p.id_producto
 				INNER JOIN productos_unidades AS pu ON p.id_unidad = pu.id_unidad
 			WHERE s.status IN ('p','pa','n') ".$condicion." ORDER BY s.fecha ASC");
