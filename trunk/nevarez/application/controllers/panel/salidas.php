@@ -7,7 +7,7 @@ class salidas extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array();
+	private $excepcion_privilegio = array('salidas/ver_todos/');
 	
 	
 	public function _remap($method){
@@ -118,6 +118,48 @@ class salidas extends MY_Controller {
 		$this->load->view('panel/footer');
 	}
 	
+	private function ver_todos() {
+		$this->carabiner->css(array(
+				array('libs/jquery.msgbox.css', 'screen'),
+				array('libs/jquery.superbox.css', 'screen'),
+				array('general/forms.css', 'screen'),
+				array('general/tables.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('libs/jquery.msgbox.min.js'),
+				array('libs/jquery.superbox.js'),
+				array('compras/listado.js'),
+				array('general/msgbox.js')
+		));
+		$this->load->library('pagination');
+		
+		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Salidas'; //activa la opcion del menu
+		$params['seo'] = array(
+				'titulo' => 'Herramientas Prestadas'
+		);
+		
+		$this->load->model('salidas_model');
+		$params['data'] = $this->salidas_model->getHerramientas();
+		
+		foreach ($params['data']['herramientas'] as $key => $h) {
+			if($h->dias_restantes<=3 && $h->dias_restantes>=1)
+				$params['data']['herramientas'][$key]->style = 'style="background-color:#FFFFD9;"';
+			elseif ($h->dias_restantes<=0)
+				$params['data']['herramientas'][$key]->style = 'style="background-color:#FFE1E1;"';
+			else
+				$params['data']['herramientas'][$key]->style = '';
+		}
+		
+		if(isset($_GET['msg']{0}))
+				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		
+		$this->load->view('panel/header', $params);
+		$this->load->view('panel/general/menu', $params);
+		$this->load->view('panel/salidas/admin_herramientas', $params);
+		$this->load->view('panel/footer');
+	}
+	
 	private function cancelar(){
 		if(isset($_GET['id'])){
 			$this->load->model('salidas_model');
@@ -125,6 +167,32 @@ class salidas extends MY_Controller {
 			if($res[0])
 				redirect(base_url('panel/salidas/?'.String::getVarsLink(array('id','msg')).'&msg=5'));
 		}else redirect(base_url('panel/salidas/?'.String::getVarsLink(array('msg')).'&msg=1'));
+	}
+	
+	private function entregado(){
+		if(isset($_GET['id']{0})){
+			$this->load->model('salidas_model');
+			$result = $this->salidas_model->entregar_herramienta();
+			if($result[0]){
+				if($_GET['r']==1)
+					redirect(base_url('panel/home/?'.String::getVarsLink(array('id','msg','r')).'&msg=3'));
+				elseif($_GET['r']==2)
+					redirect(base_url('panel/salidas/ver_todos/?'.String::getVarsLink(array('id','msg','r')).'&msg=7'));
+			}
+				
+		}redirect(base_url('panel/home/?'.String::getVarsLink(array('id','msg','r')).'&msg=1'));
+	}
+	
+	private function extender_plazo(){
+		if(isset($_GET['id']{0})){
+				$this->load->model('salidas_model');
+				$result = $this->salidas_model->extender_plazo_herramienta();
+				if($result[0])
+					if($_GET['r']==1)
+						redirect(base_url('panel/home/?'.String::getVarsLink(array('id','msg','r')).'&msg=4'));
+					elseif($_GET['r']==2)
+						redirect(base_url('panel/salidas/ver_todos/?'.String::getVarsLink(array('id','msg','r')).'&msg=8'));
+			}redirect(base_url('panel/home/?'.String::getVarsLink(array('id','msg','r')).'&msg=1'));
 	}
 	
 	private function configAddSalida($tipo='ni'){
@@ -446,6 +514,14 @@ class salidas extends MY_Controller {
 				break;
 			case 6:
 				$txt = $msg;
+				$icono = 'ok';
+				break;
+			case 7:
+				$txt = 'La herramienta se entrego correctamenta.';
+				$icono = 'ok';
+				break;
+			case 8:
+				$txt = 'La fecha se actualizo correctamente.';
 				$icono = 'ok';
 				break;
 		}

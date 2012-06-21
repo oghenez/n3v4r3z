@@ -132,6 +132,21 @@ class privilegios_model extends CI_Model{
 	}
 	
 	/**
+	 * Verifica si el usuario tiene ese privilegio de alerta, si lo tiene genera el html de la alerta con sus datos
+	 * @param unknown_type $url_accion
+	 */
+	public function getAlertPriv($url_accion){
+		$txt = '';
+		$priv = $this->tienePrivilegioDe('', $url_accion, true);
+		if(is_object($priv)){
+			list($controler,$metodo) = explode("/",$url_accion);
+			$txt = $this->alertas_model->{$metodo}();
+		}
+		return $txt;
+	}
+	
+	
+	/**
 	 * Verifica si el usuario tiene un privilegio en espesifico
 	 * @param unknown_type $id_privilegio
 	 * @param unknown_type $url_accion
