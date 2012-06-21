@@ -26,10 +26,14 @@ class home extends MY_Controller {
 	
 	public function index(){
 		$this->carabiner->css(array(
-				array('libs/jquery.treeview.css', 'screen')
+				array('libs/jquery.treeview.css', 'screen'),
+				array('libs/jquery.msgbox.css', 'screen'),
+				array('general/tables.css')
 		));
 		$this->carabiner->js(array(
-				array('libs/jquery.treeview.js')
+				array('libs/jquery.treeview.js'),
+				array('libs/jquery.msgbox.min.js'),
+				array('general/msgbox.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -38,6 +42,10 @@ class home extends MY_Controller {
 		);
 		
 		$this->load->model('privilegios_model');
+		$this->load->model('alertas_model');
+		
+		if(isset($_GET['msg']))
+			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
@@ -96,6 +104,43 @@ class home extends MY_Controller {
 		session_destroy();
 		redirect(base_url('panel/home'));
 	}
+	
+	/**
+	 * Muestra mensajes cuando se realiza alguna accion
+	 * @param unknown_type $tipo
+	 * @param unknown_type $msg
+	 * @param unknown_type $title
+	 */
+	private function showMsgs($tipo, $msg='', $title='Alertas!'){
+		switch($tipo){
+			case 1:
+				$txt = 'El campo ID es requerido.';
+				$icono = 'error';
+				break;
+			case 2: //Cuendo se valida con form_validation
+				$txt = $msg;
+				$icono = 'error';
+				break;
+			case 3:
+				$txt = 'La herramienta se entrego correctamenta.';
+				$icono = 'ok';
+				break;
+			case 4:
+				$txt = 'La fecha se actualizo correctamente.';
+				$icono = 'ok';
+				break;
+			case 6:
+				$txt = $msg;
+				$icono = 'ok';
+				break;
+		}
+	
+		return array(
+				'title' => $title,
+				'msg' => $txt,
+				'ico' => $icono);
+	}
+	
 }
 
 ?>

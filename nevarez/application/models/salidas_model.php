@@ -6,7 +6,7 @@ class salidas_model extends CI_Model{
 	}
 	
 	/**
-	 * Obtiene el listado de compras
+	 * Obtiene el listado de salidas
 	 */
 	public function getSalidas(){
 		$sql = '';
@@ -46,6 +46,54 @@ class salidas_model extends CI_Model{
 			$response['salidas'] = $res->result();
 		
 		return $response;
+	}
+	
+	/**
+	 * Obtiene el listado de las herramientas prestadas
+	 */
+	public function getHerramientas(){
+		$sql = '';
+		//paginacion
+		$params = array(
+				'result_items_per_page' => '30',
+				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
+		);
+		if($params['result_page'] % $params['result_items_per_page'] == 0)
+			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
+	
+		//Filtros para buscar
+		if($this->input->get('ffecha') != '')
+			$sql = " AND Date(s.fecha) = '".$this->input->get('ffecha')."'";
+		if($this->input->get('fmostrar') != ''){
+			if($this->input->get('fmostrar')=='pv')
+				$sql .= " AND DATE(fecha_vencimiento)-DATE(now())<=3 AND DATE(fecha_vencimiento)-DATE(now())>=1";
+			elseif($this->input->get('fmostrar')=='ve')
+				$sql .= " AND DATE(now())>=DATE(fecha_vencimiento)";
+		}
+		
+		if($this->input->get('ftipo') != ''){
+			$sql .= " AND s.status = '".$this->input->get('ftipo')."'";
+		}
+	
+		$query = BDUtil::pagination("
+				SELECT id_alerta, tabla_obj, id_obj1, id_obj2, descripcion, DATE(fecha_vencimiento) as fecha_vencimiento, DATE(fecha_vencimiento)-DATE(now()) as dias_restantes
+				FROM alertas
+				WHERE tabla_obj = 'salidas_productos' $sql
+				ORDER BY (Date(fecha_vencimiento)) DESC
+				", $params, true);
+	
+				$res = $this->db->query($query['query']);
+	
+				$response = array(
+						'herramientas' => array(),
+						'total_rows' 		=> $query['total_rows'],
+						'items_per_page' 	=> $params['result_items_per_page'],
+						'result_page' 		=> $params['result_page']
+				);
+				if($res->num_rows() > 0)
+					$response['herramientas'] = $res->result();
+	
+				return $response;
 	}
 	
 	/**
@@ -163,6 +211,19 @@ class salidas_model extends CI_Model{
 		return array(true, '');
 	}
 	
+	public function entregar_herramienta(){
+		$q_result = $this->db->select("id_obj1, id_obj2")->from("alertas")->where("id_alerta",$_GET['id'])->get()->result();
+		$this->db->update("salidas_productos",array('status'=>'f'),array("id_salida"=>$q_result[0]->id_obj1,"id_producto"=>$q_result[0]->id_obj2));
+		$this->db->delete("alertas",array("id_alerta"=>$_GET['id']));
+		return array(true,'');
+		
+	}
+	
+	public function extender_plazo_herramienta(){
+		$fecha_nueva = $this->db->select("fecha_vencimiento + interval '3 day' as fecha_nueva")->from("alertas")->where('id_alerta',$_GET['id'])->get()->row()->fecha_nueva; 
+		$this->db->update("alertas",array('fecha_vencimiento'=>$fecha_nueva),array("id_alerta"=>$_GET['id']));
+		return array(true,'');
+	}
 	
 	/**
 	 * Agrega los productos a una compra
@@ -213,7 +274,7 @@ class salidas_model extends CI_Model{
 							'tabla_obj' => 'salidas_productos',
 							'id_obj1' => $id_salida,
 							'id_obj2' => $producto,
-							'descripcion' => "Prestamo Herramienta {$_POST['dpcantidad'][$key]} $pr_nombre a $tr_nombre",
+							'descripcion' => "Prestamo Herramienta - ({$_POST['dpcantidad'][$key]}) $pr_nombre a $tr_nombre",
 							'fecha_vencimiento' => $this->input->post('dfecha_entrega')
 						);
 				}

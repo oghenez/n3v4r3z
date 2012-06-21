@@ -24,7 +24,7 @@
 	background-color: #eee;
 }
 .tblListados tr:hover{
-	background-color: #DEEDD3;
+	background-color: #DEEDD3 !important;
 }
 
 /*Sub menu*/
