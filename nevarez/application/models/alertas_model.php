@@ -13,6 +13,7 @@ class alertas_model extends privilegios_model{
 		$query = $this->db->select("*")->
 							 from("alertas")->
 							 where("tabla_obj = 'salidas_productos' $date")->
+							 order_by("DATE(fecha_vencimiento)","ASC")->
 							 get();
 		$html_alert = '';
 		if($query->num_rows() > 0){

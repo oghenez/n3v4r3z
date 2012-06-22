@@ -30,7 +30,7 @@ class salidas_model extends CI_Model{
 		$query = BDUtil::pagination("
 				SELECT s.id_salida, Date(s.fecha) AS fecha, s.folio, s.tipo_salida, s.status
 				FROM salidas as s
-				WHERE s.status <> 'ca' $sql
+				WHERE s.status IN ('ba','sa') $sql
 				ORDER BY (Date(s.fecha), s.folio) DESC
 				", $params, true);
 		
@@ -150,7 +150,7 @@ class salidas_model extends CI_Model{
 	}
 	
 	/**
-	 * Agrega una compra a la bd
+	 * Agrega una salida a la bd
 	 */
 	public function addSalida(){
 		$existen = true;
@@ -194,7 +194,7 @@ class salidas_model extends CI_Model{
 			}
 			$this->db->insert('salidas', $data);
 			
-			//productos para las compras
+			//productos para la salida
 			if(isset($_POST['dpid_producto'])){
 				$this->addProductos($id_salida);
 			}
