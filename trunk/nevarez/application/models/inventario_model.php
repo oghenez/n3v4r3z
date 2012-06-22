@@ -70,13 +70,14 @@ class inventario_model extends CI_Model{
 				'id_usuario' => $_SESSION['id_empleado'],
 // 				'subtotal' => $total_ordent,
 // 				'total' => $total_ordent,
+				'folio' => 0,
 				'status' => 'n'
 			);
 			$this->db->insert('salidas', $ordent);
 				
 			//productos de la orden t
 			foreach($ordenest as $key => $co)
-				$ordenest[$key]['id_ordent'] = $id_ordent;
+				$ordenest[$key]['id_salida'] = $id_ordent;
 			$this->db->insert_batch('salidas_productos', $ordenest);
 		}
 	}
@@ -139,7 +140,7 @@ class inventario_model extends CI_Model{
 				INNER JOIN salidas_productos AS sp ON s.id_salida = sp.id_salida
 				INNER JOIN productos AS p ON sp.id_producto = p.id_producto
 				INNER JOIN productos_unidades AS pu ON p.id_unidad = pu.id_unidad
-			WHERE s.status IN ('p','pa','n') ".$condicion." ORDER BY s.fecha ASC");
+			WHERE s.status IN ('sa','ba','n') AND sp.status='t'".$condicion." ORDER BY s.fecha ASC");//IN ('p','pa','n') 
 		$resS = $resS->result_array();
 		
 		/*//Quita las notas de credito a las compras
