@@ -524,6 +524,10 @@ class salidas extends MY_Controller {
 				$txt = 'La fecha se actualizo correctamente.';
 				$icono = 'ok';
 				break;
+			case 9:
+				$txt = 'La alerta se elimino correctamente.';
+				$icono = 'ok';
+				break;
 		}
 	
 		return array(

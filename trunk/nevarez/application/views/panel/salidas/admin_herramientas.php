@@ -34,6 +34,8 @@
 										"msb.confirm('Estas seguro de marcar la herramienta como entregada? <br>Ya no se podrá revertir el cambio', this); return false;", '', '&r=2');
 							echo $this->empleados_model->getLinkPrivSm('salidas/extender_plazo/', $herra->id_alerta, 
 										"msb.confirm('Estas seguro de extender el tiempo de entrega? <br>Ya no se podrá revertir el cambio', this); return false;", '', '&r=2');
+							echo $this->empleados_model->getLinkPrivSm('alertas/eliminar/', $herra->id_alerta,
+									"msb.confirm('Estas seguro de eliminar esta alerta? <br>Ya no se podrá revertir el cambio', this); return false;", '', '&r=hp');
 							?>
 						</p>
 					</div>

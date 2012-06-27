@@ -56,6 +56,10 @@
 						<input type="text" name="dcp" id="dcp" 
 							value="<?php echo (isset($piloto['info']->cp)? $piloto['info']->cp: ''); ?>" size="30" maxlength="10">
 					</p>
+					<p class="w50 f-l">
+						<label for="dfecha_nacimiento">Fecha Nacimiento:</label> <br>
+						<input type="text" name="dfecha_nacimiento" id="dfecha_nacimiento" value="<?php echo (isset($piloto['info']->fecha_nacimiento)? $piloto['info']->fecha_nacimiento: '')?>" size="20" maxlength="10">
+					</p>
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
@@ -89,7 +93,7 @@
 					</p>
 					<div class="clear"></div>
 					
-					<p class="w50 f-l">
+					<p class="w50 f-l" style="display: none;">
 						<label for="drecepcion_facturas">Recepción facturas:</label> <br>
 						<select name="drecepcion_facturas" id="drecepcion_facturas">
 							<option value="Lunes" <?php echo set_select('drecepcion_facturas', 'Lunes', false, 
@@ -108,7 +112,7 @@
 									(isset($piloto['info']->recepcion_facturas)? $piloto['info']->recepcion_facturas: '')); ?>>Domingo</option>
 						</select>
 					</p>
-					<p class="w50 f-l">
+					<p class="w50 f-l" style="display: none;">
 						<label for="ddias_pago">Dias pago:</label> <br>
 						<select name="ddias_pago" id="ddias_pago">
 							<option value="Lunes" <?php echo set_select('ddias_pago', 'Lunes', false, 
@@ -129,7 +133,7 @@
 					</p>
 					<div class="clear"></div>
 					
-					<p class="w50 f-l">
+					<p class="w50 f-l" style="display: none;">
 						<label for="ddias_credito">Dias credito:</label> <br>
 						<select name="ddias_credito" id="ddias_credito">
 							<option value="15" <?php echo set_select('ddias_credito', '15', false, 
