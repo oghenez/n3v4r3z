@@ -18,7 +18,7 @@
 <body>
 
 <div id="header">
-	<div class="logo f-l"><img alt="logo" src="<?php echo base_url('application/images/logo.png')?>" width="150" height="60"></div>
+	<div class="logo f-l"><a href="<?php echo base_url("panel/home/")?>" ><img alt="logo" src="<?php echo base_url('application/images/logo.png')?>" width="150" height="60"></a></div>
 	<div class="titulo f-l"><?php echo $seo['titulo'];?></div>
 	<div class="info_user f-l a-r">
 <?php

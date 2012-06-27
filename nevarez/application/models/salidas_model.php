@@ -274,7 +274,7 @@ class salidas_model extends CI_Model{
 							'tabla_obj' => 'salidas_productos',
 							'id_obj1' => $id_salida,
 							'id_obj2' => $producto,
-							'descripcion' => "Prestamo Herramienta - ({$_POST['dpcantidad'][$key]}) $pr_nombre a $tr_nombre",
+							'descripcion' => "Vencimiento de Prestamo Herramienta - ({$_POST['dpcantidad'][$key]}) $pr_nombre a $tr_nombre",
 							'fecha_vencimiento' => $this->input->post('dfecha_entrega')
 						);
 				}

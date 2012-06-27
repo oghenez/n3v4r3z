@@ -1,5 +1,10 @@
 <div id="contentAll" class="f-l">
+	<?php echo $this->empleados_model->getAlertPriv('alertas/productos_bajos/');?>
+	<?php echo $this->empleados_model->getAlertPriv('alertas/cumpleaños/');?>
 	<?php echo $this->empleados_model->getAlertPriv('alertas/herramientas/');?>
+	<?php echo $this->empleados_model->getAlertPriv('alertas/aviones/');?>
+	<?php echo $this->empleados_model->getAlertPriv('alertas/pilotos/');?>
+	
 </div>
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){

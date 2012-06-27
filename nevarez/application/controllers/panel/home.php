@@ -54,6 +54,57 @@ class home extends MY_Controller {
 	}
 	
 	/**
+	 * Genera el reporte productos bajos del stock
+	 */
+	public function productos_bajos(){
+		$prod_bajos = $this->db->query("SELECT * FROM reportes_costo_existencias1 WHERE stock_min > existencia")->result();
+	
+		$this->load->library('mypdf');
+		// Creación del objeto de la clase heredada
+		$pdf = new MYpdf('P', 'mm', 'Letter');
+		$pdf->show_head = true;
+		$pdf->titulo2 = 'Reporte Productos Bajos de Inventario';
+		$pdf->AliasNbPages();
+		$pdf->AddPage();
+			
+		$links = array('', '', '', '');
+		$aligns = array('C', 'C', 'C', 'C');
+		$widths1 = array(98, 35, 35, 35);
+		$header1 = array('Producto', 'Existencia', 'Stock min', 'Faltante');
+	
+		foreach($prod_bajos as $key => $item){
+			if($pdf->GetY() >= $pdf->limiteY || $key == 0){ //salta de pagina si exede el max
+				if($key > 0)
+					$pdf->AddPage();
+	
+				$pdf->SetFont('Arial', 'B', 8);
+				$pdf->SetTextColor(255, 255, 255);
+				$pdf->SetFillColor(160, 160, 160);
+				$pdf->SetX(6);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths1);
+				$pdf->Row($header1, true);
+			}
+				
+			$pdf->SetFont('Arial', '', 8);
+			$pdf->SetTextColor(0,0,0);
+				
+			$datarow = array($item->nombre,
+					$item->existencia,
+					$item->stock_min,
+					$item->stock_min - $item->existencia
+			);
+				
+			$pdf->SetX(6);
+			$pdf->SetAligns($aligns);
+			$pdf->SetWidths($widths1);
+			$pdf->Row($datarow, false);
+		}
+			
+		$pdf->Output('reporte.pdf', 'I');
+	}
+	
+	/**
 	 * carga el login para entrar al panel
 	 */
 	public function login(){
@@ -129,8 +180,12 @@ class home extends MY_Controller {
 				$txt = 'La fecha se actualizo correctamente.';
 				$icono = 'ok';
 				break;
-			case 6:
+			case 5:
 				$txt = $msg;
+				$icono = 'ok';
+				break;
+			case 6:
+				$txt = 'La alerta se elimino correctamente';
 				$icono = 'ok';
 				break;
 		}
