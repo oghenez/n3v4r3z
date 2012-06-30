@@ -95,10 +95,10 @@ class facturacion_model extends privilegios_model{
 					");
 						
 			$res_q2 = $this->db->query("
-					SELECT cantidad, unidad, descripcion, precio_unitario, importe
+					SELECT cantidad, unidad, descripcion, precio_unitario, importe, tipo
 					FROM tickets_vuelos_productos
 					WHERE id_ticket='$t'
-					GROUP BY  cantidad, unidad, descripcion, precio_unitario, importe
+					GROUP BY  cantidad, unidad, descripcion, precio_unitario, importe, tipo
 					");
 						
 // 			$res = $this->db->query("
