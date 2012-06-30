@@ -24,7 +24,7 @@
 	</div>
 	<div class="clear"></div>
 	<div class="a-c">
-		<img src="<?php echo base_url('application/images/logo.png')?>" width="150" height="60"/><br>
+		<!-- <img src="<?php echo base_url('application/images/logo.png')?>" width="150" height="60"/><br> -->
 		<span>Fumigaciones Aereas Nevarez</span>
 	</div>
 	<br><br>

@@ -128,7 +128,7 @@ function ajax_get_total_tickets(data){
 	$.post(base_url+'panel/facturacion/ajax_get_total_tickets/', {'tickets[]':data}, function(resp){
 
 		if(resp.tickets){
-			var opc_elimi = '';
+			var opc_elimi = '', subtotal_vuelos_isr=0;
 			
 			for(var i in resp.tickets){
 				tickets_data[indice] = {};
@@ -150,11 +150,10 @@ function ajax_get_total_tickets(data){
 					'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10">Eliminar Ticket</a>';
 				
 //				//Agrego el tr con la informacion de los productos del ticket
-				
 				id = resp.tickets[i].id_ticket;
 				for(var p in resp.productos[id]){
 					$("#tbl_tickets tr.header:last").after(
-					'<tr id="e'+indice+'">'+
+					'<tr id="e'+indice+'" class="'+resp.productos[id][p].tipo+'" data-importe="'+resp.productos[id][p].importe+'">'+
 					'	<td></td>'+
 					'	<td>'+resp.productos[id][p].cantidad+'</td>'+
 					'	<td>'+resp.productos[id][p].unidad+'</td>'+
@@ -163,6 +162,9 @@ function ajax_get_total_tickets(data){
 					'	<td>'+resp.productos[id][p].importe+'</td>'+
 					'	<td></td>'+
 					'</tr>');
+					if(resp.productos[id][p].tipo == 'vu'){
+						subtotal_vuelos_isr += parseFloat(resp.productos[id][p].importe);
+					}
 				}
 				
 				$("#tbl_tickets tr.header:last").after(
@@ -184,7 +186,7 @@ function ajax_get_total_tickets(data){
 				indice++;
 			}
 			if(aux_isr){
-				total_isr = parseFloat(subtotal*0.1, 2);
+				total_isr += parseFloat(subtotal_vuelos_isr*0.1, 2);
 				ttcisr = total-total_isr;
 			}
 			updateTablaPrecios();
@@ -277,6 +279,11 @@ function ajax_submit_form(){
 function eliminaTickets(vals){
 	delete tickets_selecc[vals.indice];
 	delete tickets_data[vals.indice];
+	var subtotal_vuelos_isr = 0;
+	
+	$('tr#e'+vals.indice+'.vu').each(function(){
+		subtotal_vuelos_isr += parseFloat($(this).attr("data-importe"));
+	});
 	$('tr#e'+vals.indice).remove();
 	
 	subtotal	-= parseFloat(vals.subtotal, 2);
@@ -284,7 +291,7 @@ function eliminaTickets(vals){
 	total		-= parseFloat(vals.total, 2);
 	
 	if(aux_isr){
-		total_isr	= parseFloat(subtotal*0.1,2);
+		total_isr	-= parseFloat(subtotal_vuelos_isr*0.1,2);
 		ttcisr = total-total_isr;
 	}
 	updateTablaPrecios();
