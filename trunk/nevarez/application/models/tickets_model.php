@@ -84,7 +84,7 @@ class tickets_model extends privilegios_model{
 		foreach ($_POST as $v){
 			$v['clientes'] = str_replace('-', '<br>', $v['clientes']);
 			$res = $this->db->query("
-					SELECT vc.id_vuelo, p.id_producto, p.codigo, p.descripcion, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio, get_clientes_vuelo(v.id_vuelo,null) as clientes, '{$v['valuehtml']}' as valuehtml
+					SELECT vc.id_vuelo, p.id_producto, p.codigo, p.descripcion, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default(p.id_producto) END as precio, get_clientes_vuelo(v.id_vuelo,null) as clientes, '{$v['valuehtml']}' as valuehtml
 					FROM vuelos as v
 					INNER JOIN productos as p ON v.id_producto=p.id_producto
 					INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo
