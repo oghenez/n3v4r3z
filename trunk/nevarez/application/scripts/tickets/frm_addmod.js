@@ -94,7 +94,7 @@ function ajax_get_total_vuelos(data, tipo){
 						vuelos_selec[indice].push(resp.vuelos[i].valuehtml);
 						vuelos_data[indice]['vuelo'+i] = {};
 						vuelos_data[indice]['vuelo'+i].id_vuelo = resp.vuelos[i].id_vuelo;
-						vuelos_data[indice]['vuelo'+i].cantidad = resp.cant_vuelos;
+						vuelos_data[indice]['vuelo'+i].cantidad = resp.tipos_v[v].cantidad;
 						vuelos_data[indice]['vuelo'+i].taza_iva = parseFloat(taza_iva,2);
 						vuelos_data[indice]['vuelo'+i].precio_unitario = resp.tipos_v[v].p_uni;
 						vuelos_data[indice]['vuelo'+i].importe = parseFloat(resp.tipos_v[v].importe,2);
@@ -139,7 +139,6 @@ function ajax_get_total_vuelos(data, tipo){
 				
 				indice++;
 			}
-			console.log(vuelos_selec);
 		}
 	}, "json").complete(function(){ 
     	loader.close();
@@ -242,7 +241,6 @@ function eliminaVuelos(vals){
 		cont_aux_clientes--;
 
 	updateTablaPrecios();
-//	console.log(vuelos_selec);
 }
 
 function updateTablaPrecios(){
