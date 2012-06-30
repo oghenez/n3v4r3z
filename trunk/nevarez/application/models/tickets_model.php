@@ -51,7 +51,7 @@ class tickets_model extends privilegios_model{
 				FROM tickets as t
 				INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
 				WHERE $sql
-				ORDER BY DATE(t.fecha) DESC
+				ORDER BY (folio,DATE(t.fecha)) DESC
 				", $params, true);
 				$res = $this->db->query($query['query']);
 		
@@ -66,11 +66,12 @@ class tickets_model extends privilegios_model{
 		
 	}
 	
-	public function getTicketsCliente($id_cliente=null){
-		$id_cliente = ($id_cliente==null) ? $this->input->get('id') : $id_cliente;
+	public function getTicketsCliente(){
+		$where = (isset($_GET['id'])) ? "WHERE id_cliente='{$_GET['id']}'" : ""; 
 		$res = $this->db->query("SELECT id_ticket, fecha, folio, cliente, otros_clientes, vuelos
 								FROM get_tickets_pendientes
-								WHERE id_cliente='$id_cliente'");
+								$where
+								");
 		$tickets = array();
 		if($res->num_rows() > 0)
 			$tickets = $res->result();
@@ -83,26 +84,40 @@ class tickets_model extends privilegios_model{
 		foreach ($_POST as $v){
 			$v['clientes'] = str_replace('-', '<br>', $v['clientes']);
 			$res = $this->db->query("
-					SELECT vc.id_vuelo, p.codigo, p.descripcion, plp.dias_credito, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio, get_clientes_vuelo(v.id_vuelo,null) as clientes
+					SELECT vc.id_vuelo, p.id_producto, p.codigo, p.descripcion, CASE WHEN plp.precio<>0 THEN plp.precio ELSE get_precio_default() END as precio, get_clientes_vuelo(v.id_vuelo,null) as clientes, '{$v['valuehtml']}' as valuehtml
 					FROM vuelos as v
 					INNER JOIN productos as p ON v.id_producto=p.id_producto
 					INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo
-					LEFT JOIN (SELECT plp.id_producto, plp.precio, c.dias_credito FROM productos_listas_precios as plp INNER JOIN clientes as c ON plp.id_lista=c.id_lista_precio WHERE c.id_cliente='{$v['id_cliente']}') as plp ON plp.id_producto=v.id_producto
-					WHERE vc.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND v.fecha = '{$v['fecha']}' AND get_clientes_vuelo(v.id_vuelo,null) = '{$v['clientes']}';
+					LEFT JOIN (SELECT plp.id_producto, plp.precio FROM productos_listas_precios as plp INNER JOIN clientes as c ON plp.id_lista=c.id_lista_precio WHERE c.id_cliente='{$v['id_cliente']}') as plp ON plp.id_producto=v.id_producto
+					WHERE vc.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND DATE(v.fecha) = '{$v['fecha']}' AND get_clientes_vuelo(v.id_vuelo,null) = '{$v['clientes']}';
 			");
-			
+
 			if($res->num_rows()>0)
 				foreach ($res->result() as $itm)
 					$response['vuelos'][] = $itm;
 		}
+
+		if(count($response['vuelos'])>0){
+			$array_vuelos = array();
+			foreach ($response['vuelos'] as $v){
+				if(array_key_exists($v->id_producto, $array_vuelos)){
+					$array_vuelos[$v->id_producto]['cantidad'] += 1;
+					$array_vuelos[$v->id_producto]['importe'] = String::float($array_vuelos[$v->id_producto]['cantidad']*$array_vuelos[$v->id_producto]['p_uni']);
+				}
+				else{
+					$array_vuelos[$v->id_producto]['id_producto'] = $v->id_producto;
+					$array_vuelos[$v->id_producto]['cantidad'] = 1;
+					$array_vuelos[$v->id_producto]['codigo'] = $v->codigo;
+					$array_vuelos[$v->id_producto]['descripcion'] = $v->descripcion;
+					$array_vuelos[$v->id_producto]['p_uni'] = String::float($v->precio);
+					$array_vuelos[$v->id_producto]['importe'] = String::float($v->precio);
+				}
+				$v->valuehtml = str_replace(';', '', $v->valuehtml);
+			}
+			$response['tipos_v'] = $array_vuelos;
+			$response['cant_vuelos'] = count($response['vuelos']);
+		}
 		
-		$response['tabla']['dias_credito']	= $response['vuelos'][0]->dias_credito;
-		$response['tabla']['cantidad']		= count($response['vuelos']);
-		$response['tabla']['codigo']		= $response['vuelos'][0]->codigo;
-		$response['tabla']['descripcion']	= $response['vuelos'][0]->descripcion;
-		$response['tabla']['p_uni']			= String::float($response['vuelos'][0]->precio);
-		$response['tabla']['importe']		= String::float($response['tabla']['cantidad']*$response['tabla']['p_uni']);
-			
 		return $response;
 	}
 	
@@ -114,13 +129,14 @@ class tickets_model extends privilegios_model{
 								'<br>Estado: ' || c.estado || '<br>C.P: ' || c.cp) as domicilio, get_clientes_vuelo(vc.id_vuelo,t.id_cliente) as otros_clientes
 						FROM tickets as t
 						INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
-						INNER JOIN tickets_vuelos as tv ON t.id_ticket = tv.id_ticket
-						INNER JOIN vuelos_clientes as vc ON t.id_cliente=vc.id_cliente AND tv.id_vuelo=vc.id_vuelo
+						LEFT JOIN tickets_vuelos as tv ON t.id_ticket = tv.id_ticket
+						LEFT JOIN vuelos_clientes as vc ON t.id_cliente=vc.id_cliente AND tv.id_vuelo=vc.id_vuelo
 						WHERE t.id_ticket='$id_ticket'
 						GROUP BY t.folio, t.tipo_pago, t.fecha, t.subtotal, t.iva, t.total, c.nombre_fiscal, c.rfc, c.calle, c.colonia, c.localidad, c. municipio, c.estado, c.cp, get_clientes_vuelo(vc.id_vuelo,t.id_cliente)
 					");
 			$response['cliente_info'] = $res_q1->result();
 			
+			$response['vuelos_info'] = array();
 			$res_q2 = $this->db->query("
 						SELECT v.fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion, av.matricula
 						FROM tickets as t
@@ -146,7 +162,7 @@ class tickets_model extends privilegios_model{
 		else return array(false); 
 	}
 	
-	public function addTicket(){		
+	public function addTicket(){
 		
 		$id_ticket = BDUtil::getId();
 		$data = array(
@@ -165,7 +181,6 @@ class tickets_model extends privilegios_model{
 		
 		foreach ($_POST as $vuelo){
 			if(is_array($vuelo)){
-				
 				if($vuelo['tipo']=='vu'){
 					$data_v = array(
 							'id_ticket'	=> $id_ticket,

@@ -53,10 +53,19 @@
 			</p>
 			<div class="clear"></div>
 			
-			<div class="addv">
-				<a href="javascript:void(0);" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta('Seleccione un Cliente !');">
-				<img src="<?php echo base_url('application/images/privilegios/add.png'); ?>" width="16" height="16">Agregar Tickets</a>
-			</div>
+			<fieldset>
+				<legend>Selección de Tickets</legend>
+				<p class="f-l w50">
+					<label for="dfiltro-cliente" class="f-l">Filtro Cliente</label><br>
+					<input type="text" name="dfiltro-cliente" value="<?php echo set_value('dfiltro-cliente');?>" size="45" id="dfiltro-cliente" class="f-l not">
+				</p>
+				<p class="f-l w50">
+					<div class="addv">
+						<a href="<?php echo base_url("panel/tickets/tickets_cliente/")?>" id="btnAddTicket" class="linksm" style="margin: 0px;" rel="superbox[iframe][700x500]">
+						<img src="<?php echo base_url('application/images/privilegios/add.png'); ?>" width="16" height="16">Agregar Tickets</a>
+					</div>
+				</p>
+			</fieldset>
 			
 			<div class="clear"></div>
 			<table class="tblListados corner-all8" id="tbl_tickets">

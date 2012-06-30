@@ -1,6 +1,14 @@
 <div id="contentAll" class="f-l">
 	<form action="<?php echo base_url('panel/vuelos/agregar')?>" method="post" class="frm_addmod">
-		<div class="frmsec-left w75 f-l">
+		<div class="frmsec-left w100 f-l">
+			<p class="f-r">
+				<label for="dproducto">*Tipo</label>
+				<select id="dproducto" name="dproducto">
+					<?php foreach ($prod_venta as $p){?>
+						<option value="<?php echo $p->id_producto?>" <?php echo set_select('dproducto',  $p->id_producto); ?>><?php echo $p->nombre?></option>
+					<?php }?>
+				</select>
+			</p>
 			<p class="f-r">
 				<label for="dfecha">*Fecha</label>
 				<input type="text" name="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d");?>" size="15" id="dfecha" readonly class="a-c">

@@ -14,7 +14,7 @@ var total_isr = 0;
 var ttcisr = 0;
 
 $(function(){
-
+	$.superbox();
 	$("#dcliente").autocomplete({
 		source: base_url+'panel/clientes/ajax_get_clientes',
 		minLength: 1,
@@ -40,10 +40,27 @@ $(function(){
 			}else aux_isr = false;
 			
 			$("#dcliente").css("background-color", "#B0FFB0");
-			$('.addv').html('<a href="'+base_url+'panel/tickets/tickets_cliente/?id='+ui.item.id+'" id="btnAddTicket" class="linksm f-r" style="margin: 10px 0 20px 0;" rel="superbox[iframe][700x500]"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
+		}
+	});	
+	
+	$("#dfiltro-cliente").autocomplete({
+		source: base_url+'panel/clientes/ajax_get_clientes',
+		minLength: 1,
+		selectFirst: true,
+		select: function( event, ui ) {
+			$("#dfiltro-cliente").css("background-color", "#B0FFB0");
+			$('.addv').html('<a href="'+base_url+'panel/tickets/tickets_cliente/?id='+ui.item.id+'" id="btnAddTicket" class="linksm" style="margin: 0px;" rel="superbox[iframe][700x500]"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
 			$.superbox();
 		}
 	});	
+	
+	$("#dfiltro-cliente").on("keydown", function(event){
+		if(event.which == 8 || event == 46){
+			$('.addv').html('<a href="'+base_url+'panel/tickets/tickets_cliente/" id="btnAddTicket" class="linksm" style="margin: 0px;" rel="superbox[iframe][700x500]"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
+			$("#dfiltro-cliente").val("").css("background-color", "#FFD9B3");
+			$.superbox();
+		}
+	});
 	
 	$("input[type=text]:not(.not)").on("keydown", function(event){
 		if(event.which == 8 || event == 46){
@@ -59,7 +76,6 @@ $(function(){
 			$('#festado').val('');
 			$('#fcp').val('');
 			$('#fpais').val('');
-			$('.addv').html('<a href="javascript:void(0);" id="btnAddTicket" class="linksm f-r" style="margin: 10px 0 20px 0;" onclick="alerta(\'Seleccione un Cliente !\');"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16">Agregar Tickets</a>');
 			$("#dcliente").val("").css("background-color", "#FFD9B3");
 		}
 	});
@@ -155,7 +171,7 @@ function ajax_get_total_tickets(data){
 						'	<td class="tdsmenu a-c" style="width: 90px;">'+
 						'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
 						'		<div class="submenul">'+
-						'			<p class="corner-bottom8" style="background-color:#FFFED9 !important;">'+
+						'			<p class="corner-bottom8">'+
 											opc_elimi+
 						'			</p>'+
 						'		</div>'+

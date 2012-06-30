@@ -33,6 +33,7 @@ $(function(){
 		select: function( event, ui ) {
 			$("#hcliente").val(ui.item.id);
 			$("#dcliente_info").val(createInfoCliente(ui.item.item));
+			$('#hdias_credito').val(ui.item.item.dias_credito);
 			$("#dcliente").css("background-color", "#B0FFB0");
 			$('.addv').html('<a href="'+base_url+'panel/vuelos/vuelos_cliente/?id='+ui.item.id+'" id="btnAddVuelo" class="linksm f-r" style="margin: 10px 0 20px 0;" rel="superbox[iframe][700x500]"> <img src="'+base_url+'application/images/privilegios/add.png" width="16" height="16"> Agregar vuelos</a>');
 			$.superbox();
@@ -83,58 +84,62 @@ function ajax_get_total_vuelos(data, tipo){
 	$.post(base_url+'panel/tickets/ajax_get_total_vuelos/', data, function(resp){
 
 		if(resp.vuelos){
-			var opc_elimi = '';
-			
-			
-			vuelos_data[indice] = {};
-			for(var i in resp.vuelos){
-				vuelos_data[indice]['vuelo'+i] = {};
-				vuelos_data[indice]['vuelo'+i].id_vuelo = resp.vuelos[i].id_vuelo;
-				vuelos_data[indice]['vuelo'+i].cantidad = resp.tabla.cantidad;
-				vuelos_data[indice]['vuelo'+i].taza_iva = parseFloat(taza_iva,2);
-				vuelos_data[indice]['vuelo'+i].precio_unitario = resp.tabla.p_uni;
-				vuelos_data[indice]['vuelo'+i].importe = parseFloat(resp.tabla.importe,2);
-				vuelos_data[indice]['vuelo'+i].importe_iva = parseFloat(resp.tabla.importe*taza_iva, 2);
-				vuelos_data[indice]['vuelo'+i].total = parseFloat(resp.tabla.importe,2) +  parseFloat(resp.tabla.importe*taza_iva, 2);
-				vuelos_data[indice]['vuelo'+i].tipo = 'vu';
+			for(var v in resp.tipos_v){
+				var opc_elimi = '';
+				vuelos_data[indice] = {};
+				vuelos_selec[indice] = [];
+				cont_aux_clientes++;
+				for(var i in resp.vuelos){
+					if(resp.vuelos[i].id_producto==resp.tipos_v[v].id_producto){
+						vuelos_selec[indice].push(resp.vuelos[i].valuehtml);
+						vuelos_data[indice]['vuelo'+i] = {};
+						vuelos_data[indice]['vuelo'+i].id_vuelo = resp.vuelos[i].id_vuelo;
+						vuelos_data[indice]['vuelo'+i].cantidad = resp.cant_vuelos;
+						vuelos_data[indice]['vuelo'+i].taza_iva = parseFloat(taza_iva,2);
+						vuelos_data[indice]['vuelo'+i].precio_unitario = resp.tipos_v[v].p_uni;
+						vuelos_data[indice]['vuelo'+i].importe = parseFloat(resp.tipos_v[v].importe,2);
+						vuelos_data[indice]['vuelo'+i].importe_iva = parseFloat(resp.tipos_v[v].importe*taza_iva, 2);
+						vuelos_data[indice]['vuelo'+i].total = parseFloat(resp.tipos_v[v].importe,2) +  parseFloat(resp.tipos_v[v].importe*taza_iva, 2);
+						vuelos_data[indice]['vuelo'+i].tipo = 'vu';
+					}
+				}
+				
+				subtotal	+= parseFloat(resp.tipos_v[v].importe, 2);
+				
+				vivat 		= parseFloat(subtotal*taza_iva);
+				iva			+= parseFloat(vivat, 2);
+				
+				total		= parseFloat(subtotal+iva, 2);
+				
+				vals= '{indice:'+indice+',importe:'+parseFloat(resp.tipos_v[v].importe, 2)+', iva:'+vivat+', tipo:'+tipo+'}';
+				
+				opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
+					'onclick="msb.confirm(\'Estas seguro de eliminar el vuelo?\', '+vals+', eliminaVuelos); return false;">'+
+					'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10">Eliminar</a>';
+				
+				//Agrego el tr con la informacion del vuelo agregado
+				$("#tbl_vuelos tr.header:last").after(
+				'<tr id="e'+indice+'">'+
+				'	<td>'+resp.tipos_v[v].cantidad+'</td>'+
+				'	<td>'+resp.tipos_v[v].codigo+'</td>'+
+				'	<td>'+resp.tipos_v[v].descripcion+'</td>'+
+				'	<td>$'+resp.tipos_v[v].p_uni+'</td>'+
+				'	<td>$'+resp.tipos_v[v].importe+'</td>'+
+				'	<td class="tdsmenu a-c" style="width: 90px;">'+
+				'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
+				'		<div class="submenul">'+
+				'			<p class="corner-bottom8">'+
+									opc_elimi+
+				'			</p>'+
+				'		</div>'+
+				'	</td>'+
+				'</tr>');
+				
+				updateTablaPrecios();
+				
+				indice++;
 			}
-			
-			subtotal	+= parseFloat(resp.tabla.importe, 2);
-			
-			vivat 		= parseFloat(subtotal*taza_iva);
-			iva			+= parseFloat(vivat, 2);
-			
-			total		= parseFloat(subtotal+iva, 2);
-			
-			vals= '{indice:'+indice+',importe:'+parseFloat(resp.tabla.importe, 2)+', iva:'+vivat+', tipo:'+tipo+'}';
-			
-			$('#hdias_credito').val(resp.tabla.dias_credito);
-			
-			opc_elimi = '<a href="javascript:void(0);" class="linksm"'+ 
-				'onclick="msb.confirm(\'Estas seguro de eliminar el vuelo?\', '+vals+', eliminaVuelos); return false;">'+
-				'<img src="'+base_url+'application/images/privilegios/delete.png" width="10" height="10">Eliminar</a>';
-			
-			//Agrego el tr con la informacion del vuelo agregado
-			$("#tbl_vuelos tr.header:last").after(
-			'<tr id="e'+indice+'">'+
-			'	<td>'+resp.tabla.cantidad+'</td>'+
-			'	<td>'+resp.tabla.codigo+'</td>'+
-			'	<td>'+resp.tabla.descripcion+'</td>'+
-			'	<td>$'+resp.tabla.p_uni+'</td>'+
-			'	<td>$'+resp.tabla.importe+'</td>'+
-			'	<td class="tdsmenu a-c" style="width: 90px;">'+
-			'		<img alt="opc" src="'+base_url+'application/images/privilegios/gear.png" width="16" height="16">'+
-			'		<div class="submenul">'+
-			'			<p class="corner-bottom8">'+
-								opc_elimi+
-			'			</p>'+
-			'		</div>'+
-			'	</td>'+
-			'</tr>');
-			
-			updateTablaPrecios();
-			
-			indice++;
+			console.log(vuelos_selec);
 		}
 	}, "json").complete(function(){ 
     	loader.close();
@@ -237,6 +242,7 @@ function eliminaVuelos(vals){
 		cont_aux_clientes--;
 
 	updateTablaPrecios();
+//	console.log(vuelos_selec);
 }
 
 function updateTablaPrecios(){

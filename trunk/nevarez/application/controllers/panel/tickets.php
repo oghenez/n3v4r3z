@@ -206,29 +206,23 @@ class tickets extends MY_Controller {
 		}
 	}
 	
-	public function tickets_cliente(){
-		if(isset($_GET['id']{0})){
-					
-				$this->carabiner->css(array(
-						array('general/forms.css', 'screen'),
-						array('general/tables.css', 'screen')
-				));
-					
-				$this->carabiner->js(array(
-						array('tickets/tickets_notas_venta.js')
-				));
-					
-				$params['seo'] = array(
-						'titulo' => 'Tickets'
-				);
-	
-				$this->load->model('tickets_model');
-				$params['cliente'] = array('tickets' => $this->tickets_model->getTicketsCliente($_GET['id']));
-			}
-			else
-				$params['frm_errors'] = $this->showMsgs(1);
-	
-			$this->load->view('panel/tickets/tickets_cliente',$params);
+	public function tickets_cliente(){			
+		$this->carabiner->css(array(
+				array('general/forms.css', 'screen'),
+				array('general/tables.css', 'screen')
+		));
+			
+		$this->carabiner->js(array(
+				array('tickets/tickets_notas_venta.js')
+		));
+		$params['seo'] = array(
+				'titulo' => 'Tickets'
+		);
+		
+		$this->load->model('tickets_model');
+		$params['cliente'] = array('tickets' => $this->tickets_model->getTicketsCliente());
+		
+		$this->load->view('panel/tickets/tickets_cliente',$params);
 	}
 	
 	
@@ -273,10 +267,10 @@ class tickets extends MY_Controller {
 						'rules'		=> 'required'),
 				array('field'	=> 'total',
 						'label'		=> 'Total',
-						'rules'		=> 'required'),
+						'rules'		=> 'required|callback_val_total'),
 				array('field'	=> 'vuelos',
 						'label'		=> 'Vuelos',
-						'rules'		=> 'required')
+						'rules'		=> '')
 		);
 		$this->form_validation->set_rules($rules);
 	
@@ -319,6 +313,14 @@ class tickets extends MY_Controller {
 				$this->form_validation->set_message('isValidDate', 'El campo %s no es una fecha valida');
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public function val_total($str){
+		if($str <= 0){
+			$this->form_validation->set_message('val_total', 'El Total no puede ser 0, verifica los datos ingresados.');
+			return false;
 		}
 		return true;
 	}
