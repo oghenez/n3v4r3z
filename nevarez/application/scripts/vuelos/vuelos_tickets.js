@@ -23,21 +23,22 @@ function cargar_vuelos(){
 	var all_ok = true;
 	
 	var indice = window.parent.indice;
-	
+
 	if(((window.parent.aux_varios_clientes == false && is_t==1 && is_f==0) || (window.parent.aux_varios_clientes == false && is_t==0))){
 		if((is_t==1 && window.parent.cont_aux_clientes==0) || (is_t==0 && window.parent.cont_aux_clientes>=0)){
 			$(':checkbox:checked').each(function(){
 				var vuelos_selecc = window.parent.vuelos_selec;
 				for(var i in vuelos_selecc)
-					for(var x in vuelos_selecc[i])
+					for(var x in vuelos_selecc[i]){
 						if(vuelos_selecc[i][x]== $(this).val()){
 							all_ok = false;break;
 						}
+					}
 			});
 			
 			if(all_ok){
 				is_ok=true;
-				window.parent.vuelos_selec[indice] = [];
+//				window.parent.vuelos_selec[indice] = [];
 				var c=1;
 				$(':checkbox:checked').each(function(){
 					var data = $(this).val().split('&');
@@ -47,6 +48,7 @@ function cargar_vuelos(){
 					json_data['vuelos']['v'+aux_inc].id_avion	= data[2];
 					json_data['vuelos']['v'+aux_inc].fecha		= data[3];
 					json_data['vuelos']['v'+aux_inc].clientes	= data[4];
+					json_data['vuelos']['v'+aux_inc].valuehtml	= $(this).val();
 					aux_inc++;
 					
 					if(data[5]=='t'){
@@ -55,13 +57,13 @@ function cargar_vuelos(){
 					}
 					
 					if(data[5]=='f'){
-						if(c==1)
-							window.parent.cont_aux_clientes++;
+//						if(c==1)
+//							window.parent.cont_aux_clientes++;
 						tipo = 1;
-						c++;
+//						c++;
 					}
 					
-					window.parent.vuelos_selec[indice].push($(this).val());
+//					window.parent.vuelos_selec[indice].push($(this).val());
 				});
 			}
 			
@@ -69,8 +71,8 @@ function cargar_vuelos(){
 				window.parent.ajax_get_total_vuelos(json_data['vuelos'], tipo);
 				window.parent.$("p.close a").click();
 			}else{alerta('Un vuelo seleccionado ya existe');}
-		}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
-	}else{alerta('No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
+		}else{alerta('2No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
+	}else{alerta('1No puedes agregar más vuelos con otros vuelos que estan asignados a más de un cliente');}
 }
 
 function verifica_vuelo_varios_clientes(obj){

@@ -80,7 +80,8 @@ class vuelos_model extends CI_Model{
 			'id_vuelo' 		=> $id_vuelo,
 			'id_piloto'		=> $this->input->post('hpiloto'),
 			'id_avion'		=> $this->input->post('havion'),
-			'fecha'			=> $this->input->post('dfecha')
+			'fecha'			=> $this->input->post('dfecha'),
+			'id_producto'	=> $this->input->post('dproducto')
 		);
 		$this->db->insert('vuelos', $data);
 		$data = array();

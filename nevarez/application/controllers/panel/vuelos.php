@@ -139,7 +139,13 @@ class vuelos extends MY_Controller {
 			}
 				
 		}
-// 		var_dump($params['infoc']);
+		
+		$params['prod_venta'] = $this->db->query("
+									SELECT p.id_producto, p.nombre 
+									FROM productos as p 
+									INNER JOIN productos_familias AS pf ON p.id_familia=pf.id_familia 
+									WHERE pf.tipo='venta'")->result();
+		
 		if(isset($_GET['msg']{0}))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
 		
@@ -225,6 +231,9 @@ class vuelos extends MY_Controller {
 						'label'		=> 'Cliente',
 						'rules'		=> ''),
 				array('field'	=> 'dpiloto_info',
+						'label'		=> '',
+						'rules'		=> ''),
+				array('field'	=> 'dproducto',
 						'label'		=> '',
 						'rules'		=> '')
 			);
