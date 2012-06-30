@@ -115,7 +115,7 @@ class tickets_model extends privilegios_model{
 				$v->valuehtml = str_replace(';', '', $v->valuehtml);
 			}
 			$response['tipos_v'] = $array_vuelos;
-			$response['cant_vuelos'] = count($response['vuelos']);
+// 			$response['cant_vuelos'] = count($response['vuelos']);
 		}
 		
 		return $response;
