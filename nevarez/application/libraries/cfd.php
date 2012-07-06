@@ -10,7 +10,7 @@ class cfd{
 	
 	private $rfc = 'NEDR620710H76';
 	private $razon_social = 'ROBERTO NEVAREZ DOMINGUEZ';
-	private $regimen_fiscal = 'reg1';
+	private $regimen_fiscal = 'Actividad empresarial y profesional, Régimen de honorarios';
 	private $calle = 'Pista Aérea';
 	private $no_exterior = 'S/N';
 	private $no_interior = '';
