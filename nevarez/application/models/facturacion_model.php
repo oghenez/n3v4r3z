@@ -114,11 +114,11 @@ class facturacion_model extends privilegios_model{
 
 			if($res_q1->num_rows()>0)
 				foreach ($res_q1->result() as $itm)
-				$response['tickets'][] = $itm;
+					$response['tickets'][] = $itm;
 				
 			if($res_q2->num_rows()>0)
 				foreach ($res_q2->result() as $itm)
-				$response['productos'][$t][] = $itm;
+					$response['productos'][$t][] = $itm;
 		}
 		return $response;
 	}
@@ -495,7 +495,7 @@ class facturacion_model extends privilegios_model{
 			->from("facturacion as f")
 			->where(array("f.status !=" =>"ca","f.id_factura"=>$id_factura))
 			->get();
-		}
+		}		
 		return $res->row();
 	}
 	

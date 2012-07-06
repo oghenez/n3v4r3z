@@ -52,7 +52,6 @@
 					value="<?php echo set_value('fplazo_credito', 0); ?>" size="15" min="0" max="120"> días
 			</p>
 			<div class="clear"></div>
-			
 			<fieldset>
 				<legend>Selección de Tickets</legend>
 				<p class="f-l w50">

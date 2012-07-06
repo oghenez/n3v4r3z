@@ -38,7 +38,7 @@
 					<p class="corner-bottom8">
 						<?php 
 						echo $this->empleados_model->getLinkPrivSm('facturacion/ver/', $f->id_factura);
-						if($f->status!='pa')
+						if($f->status!='pa' && $f->status!='ca')
 							echo $this->empleados_model->getLinkPrivSm('facturacion/pagar/', $f->id_factura,'','rel="superbox[iframe][500x330]" data-sbox="notas_venta"','');
 						echo $this->empleados_model->getLinkPrivSm('facturacion/xml/', $f->id_factura);
 						echo $this->empleados_model->getLinkPrivSm('facturacion/imprimir_pdf/', $f->id_factura,'','target="_BLANK"');
