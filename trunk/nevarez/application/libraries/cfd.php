@@ -325,12 +325,12 @@ class cfd{
 			$pdf->Image(APPPATH.'/images/logo.png',8,20,25,25,"PNG");
 			
 			$pdf->SetFont('Arial','B',17);
-			$pdf->SetXY(38, $y-20);
+			$pdf->SetXY(38, $y-30);
 			$pdf->Cell(120, 6, "ROBERTO NEVAREZ DOMINGUEZ" , 0, 0, 'C');
 			
 			$pdf->SetFont('Arial','',13);
-			$pdf->SetXY(38, $y-13);
-			$pdf->MultiCell(116, 6, "R.F.C.".$this->rfc." \n Pista Aerea No. S/N \n Ranchito 60800 Ranchito Michoacan Mexico" , 0,'C',0);			
+			$pdf->SetXY(38, $y-23);
+			$pdf->MultiCell(116, 6, "R.F.C.".$this->rfc." \n Pista Aerea No. S/N \n Ranchito 60800 Ranchito Michoacan Mexico \n {$this->regimen_fiscal} " , 0,'C',0);			
 			$pdf->SetDrawColor(140,140,140);
 			// ----------- FOLIO ------------------
 			$pdf->SetFont('Arial','',13);
@@ -559,10 +559,13 @@ class cfd{
 			$pdf->SetXY(8, ($y+5));
 			$pdf->Cell(134, 6, '	IMPORTE CON LETRA' , 0, 0, 'L',1);
 			
-			$pdf->SetFont('Arial','',12);
+			$pdf->SetFont('Arial','',8);
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetXY(9, ($y+12));
 			$pdf->MultiCell(130, 6, $data['total_letra'] , 0, 'L');
+			
+			$pdf->SetXY(9, ($y+24));
+			$pdf->Cell(130, 6, "Método de Pago: {$data['metodo_pago']}".(($data['metodo_pago'] == 'efectivo')?'':" | No. Cuenta: {$data['no_cuenta_pago'] }") , 0, 0, 'L',0);
 			
 			//------------ CADENA ORIGINAL --------------------
 			$y += 32;
