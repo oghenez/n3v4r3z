@@ -124,8 +124,13 @@ class privilegios_model extends CI_Model{
 		$txt = '';
 		$priv = $this->tienePrivilegioDe('', $url_accion, true);
 		if(is_object($priv)){
+			if(is_array($id_obj)){
+				list($key) = array_keys($id_obj);
+				$id_obj = "?$key={$id_obj[$key]}";
+			}else $id_obj = '?id='.$id_obj;
+			
 			$js = $js!=''? ' onclick="'.$js.'"': '';
-			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.'?id='.$id_obj.$params).'" class="linksm"'.$js.$attrs.'>
+			$txt = '<a href="'.base_url('panel/'.$priv->url_accion.$id_obj.$params).'" class="linksm"'.$js.$attrs.'>
 			<img src="'.base_url('application/images/privilegios/'.$priv->url_icono).'" width="10" height="10"> '.$priv->nombre.'</a> <br>';
 		}
 		return $txt;

@@ -11,11 +11,11 @@
 	</form>
 	
 	<div class="w30 m10-all f-l">
-		<a href="<?php echo base_url('panel/nomina/pilotos/?'.String::getVarsLink(array('id'))); ?>" class="linksm">
+		<a href="<?php echo base_url('panel/nomina/pilotos/?'.String::getVarsLink(array('id','msg'))); ?>" class="linksm">
 			<img src="<?php echo base_url('application/images/privilegios/atras.png'); ?>" width="16" height="16"> Atras</a>
-		<a href="<?php echo base_url('panel/nomina/dp_pdf/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
+		<a href="<?php echo base_url('panel/nomina/dp_pdf/?'.String::getVarsLink(array('msg'))); ?>" class="linksm" target="_blank">
 			<img src="<?php echo base_url('application/images/privilegios/pdf.png'); ?>" width="20" height="20"> Imprimir</a>
-		<a href="<?php echo base_url('panel/nomina/dp_xls/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
+		<a href="<?php echo base_url('panel/nomina/dp_xls/?'.String::getVarsLink(array('msg'))); ?>" class="linksm" target="_blank">
 			<img src="<?php echo base_url('application/images/privilegios/xls.png'); ?>" width="20" height="20"> Excel</a>
 	</div>
 	
@@ -49,6 +49,7 @@
 			<td>Vuelos</td>
 			<td>Abonos</td>
 			<td>Saldo</td>
+			<td class="a-c">Opc</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -61,8 +62,6 @@
 					(isset($cuentasp['anterior']->total_abonos)? $cuentasp['anterior']->total_abonos: 0) ); ?></td>
 			<td><?php echo String::formatoNumero(
 					(isset($cuentasp['anterior']->total_saldo)? $cuentasp['anterior']->total_saldo: 0) ); ?></td>
-			<td></td>
-			<td></td>
 			<td></td>
 		</tr>
 		<?php
@@ -92,6 +91,21 @@
 				<td><?php echo String::formatoNumero($cuenta->total_vuelos); ?></td>
 				<td><?php echo String::formatoNumero($cuenta->total_abonos); ?></td>
 				<td><?php echo String::formatoNumero($total_saldo); ?></td>
+				
+				<?php if ($cuenta->tipo=='ab') {?>
+					<td class="tdsmenu a-c" style="width: 90px;">
+						<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
+						<div class="submenul">
+							<p class="corner-bottom8">
+								<?php
+								echo $this->empleados_model->getLinkPrivSm('nomina/eliminar_abono_piloto/', array('ida'=>$cuenta->id_abono), 
+										"msb.confirm('Estas seguro de eliminar el abono?<br>Ya no se podra revertirl el cambio.', this); return false;", '', '&'.String::getVarsLink());
+								?>
+							</p>
+						</div>
+					</td>
+				<?php }else echo '<td></td>'?>
+				
 			</tr>
 		<?php }?>
 			<tr style="background-color:#ccc;font-weight: bold;">
@@ -99,9 +113,8 @@
 				<td><?php echo String::formatoNumero($total_cargo); ?></td>
 				<td><?php echo String::formatoNumero($total_abono); ?></td>
 				<td><?php echo String::formatoNumero($total_saldo); ?></td>
-				<td colspan="3"></td>
+				<td></td>
 			</tr>
-		
 	</table>
 	
 </div>

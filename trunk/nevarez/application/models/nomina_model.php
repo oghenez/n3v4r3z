@@ -109,22 +109,22 @@ class nomina_model extends privilegios_model{
 		
 		$query->free_result();
 		$query = $this->db->query("
-					(SELECT v.fecha as f, DATE(v.fecha) as fecha, a.matricula, p.descripcion, COUNT(*) as cantidad_vuelos, 
+					(SELECT '' as id_abono, v.fecha as f, DATE(v.fecha) as fecha, a.matricula, p.descripcion, COUNT(*) as cantidad_vuelos, 
 							SUM(v.costo_piloto)+SUM(v.iva_piloto) as total_vuelos, 0 as total_abonos, 'vu' as tipo
 					FROM vuelos as v
 					INNER JOIN aviones as a ON v.id_avion=a.id_avion
 					INNER JOIN productos as p ON v.id_producto=p.id_producto
 					WHERE v.id_piloto='{$_GET['id']}' AND DATE(fecha)>='$fecha1' AND DATE(fecha)<='$fecha2'
-					GROUP BY v.id_piloto, v.fecha, a.matricula, p.descripcion
-					ORDER BY fecha ASC)
+					GROUP BY v.id_piloto, fecha, a.matricula, p.descripcion, a.id_avion, p.nombre
+					)
 				UNION
-					(SELECT fecha as f, DATE(fecha) as fecha, '' as matricula, concepto as descripcion, 0 as cantidad, 
+					(SELECT id_abono, fecha as f, DATE(fecha) as fecha, '' as matricula, concepto as descripcion, 0 as cantidad, 
 							0 as total_vuelos, SUM(total) total_abonos, 'ab' as tipo
 					FROM proveedores_abonos
 					WHERE id_proveedor='{$_GET['id']}' AND tipo='ab' AND DATE(fecha)>='$fecha1' AND DATE(fecha)<='$fecha2'
-					GROUP BY fecha, concepto
-					ORDER BY fecha ASC)
-					ORDER BY fecha ASC");
+					GROUP BY fecha, concepto, id_abono
+					)
+					ORDER BY f ASC");
 		
 		$response['cuentas'] = $query->result();
 		return $response;
@@ -407,6 +407,11 @@ class nomina_model extends privilegios_model{
 			->get();
 		}
 		return $res->row();
+	}
+	
+	public function eliminar_abono_piloto() {
+		$this->db->delete("proveedores_abonos",array('id_abono'=>$this->input->get("ida")));
+		return array(true);
 	}
 	
 }?>

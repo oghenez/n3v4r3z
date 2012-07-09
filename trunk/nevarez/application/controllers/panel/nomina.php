@@ -87,6 +87,7 @@ class nomina extends MY_Controller {
 		$this->carabiner->js(array(
 				array('libs/jquery.msgbox.min.js'),
 				array('libs/jquery.superbox.js'),
+				array('general/msgbox.js'),
 				array('nomina/detalle_piloto.js')
 		));
 		$this->load->model('nomina_model');
@@ -141,6 +142,17 @@ class nomina extends MY_Controller {
 			$params['seo']['titulo'] = 'Abonar a Piloto';
 			$this->load->view('panel/nomina/pilotos/abono',$params);
 		}else redirect(base_url('panel/nomina/detalle_piloto/?'.String::getVarsLink(array('msg')).'&msg=1'));
+	}
+	
+	private function eliminar_abono_piloto() {
+		if (isset($_GET['ida'])) {
+			$this->load->model('nomina_model');
+			$res = $this->nomina_model->eliminar_abono_piloto();
+			if ($res[0])
+				redirect(base_url('panel/nomina/detalle_piloto/?'.String::getVarsLink(array('ida','msg')).'&msg=5'));
+		}else
+			redirect(base_url('panel/nomina/detalle_piloto/?'.String::getVarsLink(array('ida','msg')).'&msg=1'));
+		
 	}
 	
 	private function pilotos_pdf() {
@@ -229,6 +241,10 @@ class nomina extends MY_Controller {
 				break;
 			case 5:
 				$txt = 'El Vuelo se elimino correctamente.';
+				$icono = 'ok';
+				break;
+			case 5:
+				$txt = 'El Abono se elimino correctamente.';
 				$icono = 'ok';
 				break;
 		}
