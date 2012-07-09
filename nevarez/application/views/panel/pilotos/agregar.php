@@ -122,6 +122,10 @@
 							<option value="0" <?php echo set_select('dexpide_factura', '0'); ?>>No</option>
 						</select>
 					</p>
+					<p class="w50 f-l">
+						<label for="dprecio_vuelo">Precio por Vuelo:</label> <br>
+						<input type="text" name="dprecio_vuelo" id="dprecio_vuelo" class="vpositive" value="<?php echo set_value('dprecio_vuelo'); ?>" size="10">
+					</p>
 					<div class="clear"></div>
 				</div>
 				

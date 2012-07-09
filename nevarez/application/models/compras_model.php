@@ -33,7 +33,7 @@ class compras_model extends CI_Model{
 		}
 		
 		$query = BDUtil::pagination("
-				SELECT c.id_compra, Date(c.fecha) AS fecha, c.serie, c.folio, p.nombre, c.is_gasto, c.status
+				SELECT c.id_compra, Date(c.fecha) AS fecha, c.serie, c.folio, p.nombre, c.is_gasto, c.status, p.tipo
 				FROM compras AS c INNER JOIN proveedores AS p ON p.id_proveedor = c.id_proveedor
 				WHERE c.status <> 'ca' AND c.status <> 'n'".$sql."
 				ORDER BY (Date(c.fecha), c.serie, c.folio) ASC
@@ -81,13 +81,23 @@ class compras_model extends CI_Model{
 			$response['info']->proveedor_info .= $prov['info']->estado!=''? ', '.$prov['info']->estado: '';
 			
 			//productos
-			$res = $this->db
-				->select('p.id_producto, p.codigo, p.nombre, cp.taza_iva, cp.cantidad, cp.precio_unitario, 
-						cp.importe, cp.importe_iva, cp.total')
-				->from('compras_productos AS cp')
-					->join('productos AS p', 'p.id_producto = cp.id_producto', 'inner')
-				->where("cp.id_compra = '".$id."'")
-			->get();
+			if($_GET['gasto'] == 'f' && $_GET['tipo'] == 'pr'){ 
+				$res = $this->db
+					->select('p.id_producto, p.codigo, p.nombre, cp.taza_iva, cp.cantidad, cp.precio_unitario, 
+							cp.importe, cp.importe_iva, cp.total')
+					->from('compras_productos AS cp')
+						->join('productos AS p', 'p.id_producto = cp.id_producto', 'inner')
+					->where("cp.id_compra = '".$id."'")
+				->get();
+			}
+			elseif($_GET['gasto'] == 't' && $_GET['tipo'] == 'pi'){
+				$res = $this->db
+						->select('cgv.id_compra, cgv.cantidad, cgv.taza_iva, cgv.precio_unitario, cgv.importe, cgv.importe_iva, cgv.total, count(*) as total_vuelos')
+						->from('compras_gastos_vuelos AS cgv')
+						->where("cgv.id_compra = '".$id."'")
+						->group_by('cgv.id_compra, cgv.cantidad, cgv.taza_iva, cgv.precio_unitario, cgv.importe, cgv.importe_iva, cgv.total')
+						->get();
+			}			
 			if($res->num_rows() > 0){
 				$response['productos'] = $res->result();
 			}
@@ -274,4 +284,81 @@ class compras_model extends CI_Model{
 			WHERE c.id_compra = '".$id."'", true);
 		return $data->row();
 	}
+	
+	public function getTotalVuelosAjax(){
+		$response = array();
+	
+		foreach ($_POST as $v){
+			$res = $this->db->query("
+					SELECT v.id_vuelo, 1 as cantidad, CASE WHEN iva_piloto=0 THEN 0 ELSE 0.16 END as taza_iva, 
+							v.costo_piloto as precio_unitario, v.costo_piloto as importe, v.iva_piloto as importe_iva, (v.costo_piloto+v.iva_piloto) as total  
+					FROM vuelos as v
+					WHERE v.id_vuelo = '{$v['id_vuelo']}'
+					");
+	
+					if($res->num_rows()>0)
+						foreach ($res->result() as $itm)
+							$response['vuelos'][] = $itm;
+		}
+		
+		if(count($response['vuelos'])>0){
+			$array_vuelos = array();
+			foreach ($response['vuelos'] as $v){
+				if(array_key_exists($v->id_vuelo, $array_vuelos)){
+					$array_vuelos[$v->id_vuelo]['cantidad'] += 1;
+					$array_vuelos[$v->id_vuelo]['importe'] = String::float($array_vuelos[$v->id_vuelo]['cantidad']*$array_vuelos[$v->id_vuelo]['p_uni']);
+				}
+				else{
+					$array_vuelos[$v->id_vuelo]['id_vuelo'] = $v->id_vuelo;
+					$array_vuelos[$v->id_vuelo]['cantidad'] = 1;
+					$array_vuelos[$v->id_vuelo]['taza_iva'] = String::float($v->taza_iva);
+					$array_vuelos[$v->id_vuelo]['p_uni'] = String::float($v->precio_unitario);
+					$array_vuelos[$v->id_vuelo]['importe'] = String::float($v->precio_unitario);
+					$array_vuelos[$v->id_vuelo]['importe_iva'] = String::float($v->importe_iva);
+					$array_vuelos[$v->id_vuelo]['total'] = String::float($v->total);
+				}
+			}
+			$response['tipos_v'] = $array_vuelos;
+		}
+		return $response;
+	}
+	
+	public function addGastoPiloto(){
+		$id_gasto = BDUtil::getId();
+		$data = array(
+				'id_compra'		=> $id_gasto,
+				'id_proveedor'	=> $this->input->post('tpiloto'),
+				'id_empleado'	=> $_SESSION['id_empleado'],
+				'serie'			=> mb_strtoupper($this->input->post('dserie'), 'utf-8'),
+				'folio'			=> $this->input->post('tfolio'),
+				'fecha'			=> $this->input->post('tfecha'),
+				'subtotal'		=> $this->input->post('subtotal'),
+				'importe_iva'	=> $this->input->post('iva'),
+				'total'			=> $this->input->post('total'),
+				'concepto'		=> $this->input->post('tconcepto'),
+				'is_gasto'		=> 't',
+				'status'		=> 'pa',
+		);
+	
+		$this->db->insert('compras',$data);
+	
+		foreach ($_POST as $vuelo){
+			if(is_array($vuelo)){
+				$data_v = array(
+						'id_compra'	=> $id_gasto,
+						'id_vuelo'	=> $vuelo['id_vuelo'],
+						'cantidad'	=> String::float($vuelo['cantidad']),
+						'taza_iva'	=> String::float($vuelo['taza_iva']),
+						'precio_unitario'	=> String::float($vuelo['precio_unitario']),
+						'importe'			=> String::float($vuelo['importe']),
+						'importe_iva'		=> String::float($vuelo['importe_iva']),
+						'total'				=> String::float($vuelo['total'])
+				);
+				$this->db->insert('compras_gastos_vuelos',$data_v);
+			}
+		}
+		return array(true);
+	}
+	
+	
 }

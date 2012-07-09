@@ -107,6 +107,7 @@ class pilotos_model extends privilegios_model{
 			'licencia_vehiculo' => $this->input->post('dlicencia_vehiculo'),
 			'licencia_avion' => $this->input->post('dlicencia_avion'),
 			'fecha_vence_seguro' => $this->input->post('dfecha_vence_seguro'),
+			'precio_vuelo' => $this->input->post('dprecio_vuelo'),
 			'tipo' => 'pi'
 		);
 		
@@ -154,7 +155,8 @@ class pilotos_model extends privilegios_model{
 			'expide_factura' => ($this->input->post('dexpide_factura')==1) ? 'true' : 'false' ,
 			'licencia_vehiculo' => $this->input->post('dlicencia_vehiculo'),
 			'licencia_avion' => $this->input->post('dlicencia_avion'),
-			'fecha_vence_seguro' => $this->input->post('dfecha_vence_seguro')
+			'fecha_vence_seguro' => $this->input->post('dfecha_vence_seguro'),
+			'precio_vuelo' => $this->input->post('dprecio_vuelo')
 		);
 		
 		if($this->input->post('dvencimiento_licencia_v') != '')
@@ -212,7 +214,7 @@ class pilotos_model extends privilegios_model{
 	public function getPilotosAjax(){
 		$sql = '';
 		$res = $this->db->query("
-				SELECT id_proveedor, nombre, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, licencia_avion, vencimiento_licencia_a
+				SELECT id_proveedor, nombre, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, licencia_avion, vencimiento_licencia_a, precio_vuelo
 				FROM proveedores
 				WHERE status = 'ac' AND tipo='pi' AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
 				ORDER BY nombre ASC");

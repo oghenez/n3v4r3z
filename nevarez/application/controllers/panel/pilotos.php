@@ -75,7 +75,8 @@ class pilotos extends MY_Controller {
 				array('general/tables.css', 'screen')
 		));
 		$this->carabiner->js(array(
-				array('pilotos/frm_addmod.js')
+				array('pilotos/frm_addmod.js'),
+				array('libs/jquery.numeric.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -316,7 +317,10 @@ class pilotos extends MY_Controller {
 						'rules'		=> 'required|max_length[10]|callback_isValidDate'),
 				array('field'	=> 'dfecha_nacimiento',
 						'label'		=> 'Fecha Nacimiento',
-						'rules'		=> 'max_length[10]|callback_isValidDate')
+						'rules'		=> 'max_length[10]|callback_isValidDate'),
+				array('field'	=> 'dprecio_vuelo',
+						'label'		=> 'Precio por Vuelo',
+						'rules'		=> 'required|callback_val_precio_vuelo')
 		);
 	
 		if($tipo == 'add'){
@@ -340,6 +344,14 @@ class pilotos extends MY_Controller {
 					'rules'		=> 'max_length[20]');
 		}
 		$this->form_validation->set_rules($rules);
+	}
+	
+	public function val_precio_vuelo($str){
+		if($str <= 0){
+			$this->form_validation->set_message('val_precio_vuelo', 'El Precio por vuelo no puede ser 0, verifica los datos ingresados.');
+			return false;
+		}
+		return true;
 	}
 	
 	/**

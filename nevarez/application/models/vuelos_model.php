@@ -70,6 +70,48 @@ class vuelos_model extends CI_Model{
 	}
 	
 	/**
+	 * Obtiene los vuelos de un cliente
+	 *
+	 * @param id_cliente
+	 */
+	public function getVuelosPiloto($id_piloto=''){
+		$sql = ($id_piloto!='') ? "WHERE id_piloto = '$id_piloto'": "";
+		//paginacion
+		$params = array(
+				'result_items_per_page' => '15',
+				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
+		);
+		if($params['result_page'] % $params['result_items_per_page'] == 0)
+			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
+		
+		//Filtros para buscar
+		if($this->input->get('ffecha_ini') != '')
+			$sql .= ($this->input->get('ffecha_fin') != '') ? " AND DATE(fecha)>='".$this->input->get('ffecha_ini')."'" : " AND DATE(fecha)='".$this->input->get('ffecha_ini')."'";
+		
+		if($this->input->get('ffecha_fin') != '')
+			$sql .= ($this->input->get('ffecha_ini') != '') ? " AND DATE(fecha)<='".$this->input->get('ffecha_fin')."'" : " AND DATE(fecha)='".$this->input->get('ffecha_fin')."'";
+		
+		if($sql=='')
+			$sql = " AND DATE(v.fecha)=DATE(now())";
+		
+		$query = BDUtil::pagination("
+				SELECT id_vuelo, clientes, piloto, matricula, fecha, id_piloto, id_avion, total_vuelos
+				FROM get_vuelos_piloto_pendientes $sql
+				ORDER BY (fecha,piloto,clientes) DESC
+				", $params, true);
+				$res = $this->db->query($query['query']);
+		
+		$response = array(
+				'vuelos' 			=> array(),
+				'total_rows' 		=> $query['total_rows'],
+				'items_per_page' 	=> $params['result_items_per_page'],
+				'result_page' 		=> $params['result_page']
+		);
+		$response['vuelos'] = $res->result();
+		return $response;
+	}
+	
+	/**
 	 * Agrega la informacion de un vuelo
 	 * @param unknown_type $sucu
 	 */
@@ -80,9 +122,17 @@ class vuelos_model extends CI_Model{
 			'id_vuelo' 		=> $id_vuelo,
 			'id_piloto'		=> $this->input->post('hpiloto'),
 			'id_avion'		=> $this->input->post('havion'),
-			'fecha'			=> $this->input->post('dfecha'),
-			'id_producto'	=> $this->input->post('dproducto')
+			'fecha'			=> $this->input->post('dfecha').':'.date('s'),
+			'id_producto'	=> $this->input->post('dproducto'),
+			'costo_piloto'	=> $this->input->post('hcosto_piloto')
 		);
+		
+		$expide_factura = $this->db->select('expide_factura')->from('proveedores')->where('id_proveedor',$this->input->post('hpiloto'))->get()->row()->expide_factura;
+		
+		if($expide_factura=='t'){
+			$data['iva_piloto'] = floatval($data['costo_piloto']) * 0.16;
+		}
+		
 		$this->db->insert('vuelos', $data);
 		$data = array();
 		foreach ($_POST['hids'] as $cid)

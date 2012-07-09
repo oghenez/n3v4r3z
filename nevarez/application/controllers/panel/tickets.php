@@ -292,7 +292,7 @@ class tickets extends MY_Controller {
 	
 	
 	/**
-	 * Obtiene lostado de pilotos para el autocomplete, ajax
+	 * 
 	 */
 	public function ajax_get_total_vuelos(){
 		$this->load->model('tickets_model');

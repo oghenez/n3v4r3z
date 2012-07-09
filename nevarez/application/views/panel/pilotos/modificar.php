@@ -156,8 +156,10 @@
 									(isset($piloto['info']->expide_factura)? ($piloto['info']->expide_factura=='t' ? '1' : '0') : '')); ?>>No</option>
 						</select>
 					</p>
-					
-					
+					<p class="w50 f-l">
+						<label for="dprecio_vuelo">Precio por Vuelo:</label> <br>
+						<input type="text" name="dprecio_vuelo" id="dprecio_vuelo" class="vpositive" value="<?php echo isset($piloto['info']->precio_vuelo)?$piloto['info']->precio_vuelo:0; ?>" size="10">
+					</p>
 					<div class="clear"></div>
 				</div>
 				
