@@ -58,4 +58,7 @@ class alertas extends MY_Controller {
 			redirect(base_url('panel/home/?&msg=1'));
 	}
 	
+	function pruebas() {
+	}
+	
 }
