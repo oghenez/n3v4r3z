@@ -89,13 +89,13 @@ class nomina_model extends privilegios_model{
 
 		$query = $this->db->query("
 				SELECT p.id_proveedor,
-					SUM(v.costo_piloto) as total_costo_piloto, 
-					SUM(v.iva_piloto) as total_iva_piloto,
-					SUM(v.costo_piloto)+SUM(v.iva_piloto) as total_vuelos, 
+					COALESCE(SUM(v.costo_piloto),0) as total_costo_piloto, 
+					COALESCE(SUM(v.iva_piloto),0) as total_iva_piloto,
+					COALESCE(SUM(v.costo_piloto),0)+COALESCE(SUM(v.iva_piloto),0) as total_vuelos, 
 					COALESCE(ta.total_abonos,0) as total_abonos,
-					(SUM(v.costo_piloto)+SUM(v.iva_piloto))-COALESCE(ta.total_abonos,0) as total_saldo
+					COALESCE((SUM(v.costo_piloto)+SUM(v.iva_piloto)),0)-COALESCE(ta.total_abonos,0) as total_saldo
 				FROM proveedores as p
-				INNER JOIN vuelos as v ON p.id_proveedor=v.id_piloto AND DATE(v.fecha)<'$fecha1'
+				LEFT JOIN vuelos as v ON p.id_proveedor=v.id_piloto AND DATE(v.fecha)<'$fecha1'
 				LEFT JOIN (
 							SELECT COALESCE(SUM(pa.total),0) as total_abonos, pa.id_proveedor 
 							FROM proveedores_abonos as pa 

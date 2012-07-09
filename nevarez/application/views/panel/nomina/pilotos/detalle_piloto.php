@@ -75,7 +75,6 @@
 			$total_saldo += $cuentasp['anterior']->total_saldo;
 		}
 		foreach ($cuentasp['cuentas'] as $cuenta){
-			
 			if($cuenta->tipo=='vu'){
 				$total_cargo += $cuenta->total_vuelos;
 				$total_saldo += $cuenta->total_vuelos;
