@@ -82,7 +82,7 @@
 						<label for="dpiloto" class="f-l">*Piloto</label><br>
 						<input type="text" name="dpiloto" value="<?php echo set_value('dpiloto');?>" size="35" id="dpiloto"  class="f-l">
 						<input type="hidden" name="hpiloto" value="<?php echo set_value('hpiloto');?>" id="hpiloto">
-						
+						<input type="hidden" name="hcosto_piloto" value="<?php echo set_value('hcosto_piloto');?>" id="hcosto_piloto">
 						<textarea name="dpiloto_info" id="dpiloto_info" class="m10-l" rows="3" cols="55" readonly><?php echo set_value('dpiloto_info'); ?></textarea>
 					</p>
 					<div class="clear"></div>

@@ -76,7 +76,35 @@
 			</table>
 <?php 
 	}
-}?>
+	else if($_GET['gasto'] == 't' && $_GET['tipo'] == 'pi'){
+	?>
+		<table class="tblListados corner-all8" id="tbl_productos">
+			<tr class="header btn-gray">
+				<td>Cantidad</td>
+				<td>P. Unitario</td>
+				<td>Importe</td>
+			</tr>
+				
+		<?php
+		if(isset($inf['productos'])){
+			foreach($inf['productos'] as $key => $itm){
+				echo '<tr id="trp-'.str_replace('.', '_', $itm->id_compra).'">
+						<td>
+							<input type="hidden" name="dpid_producto[]" value="'.$itm->id_compra.'">
+							<input type="hidden" name="dpcantidad[]" value="'.$itm->total_vuelos.'">
+							<input type="hidden" name="dpprecio_unitario[]" value="'.$itm->precio_unitario.'">
+							<input type="hidden" name="dpimporte[]" value="'.$itm->importe.'" class="dpimporte">
+							<input type="hidden" name="dptaza_iva[]" value="'.$itm->taza_iva.'">
+							<input type="hidden" name="dpimporte_iva[]" value="'.$itm->importe_iva.'" class="dpimporte_iva">
+							'.$itm->total_vuelos.'</td>
+						<td>'.String::formatoNumero($itm->precio_unitario).'</td>
+						<td>'.String::formatoNumero($itm->importe).'</td>
+					</tr>';
+			}
+		}?>
+			</table>
+			
+<?php } }?>
 			<table class="tblListados corner-all8" style="text-align:center;">
 				<tr>
 					<td rowspan="3">
@@ -111,24 +139,26 @@
 				<label for="dfecha">*Fecha:</label> <br>
 				<input type="date" name="dfecha" id="dfecha" value="<?php echo (isset($inf['info']->fecha)? $inf['info']->fecha: ''); ?>"> <br><br>
 				
-				<label for="dcondicion_pago">*Condición de pago:</label> <br>
-				<select name="dcondicion_pago" id="dcondicion_pago">
-					<option value="co" <?php echo set_select('dcondicion_pago', 'co', false, 
-							(isset($inf['info']->condicion_pago)? $inf['info']->condicion_pago: '')); ?>>Contado</option>
-					<option value="cr" <?php echo set_select('dcondicion_pago', 'cr', false, 
-							(isset($inf['info']->condicion_pago)? $inf['info']->condicion_pago: '')); ?>>Credito</option>
-				</select>
-				<?php
-				$show = 'no-show';
-				if(isset($inf['info']->condicion_pago)){
-					$show = ($inf['info']->condicion_pago=='cr'? '': 'no-show');
-				}
-				?>
-				<p id="vplazo_credito" class="<?php echo $show; ?>">
-					<label for="dplazo_credito">*Plazo de crédito:</label> <br>
-					<input type="number" name="dplazo_credito" id="dplazo_credito" class="vpositive"
-						value="<?php echo (isset($inf['info']->proveedor_dias_credito)? $inf['info']->proveedor_dias_credito: ''); ?>" size="15" min="0" max="120"> días
-				</p>
+				<?php if ($_GET['gasto'] != 't' && $_GET['tipo'] != 'pi') {?>
+					<label for="dcondicion_pago">*Condición de pago:</label> <br>
+					<select name="dcondicion_pago" id="dcondicion_pago">
+						<option value="co" <?php echo set_select('dcondicion_pago', 'co', false, 
+								(isset($inf['info']->condicion_pago)? $inf['info']->condicion_pago: '')); ?>>Contado</option>
+						<option value="cr" <?php echo set_select('dcondicion_pago', 'cr', false, 
+								(isset($inf['info']->condicion_pago)? $inf['info']->condicion_pago: '')); ?>>Credito</option>
+					</select>
+					<?php
+					$show = 'no-show';
+					if(isset($inf['info']->condicion_pago)){
+						$show = ($inf['info']->condicion_pago=='cr'? '': 'no-show');
+					}
+					?>
+					<p id="vplazo_credito" class="<?php echo $show; ?>">
+						<label for="dplazo_credito">*Plazo de crédito:</label> <br>
+						<input type="number" name="dplazo_credito" id="dplazo_credito" class="vpositive"
+							value="<?php echo (isset($inf['info']->proveedor_dias_credito)? $inf['info']->proveedor_dias_credito: ''); ?>" size="15" min="0" max="120"> días
+					</p>
+				<?php }?>
 			</div>
 			
 			

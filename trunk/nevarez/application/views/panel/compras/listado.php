@@ -45,7 +45,7 @@
 				<div class="submenul">
 					<p class="corner-bottom8">
 						<?php 
-						echo $this->empleados_model->getLinkPrivSm('compras/ver/', $comp->id_compra, '', '', '&gasto='.$comp->is_gasto);
+						echo $this->empleados_model->getLinkPrivSm('compras/ver/', $comp->id_compra, '', '', '&gasto='.$comp->is_gasto.'&tipo='.$comp->tipo);
 						if($comp->status == 'p')
 							echo $this->empleados_model->getLinkPrivSm('compras/pagar/', $comp->id_compra, '', ' rel="superbox[iframe][600x300]"');
 						echo $this->empleados_model->getLinkPrivSm('compras/eliminar/', $comp->id_compra, 

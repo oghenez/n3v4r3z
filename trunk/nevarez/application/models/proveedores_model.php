@@ -186,11 +186,12 @@ class proveedores_model extends CI_Model{
 	 * Obtiene el listado de proveedores para usar ajax
 	 */
 	public function getProveedoresAjax(){
-		$sql = '';
+		$tipo = (isset($_GET['t'])) ? $_GET['t'] : 'pr';
+		$sql = " AND tipo='$tipo'";
 		$res = $this->db->query("
 				SELECT id_proveedor, nombre, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito
 				FROM proveedores
-				WHERE status = 'ac' AND tipo='pr' AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
+				WHERE status = 'ac' $sql AND lower(nombre) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
 				ORDER BY nombre ASC");
 	
 		$response = array();

@@ -5,7 +5,7 @@ require_once APPPATH.'libraries/excel2/Root.php';
 include(APPPATH.'libraries/excel2/Writer.php');
 
 class MYexcel {
-	var $titulo1 = 'Red Fire de Colima';
+	var $titulo1 = 'Fumigaciones Aereas Nevarez';
 	var $titulo2 = '';
 	var $titulo3 = '';
 	var $titulo4 = '';
@@ -51,8 +51,12 @@ class MYexcel {
 				}else{
 					$item->{$camp['name']} = utf8_decode($item->{$camp['name']});
 				}
-				
-				$worksheet->write($row, $kcamp, strip_tags($item->{$camp['name']}), $this->formatsEx[$camp['format']]);
+				if(isset($item->is_total_final)){
+					if(!empty($item->{$camp['name']}))
+						$worksheet->write($row, $kcamp, strip_tags($item->{$camp['name']}), $this->formatsEx['format5']);
+				}
+				else
+					$worksheet->write($row, $kcamp, strip_tags($item->{$camp['name']}), $this->formatsEx[$camp['format']]);
 			}
 			
 			$row++;

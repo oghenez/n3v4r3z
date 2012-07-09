@@ -7,7 +7,7 @@ class vuelos extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('vuelos/vuelos_cliente/');
+	private $excepcion_privilegio = array('vuelos/vuelos_cliente/','vuelos/vuelos_piloto/');
 	
 	
 	public function _remap($method){
@@ -199,6 +199,42 @@ class vuelos extends MY_Controller {
 		$this->load->view('panel/vuelos/vuelos_cliente',$params);
 	}
 	
+	/**
+	 * Muestra el listado de vuelos para un cliente
+	 * Usado en el superbox.
+	 *
+	 */
+	public function vuelos_piloto(){
+		if(isset($_GET['id']{0})){
+					
+				$this->carabiner->css(array(
+						array('general/forms.css', 'screen'),
+						array('general/tables.css', 'screen')
+				));
+					
+				$this->carabiner->js(array(
+						array('vuelos/vuelos_gastos_piloto.js'),
+						array('vuelos/admin.js')
+				));
+					
+				$params['seo'] = array(
+						'titulo' => 'Vuelos Piloto'
+				);
+				
+				if(!isset($_GET['ffecha_ini']))
+					$_GET['ffecha_ini'] = date('Y-m').'-01';
+				if(!isset($_GET['ffecha_fin']))
+					$_GET['ffecha_fin'] = date('Y-m-d');
+				
+				$this->load->model('vuelos_model');
+				$this->load->library('pagination');
+				$params['piloto'] = $this->vuelos_model->getVuelosPiloto($_GET['id']);
+			}
+			else
+				$params['frm_errors'] = $this->showMsgs(1);
+	
+			$this->load->view('panel/vuelos/vuelos_piloto',$params);
+	}
 	
 	private function configAddVuelo($tipo){
 		$this->load->library('form_validation');
@@ -235,10 +271,20 @@ class vuelos extends MY_Controller {
 						'rules'		=> ''),
 				array('field'	=> 'dproducto',
 						'label'		=> '',
-						'rules'		=> '')
+						'rules'		=> ''),
+				array('field'	=> 'hcosto_piloto',
+						'label'		=> '',
+						'rules'		=> 'required|callback_val_precio_vuelo')
 			);
-				
 		$this->form_validation->set_rules($rules);
+	}
+	
+	public function val_precio_vuelo($str){
+		if($str <= 0){
+			$this->form_validation->set_message('val_precio_vuelo', 'Verifique que el precio por vuelo del piloto seleccionado no sea cero (0)');
+			return false;
+		}
+		return true;
 	}
 	
 	/**

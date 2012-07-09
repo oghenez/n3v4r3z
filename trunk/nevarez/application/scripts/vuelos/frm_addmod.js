@@ -48,6 +48,7 @@ $(function(){
 		select: function( event, ui ) {
 			$("#hpiloto").val(ui.item.id);
 			$("#dpiloto_info").val(createInfoPiloto(ui.item.item));
+			$("#hcosto_piloto").val(ui.item.item.precio_vuelo);
 			$("#dPiloto").css("background-color", "#B0FFB0");
 		}
 	});
