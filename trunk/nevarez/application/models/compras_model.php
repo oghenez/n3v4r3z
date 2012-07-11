@@ -36,7 +36,7 @@ class compras_model extends CI_Model{
 				SELECT c.id_compra, Date(c.fecha) AS fecha, c.serie, c.folio, p.nombre, c.is_gasto, c.status, p.tipo
 				FROM compras AS c INNER JOIN proveedores AS p ON p.id_proveedor = c.id_proveedor
 				WHERE c.status <> 'ca' AND c.status <> 'n'".$sql."
-				ORDER BY (Date(c.fecha), c.serie, c.folio) ASC
+				ORDER BY (Date(c.fecha), c.serie, c.folio) DESC
 				", $params, true);
 		$res = $this->db->query($query['query']);
 		
@@ -329,7 +329,7 @@ class compras_model extends CI_Model{
 				'id_compra'		=> $id_gasto,
 				'id_proveedor'	=> $this->input->post('tpiloto'),
 				'id_empleado'	=> $_SESSION['id_empleado'],
-				'serie'			=> mb_strtoupper($this->input->post('dserie'), 'utf-8'),
+				'serie'			=> mb_strtoupper($this->input->post('tserie'), 'utf-8'),
 				'folio'			=> $this->input->post('tfolio'),
 				'fecha'			=> $this->input->post('tfecha'),
 				'subtotal'		=> $this->input->post('subtotal'),
