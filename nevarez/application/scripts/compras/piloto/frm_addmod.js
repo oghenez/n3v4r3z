@@ -202,6 +202,8 @@ function limpia_campos(){
 	$('#dproveedor_info').val('');
 	$('#did_proveedor').val('');
 	$('#dconcepto').val('');
+	$('#dserie').val('');
+	$('#dfolio').val('');
 	
 //	$('#dfecha').val(actualDate());
 	

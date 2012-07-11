@@ -53,7 +53,7 @@ class cuentas_pagar_model extends CI_Model{
 								AND ca.tipo <> 'ca' AND Date(ca.fecha) <= '".$fecha."'".$sql."
 							GROUP BY c.id_proveedor
 						) AS caa ON p.id_proveedor = caa.id_proveedor
-					WHERE c.status <> 'ca' AND c.status <> 'n' AND Date(c.fecha) <= '".$fecha."'".$sql."
+					WHERE  p.tipo <> 'pi' AND c.status <> 'ca' AND c.status <> 'n' AND Date(c.fecha) <= '".$fecha."'".$sql."
 					GROUP BY p.id_proveedor, p.nombre, caa.abonos
 				) AS sal
 			ORDER BY nombre ASC
