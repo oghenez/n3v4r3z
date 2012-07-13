@@ -138,7 +138,7 @@ class tickets_model extends privilegios_model{
 			
 			$response['vuelos_info'] = array();
 			$res_q2 = $this->db->query("
-						SELECT v.fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion, av.matricula
+						SELECT DATE(v.fecha) as fecha, pi.nombre, COUNT(*) as vuelos, tv.precio_unitario as precio, SUM(tv.precio_unitario) as importe, p.codigo, p.descripcion, av.matricula
 						FROM tickets as t
 						INNER JOIN tickets_vuelos as tv ON t.id_ticket=tv.id_ticket
 						INNER JOIN vuelos as v ON tv.id_vuelo=v.id_vuelo
@@ -146,7 +146,7 @@ class tickets_model extends privilegios_model{
 						INNER JOIN productos as p ON v.id_producto=p.id_producto
 						INNER JOIN aviones as av ON av.id_avion=v.id_avion
 						WHERE t.id_ticket='$id_ticket'
-						GROUP BY v.fecha,v.id_piloto, pi.nombre, tv.precio_unitario, p.codigo, p.descripcion, av.matricula
+						GROUP BY DATE(v.fecha),v.id_piloto, pi.nombre, tv.precio_unitario, p.codigo, p.descripcion, av.matricula
 					");
 			$response['vuelos_info'] = $res_q2->result();
 			
