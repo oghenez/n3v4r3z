@@ -627,5 +627,46 @@ class facturacion_model extends privilegios_model{
 		return FALSE;
 	}
 	
+	public function getFacturasReporteMensual() {
+		$sql = $this->db->query("SELECT rfc, serie, folio, no_aprobacion, EXTRACT(YEAR from fecha) as anio, fecha, total, importe_iva, status
+									FROM facturacion
+									WHERE EXTRACT(YEAR from fecha) = '{$this->input->post('fano')}' AND EXTRACT(MONTH from fecha) = '{$this->input->post('fmes')}'
+									ORDER BY fecha ASC
+								");
+		
+		$str_data = "";
+		if($sql->num_rows() > 0){
+			$res = $sql->result();
+			foreach( $res as $f){
+				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".substr($f->fecha,0,19)."|".$f->total."|".$f->importe_iva."|".(($f->status == "pa")?"0":"1")."|I||||\n";
+			}
+		}
+		
+		return $str_data;
+	}
 	
+	public function getPdfReporteMensual() {
+		$_POST['fano'] = $_GET['fano'];
+		$_POST['fmes'] = $_GET['fmes'];
+		$string = $this->getFacturasReporteMensual();
+		
+		$this->load->library('mypdf');
+		// Creación del objeto de la clase heredada
+		$pdf = new MYpdf('P', 'mm', 'Letter');
+		$pdf->show_head = true;
+		$pdf->titulo2 = 'Reporte Mensual';
+		$pdf->titulo3 = String::mes($_POST['fmes'])." del {$_POST['fano']}\n";
+		//$pdf->titulo3 .=  $nombre_producto;
+		$pdf->AliasNbPages();
+		$pdf->AddPage();
+		
+		$pdf->SetXY(5, 30);
+		$pdf->SetFont('Arial','',9);
+		$pdf->SetAligns(array('L'));
+		$pdf->SetWidths(array(205));
+		$pdf->Row(array($string), false, false);
+			
+		
+		$pdf->Output('Reporte_Mensual_'.$_POST['fano'].$_POST['fmes'].'.pdf', 'I');
+	}
 }

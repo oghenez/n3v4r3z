@@ -11,7 +11,7 @@ class facturacion extends MY_Controller {
          * @var unknown_type
          */
         private $excepcion_privilegio = array('facturacion/ajax_get_total_tickets/','facturacion/ajax_get_folio/','facturacion/ajax_agrega_factura/','facturacion/imprimir_pdf/',
-                                                                                        'facturacion/ajax_actualiza_digitos/');
+                                              'facturacion/ajax_actualiza_digitos/','facturacion/pdf_rm/','facturacion/descargar_rm/');
         
         public function _remap($method){
                 $this->carabiner->css(array(
@@ -104,7 +104,7 @@ class facturacion extends MY_Controller {
                 $params['no_certificado'] = $this->cfd->obtenNoCertificado();
                 
                 if(isset($_GET['msg']{0}))
-                                $params['frm_errors'] = $this->showMsgs($_GET['msg']);
+                	$params['frm_errors'] = $this->showMsgs($_GET['msg']);
         
                 $this->load->view('panel/header',$params);
                 $this->load->view('panel/general/menu',$params);
@@ -163,7 +163,7 @@ class facturacion extends MY_Controller {
                                         $params['frm_errors'] = $this->showMsgs('7');
                                         $params['load'] = true;
                                 }else $params['frm_errors']= $this->showMsgs(2, $res['msg']);
-                        }       
+                        }
                         $res_q= $this->db->select('serie,folio')->from('facturacion')->where('id_factura',$_GET['id'])->get()->result();
                         $params['serie'] = $res_q[0]->serie;
                         $params['folio'] = $res_q[0]->folio;
@@ -173,6 +173,72 @@ class facturacion extends MY_Controller {
                         $this->load->view('panel/facturacion/pago_factura',$params);
                 }else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
         }       
+        
+        private function reporte_mensual() {            
+        	$this->carabiner->css(array(
+        			array('general/forms.css', 'screen'),
+        			array('general/tables.css', 'screen'),
+        	));
+        	
+        	$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+            $params['seo'] = array('titulo' => 'Ver Factura');
+            $params['opcmenu_active'] = 'Facturas'; //activa la opcion del menu
+            
+            $this->load->library('form_validation');
+            $this->load->library('cfd');
+            $this->load->model('facturacion_model');
+            
+            if(isset($_POST['freporte'])) {
+            	$res_gen = $this->cfd->generaReporte($_POST['fano'],$_POST['fmes'],$_POST['str_facturas']);
+            	if($res_gen['tipo']==0)
+            		$params['frm_errors'] = $this->showMsgs(9);
+            }
+            
+            $rules = array(array(
+            				'field' => 'fano',
+            				'label' => 'Año', 
+            				'rules' => 'required|max_length[4]|callback_isValidYear'));
+            
+            $this->form_validation->set_rules($rules);
+            $params['status'] = 'STATUS: SIN RESULTADOS';
+            
+             if($this->form_validation->run() == FALSE){
+             	$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+             }
+             else{ 	
+             	$existe_r = $this->cfd->existeReporte($_POST['fano'],$_POST['fmes']);
+             	$res = $this->facturacion_model->getFacturasReporteMensual();
+             	
+             	if($existe_r || $res!=''){
+             		$params['s_generar'] = true;
+             		$params['status'] = ($existe_r)?'STATUS: GENERADO':'STATUS: PENDIENTE';
+             		
+             		if($existe_r){
+             			$params['s_descargar'] = true;
+             		}
+             	}
+             	$params['cadena'] = $res;
+             }
+             
+            $params['seo']['titulo'] = 'Reporte Mensual';
+            if(isset($_GET['msg']{0}))
+            	$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+            
+            $this->load->view('panel/header',$params);
+            $this->load->view('panel/general/menu', $params);
+            $this->load->view('panel/facturacion/reporte_mensual',$params);
+            $this->load->view('panel/footer');
+        }
+        
+        private function descargar_rm(){
+        	$this->load->library('cfd');
+        	$this->cfd->descargaReporte($_GET['fano'],$_GET['fmes']);
+        }
+        
+        private function pdf_rm() {
+        	$this->load->model('facturacion_model');
+        	$this->facturacion_model->getPdfReporteMensual();
+        }
         
         public function configAddPago(){
                 $this->load->library('form_validation');
@@ -594,6 +660,10 @@ class facturacion extends MY_Controller {
                                 break;
                         case 8:
                                 $txt = 'La Factura y los archivos fueron actualizados correctamente.';
+                                $icono = 'ok';
+                                break;
+                         case 9:
+                                $txt = 'El Reporte se genero correctamente';
                                 $icono = 'ok';
                                 break;
                 }

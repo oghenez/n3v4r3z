@@ -74,11 +74,11 @@ class cfd{
 		$this->generarPDF($data,array('F'),true);
 	}
 	/********** REPORTE MENSUAL ************/
-	public function descargaReporte($anio, $mes, $rfc){
+	public function descargaReporte($anio, $mes){
 		if($this->existeReporte($anio, $mes)){
-			$path = APPPATH.'media/cfd/reportesMensuales/'.$anio.'/1'.$rfc.$mes.$anio.'.txt';
+			$path = APPPATH.'media/cfd/reportesMensuales/'.$anio.'/1'.$this->rfc.$mes.$anio.'.txt';
 			header('Content-type: text/plain');
-			header('Content-Disposition: attachment; filename="1'.$rfc.$mes.$anio.'.txt"');
+			header('Content-Disposition: attachment; filename="1'.$this->rfc.$mes.$anio.'.txt"');
 			readfile($path);		
 		}
 	}
@@ -95,7 +95,7 @@ class cfd{
 		$fp = fopen($path, 'w');
 		fwrite($fp, $reporte);
 		fclose($fp);
-		$this->descargaReporte($anio, $mes, $this->rfc);
+// 		$this->descargaReporte($anio, $mes);
 		return array('tipo' => 0, 'mensaje' => 'El reporte se genero correctamente.');;
 	}
 	
