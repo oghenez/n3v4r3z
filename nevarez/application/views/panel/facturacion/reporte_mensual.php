@@ -2,7 +2,7 @@
 
 	<form action="<?php echo base_url('panel/facturacion/reporte_mensual/'); ?>" method="post" class="frmfiltros corner-all8 btn-gray">
 		<label for="fano">Año</label> 
-		<input type="text" name="fano" id="fano" class="a-c" value="<?php echo set_value('fano'); ?>" size="15" maxlength="10">
+		<input type="text" name="fano" id="fano" class="a-c" value="<?php echo (isset($_POST['fano']))?set_value('fano'):date('Y'); ?>" size="15" maxlength="10">
 			
 		<label for="fmes">Mes</label>
 		<select name="fmes" id="fmes" class="a-c">

@@ -638,7 +638,7 @@ class facturacion_model extends privilegios_model{
 		if($sql->num_rows() > 0){
 			$res = $sql->result();
 			foreach( $res as $f){
-				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".substr($f->fecha,0,19)."|".$f->total."|".$f->importe_iva."|".(($f->status == "pa")?"0":"1")."|I||||\n";
+				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".substr($f->fecha,0,19)."|".$f->total."|".$f->importe_iva."|".(($f->status == "ca")?"1":"0")."|I||||\n";
 			}
 		}
 		
@@ -648,8 +648,14 @@ class facturacion_model extends privilegios_model{
 	public function getPdfReporteMensual() {
 		$_POST['fano'] = $_GET['fano'];
 		$_POST['fmes'] = $_GET['fmes'];
-		$string = $this->getFacturasReporteMensual();
-		
+		// $string = $this->getFacturasReporteMensual();
+
+		$sql = $this->db->query("SELECT rfc, serie, folio, no_aprobacion, EXTRACT(YEAR from fecha) as anio, fecha, total, importe_iva, status
+									FROM facturacion
+									WHERE EXTRACT(YEAR from fecha) = '{$this->input->post('fano')}' AND EXTRACT(MONTH from fecha) = '{$this->input->post('fmes')}'
+									ORDER BY fecha ASC
+								");
+
 		$this->load->library('mypdf');
 		// Creación del objeto de la clase heredada
 		$pdf = new MYpdf('P', 'mm', 'Letter');
@@ -659,12 +665,46 @@ class facturacion_model extends privilegios_model{
 		//$pdf->titulo3 .=  $nombre_producto;
 		$pdf->AliasNbPages();
 		$pdf->AddPage();
+
+		// $links = array('', '', '', '');
+		$pdf->SetY(30);
+		$aligns = array('C', 'C', 'C', 'C','C', 'C', 'C', 'C', 'C');
+		$widths = array(25, 10, 15, 20, 24, 35, 30, 30, 18);
+		$header = array('Rfc', 'Serie', 'Folio', 'Año', 'No Aprobación', 'Fecha', 'Total', 'IVA', 'Estado',);
+	
+		foreach($sql->result() as $key => $item){
+			$band_head = false;
+			if($pdf->GetY() >= 200 || $key==0){ //salta de pagina si exede el max
+				if($key > 0)
+					$pdf->AddPage();
+					
+				$pdf->SetFont('Arial','B',8);
+				$pdf->SetTextColor(255,255,255);
+				$pdf->SetFillColor(140,140,140);
+				$pdf->SetX(5);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths);
+				$pdf->Row($header, true);
+			}
+				
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetTextColor(0,0,0);
+				
+			$datos = array($item->rfc, $item->serie, $item->folio, $item->anio, $item->no_aprobacion,
+							$item->fecha, String::formatoNumero($item->total),String::formatoNumero($item->importe_iva), ($item->status=='ca')?'Cancelada':'Pagada');
+				
+			$pdf->SetX(5);
+			$pdf->SetAligns($aligns);
+			$pdf->SetWidths($widths);
+			$pdf->Row($datos, false);
+		}
 		
-		$pdf->SetXY(5, 30);
-		$pdf->SetFont('Arial','',9);
-		$pdf->SetAligns(array('L'));
-		$pdf->SetWidths(array(205));
-		$pdf->Row(array($string), false, false);
+		
+		// $pdf->SetXY(5, 30);
+		// $pdf->SetFont('Arial','',9);
+		// $pdf->SetAligns(array('L'));
+		// $pdf->SetWidths(array(205));
+		// $pdf->Row(array($string), false, false);
 			
 		
 		$pdf->Output('Reporte_Mensual_'.$_POST['fano'].$_POST['fmes'].'.pdf', 'I');
