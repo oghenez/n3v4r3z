@@ -10,16 +10,17 @@ class empleados_model extends privilegios_model{
 	/**
 	 * Obtiene el listado de empleados
 	 */
-	public function getEmpleados(){
+	public function getEmpleados($paginados = true){
 		$sql = '';
 		//paginacion
-		$params = array(
-				'result_items_per_page' => '30',
-				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
-		);
-		if($params['result_page'] % $params['result_items_per_page'] == 0)
-			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
-		
+		if($paginados){
+			$params = array(
+					'result_items_per_page' => '30',
+					'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
+			);
+			if($params['result_page'] % $params['result_items_per_page'] == 0)
+				$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
+		}
 		//Filtros para buscar
 		if($this->input->get('fnombre') != '')
 			$sql = "WHERE lower((apellido_paterno || ' ' || apellido_materno || ' ' || nombre)) 
@@ -125,8 +126,10 @@ class empleados_model extends privilegios_model{
 			'fecha_nacimiento' => ($this->input->post('dfecha_nacimiento')!=''? $this->input->post('dfecha_nacimiento'): NULL),
 			'fecha_entrada' => ($this->input->post('dfecha_entrada')==''? date("Y-m-d"): $this->input->post('dfecha_entrada')),
 			'fecha_salida' => ($this->input->post('dfecha_salida')!=''? $this->input->post('dfecha_salida'): NULL),
-			'folio_inicio' => $this->input->post('dfolio_inicio'),
-			'folio_fin' => $this->input->post('dfolio_fin'),
+			// 'folio_inicio' => $this->input->post('dfolio_inicio'),
+			// 'folio_fin' => $this->input->post('dfolio_fin'),
+			'salario' => $this->input->post('dsalario'),
+			'hora_entrada' => $this->input->post('dhora_entrada'),
 			'tipo_usuario' => $this->input->post('dtipo_usuario'),
 			'status' => $this->input->post('dstatus')
 		);
@@ -187,8 +190,10 @@ class empleados_model extends privilegios_model{
 				'fecha_nacimiento' => ($this->input->post('dfecha_nacimiento')!=''? $this->input->post('dfecha_nacimiento'): NULL),
 				'fecha_entrada' => ($this->input->post('dfecha_entrada')==''? date("Y-m-d"): $this->input->post('dfecha_entrada')),
 				'fecha_salida' => ($this->input->post('dfecha_salida')!=''? $this->input->post('dfecha_salida'): NULL),
-				'folio_inicio' => $this->input->post('dfolio_inicio'),
-				'folio_fin' => $this->input->post('dfolio_fin'),
+				// 'folio_inicio' => $this->input->post('dfolio_inicio'),
+				// 'folio_fin' => $this->input->post('dfolio_fin'),
+				'salario' => $this->input->post('dsalario'),
+				'hora_entrada' => $this->input->post('dhora_entrada'),
 				'tipo_usuario' => $this->input->post('dtipo_usuario'),
 				'status' => $this->input->post('dstatus')
 			);

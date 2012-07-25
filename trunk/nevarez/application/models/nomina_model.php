@@ -382,25 +382,24 @@ class nomina_model extends privilegios_model{
 	
 	public function get_info_abonos($id_piloto=null){
 		$id_piloto = ($id_piloto==null) ? $this->input->get('id') : $id_piloto;
-		$res =	$this->db->query("
-				SELECT p.id_proveedor, p.nombre, 
-						SUM(v.costo_piloto) as total_costo_piloto, 
-						SUM(v.iva_piloto) as total_iva_piloto,
-						SUM(v.costo_piloto)+SUM(v.iva_piloto) as total, 
-						COALESCE(ta.total_abonos,0) as abonado,
-						(SUM(v.costo_piloto)+SUM(v.iva_piloto))-COALESCE(ta.total_abonos,0) as restante
-				FROM proveedores as p
-				INNER JOIN vuelos as v ON p.id_proveedor=v.id_piloto
-				LEFT JOIN (
-						SELECT COALESCE(SUM(pa.total),0) as total_abonos, pa.id_proveedor 
-						FROM proveedores_abonos as pa WHERE pa.tipo='ab' 
-						GROUP BY pa.id_proveedor
-					) as ta ON ta.id_proveedor=p.id_proveedor
-				WHERE p.tipo='pi' AND p.id_proveedor='$id_piloto'
-				GROUP BY p.id_proveedor, p.nombre, total_abonos
-				ORDER BY p.nombre ASC");
-	
-		if($res->num_rows==0){
+		$res =	$this->db->query("SELECT p.id_proveedor, p.nombre, 
+															SUM(v.costo_piloto) as total_costo_piloto, 
+															SUM(v.iva_piloto) as total_iva_piloto,
+															SUM(v.costo_piloto)+SUM(v.iva_piloto) as total, 
+															COALESCE(ta.total_abonos,0) as abonado,
+															(SUM(v.costo_piloto)+SUM(v.iva_piloto))-COALESCE(ta.total_abonos,0) as restante
+													FROM proveedores as p
+													INNER JOIN vuelos as v ON p.id_proveedor=v.id_piloto
+													LEFT JOIN (
+															SELECT COALESCE(SUM(pa.total),0) as total_abonos, pa.id_proveedor 
+															FROM proveedores_abonos as pa WHERE pa.tipo='ab' 
+															GROUP BY pa.id_proveedor
+														) as ta ON ta.id_proveedor=p.id_proveedor
+													WHERE p.tipo='pi' AND p.id_proveedor='$id_piloto'
+													GROUP BY p.id_proveedor, p.nombre, total_abonos
+													ORDER BY p.nombre ASC");
+
+	if($res->num_rows==0){
 			$res =	$this->db->select('(0) as abonado, SUM(v.costo_piloto)+SUM(v.iva_piloto) as total, SUM(v.costo_piloto)+SUM(v.iva_piloto) as restante')
 			->from("vuelos as v")
 			->where(array("v.id_piloto"=>$id_piloto))
@@ -413,5 +412,66 @@ class nomina_model extends privilegios_model{
 		$this->db->delete("proveedores_abonos",array('id_abono'=>$this->input->get("ida")));
 		return array(true);
 	}
+
+	public function getEmpleadosNomina()
+	{
+		$historial = TRUE;
+		$sql = $this->db->query("SELECT en.id_empleado, en.anio, en.semana, en.fecha_inicio, en.fecha_fin, en.fecha, en.dias_trabajados, en.salario_diario, en.sueldo_semanal, 
+																		en.premio_puntualidad, en.premio_eficiencia, en.vacaciones, en.aguinaldo, en.total_pagar, e.nombre, e.apellido_paterno, e.apellido_materno,
+																		e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
+														FROM empleados_nomina as en
+														INNER JOIN empleados as e ON e.id_empleado=en.id_empleado
+														WHERE en.anio = {$_POST['fanio']} AND en.semana = {$_POST['fsemana']}
+														ORDER BY (e.apellido_paterno, e.apellido_materno, e.nombre) ASC");
+
+		if ($sql->num_rows == 0) {
+			$historial = FALSE;
+			$sql = $this->db->query("SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario,
+															SUM(en.dias_trabajados) as dias_aguinaldo
+														FROM empleados as e
+														INNER JOIN empleados_nomina as en ON e.id_empleado=en.id_empleado
+														WHERE status='contratado'
+														GROUP BY e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
+														ORDER BY (apellido_paterno, apellido_materno, nombre) ASC");
+			// AND date(now())>=fecha_entrada AND date(now())<=COALESCE(fecha_salida,date(now()))
+
+			foreach ($sql->result() as $emp) {
+				$emp->dias_aguinaldo = (intval($emp->dias_aguinaldo) > 343)?343:intval($emp->dias_aguinaldo);
+				$total = (($emp->dias_aguinaldo * 15) / 343) * $emp->salario;
+				$emp->aguinaldo = floatval(round($total,2));
+			}
+		}
+		return array('empleados' => $sql->result(), 'historial' => $historial);
+	}
 	
+	public function addNominaEmpleado()
+	{
+		$data = array();
+		foreach ($_POST['fids'] as $key => $ids) {
+			$data[] = array('id_empleado' 	=> $ids,
+											'anio' 					=> $_POST['fanio'], 
+											'semana'			 	=> $_POST['fsemana'],
+											'dias_trabajados' => $_POST['fdias_trabajados'][$key], 
+											'salario_diario' 	=> floatval($_POST['fsalario_diario'][$key]), 
+											'sueldo_semanal' 	=> floatval($_POST['fsueldo_semanal'][$key]), 
+											'premio_puntualidad' => floatval($_POST['fpremio_puntualidad'][$key]), 
+											'premio_eficiencia'	 => floatval($_POST['fpremio_eficiencia'][$key]), 
+											'vacaciones' 	=> floatval($_POST['fvacaciones'][$key]), 
+											'aguinaldo'	 	=> floatval($_POST['faguinaldo'][$key]), 
+											'total_pagar' => floatval($_POST['ftotal_pagar'][$key])
+				);
+
+				if ($_POST['ffecha_inicio'][$key]!='') {
+					$data[$key]['fecha_inicio'] = $_POST['ffecha_inicio'][$key].' '.date('H:m:s');
+				}
+
+				if ($_POST['ffecha_fin'][$key]!='') {
+					$data[$key]['fecha_fin'] = $_POST['ffecha_fin'][$key].' '.date('H:m:s');
+				}
+
+		}
+		$this->db->insert_batch('empleados_nomina',$data);
+		return array(TRUE);
+	}
+
 }?>

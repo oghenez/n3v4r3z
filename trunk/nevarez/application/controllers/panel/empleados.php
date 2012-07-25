@@ -77,7 +77,9 @@ class empleados extends MY_Controller {
 			array('general/tables.css', 'screen')
 		));
 		$this->carabiner->js(array(
-			array('empleados/frm_addmod.js')
+			array('empleados/frm_addmod.js'),
+			array('libs/jquery.numeric.js'),
+			array('libs/jquery-ui-timepicker-addon.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -119,7 +121,9 @@ class empleados extends MY_Controller {
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
 			array('general/msgbox.js'),
-			array('empleados/frm_addmod.js')
+			array('empleados/frm_addmod.js'),
+			array('libs/jquery.numeric.js'),
+			array('libs/jquery-ui-timepicker-addon.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -305,12 +309,12 @@ class empleados extends MY_Controller {
 			array('field'	=> 'dfecha_salida',
 					'label'		=> 'Fecha salida',
 					'rules'		=> 'max_length[10]|callback_isValidDate'),
-			array('field'	=> 'dfolio_inicio',
-					'label'		=> 'Folio inicio',
-					'rules'		=> 'max_length[8]'),
-			array('field'	=> 'dfolio_fin',
-					'label'		=> 'Folio fin',
-					'rules'		=> 'max_length[8]'),
+			// array('field'	=> 'dfolio_inicio',
+			// 		'label'		=> 'Folio inicio',
+			// 		'rules'		=> 'max_length[8]'),
+			// array('field'	=> 'dfolio_fin',
+			// 		'label'		=> 'Folio fin',
+			// 		'rules'		=> 'max_length[8]'),
 			array('field'	=> 'dtipo_usuario',
 					'label'		=> 'Tipo usuario',
 					'rules'		=> 'max_length[16]'),
@@ -319,7 +323,13 @@ class empleados extends MY_Controller {
 					'rules'		=> 'max_length[15]'),
 			array('field'	=> 'dprivilegios[]',
 					'label'		=> 'Privilegios',
-					'rules'		=> 'max_length[25]')
+					'rules'		=> 'max_length[25]'),
+			array('field'	=> 'dsalario',
+					'label'		=> 'Salario Diario',
+					'rules'		=> 'callback_isPositivo'),
+			array('field'	=> 'dhora_entrada',
+					'label'		=> 'Hora de Entrada',
+					'rules'		=> '')
 		);
 		
 		if($tipo == 'add'){
@@ -379,6 +389,15 @@ class empleados extends MY_Controller {
 		return true;
 	}
 	
+	public function isPositivo($str)
+	{
+		if(floatval($str)<0) {
+			$this->form_validation->set_message('isPositivo', 'El campo %s no puede ser negativo');
+			return false;	
+		}
+		return true;
+	}
+
 	/**
 	 * Muestra mensajes cuando se realiza alguna accion
 	 * @param unknown_type $tipo
