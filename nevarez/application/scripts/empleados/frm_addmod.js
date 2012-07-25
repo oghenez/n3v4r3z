@@ -42,6 +42,8 @@ $(function(){
 			$("input:checkbox", elemento_padre).attr("checked", ($(this).attr("checked")? true: false));
 		}
 	});
+
+	$('#dhora_entrada').timepicker({});
 });
 
 

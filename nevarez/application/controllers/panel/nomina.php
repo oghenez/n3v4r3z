@@ -189,6 +189,107 @@ class nomina extends MY_Controller {
 		$this->form_validation->set_rules($rules);
 	}
 	
+
+	public function empleados()
+	{
+		$this->carabiner->css(array(
+			array('libs/jquery.msgbox.css', 'screen'),
+			array('libs/jquery.superbox.css', 'screen'),
+			array('general/tables.css', 'screen'),
+			array('general/forms.css', 'screen'),
+			array('nomina/forms.css', 'screen')
+		));
+		$this->carabiner->js(array(
+			array('libs/jquery.msgbox.min.js'),
+			array('libs/jquery.superbox.js'),
+			array('general/util.js'),
+			array('general/msgbox.js'),
+			array('libs/jquery.numeric.js'),
+			array('nomina/empleados/admin.js')
+		));
+		
+		$this->load->model('nomina_model');
+		$this->load->library('Form_validation');
+		
+		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
+		$params['opcmenu_active'] = 'Recursos Humanos'; //activa la opcion del menu
+		$params['seo'] = array(
+			'titulo' => 'Nomina Empleados'
+		);
+
+		$this->confAddNominaEmpleado();
+		if ($this->form_validation->run() == FALSE) {
+			$params['frm_errors']	= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+		}
+		else {
+			if (isset($_POST['guardar'])) {
+				$res = $this->nomina_model->addNominaEmpleado();
+				if ($res[0]) {
+					redirect(base_url('panel/nomina/empleados/?msg=6'));
+				}
+			}
+		}
+
+		if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
+		if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+		$params['semanas'] = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+
+		$params['lista'] = $this->nomina_model->getEmpleadosNomina();
+
+		if(isset($_GET['msg']{0}))
+			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
+		
+		$this->load->view('panel/header', $params);
+		$this->load->view('panel/general/menu', $params);
+		$this->load->view('panel/nomina/empleados/nomina', $params);
+		$this->load->view('panel/footer');
+	}
+
+	private function confAddNominaEmpleado()
+	{
+		$rules = array(
+								array('field'   => 'fanio',
+											'label'   => 'Año',
+											'rules'   => 'required|max_length[4]'),
+								array('field'   => 'fsemana',
+											'label'   => 'Semana',
+											'rules'   => 'required|is_natural_no_zero'),
+								array('field'   => 'fids[]',
+											'label'   => 'ids',
+											'rules'   => 'required'),
+								array('field'   => 'ffecha_inicio[]',
+											'label'   => 'Fecha Inicio',
+											'rules'   => 'required'),
+								array('field'   => 'ffecha_fin[]',
+											'label'   => 'Fecha Fin',
+											'rules'   => ''),
+								array('field'   => 'fsalario_diario[]',
+											'label'   => 'Salario',
+											'rules'   => 'required'),
+								array('field'   => 'fsueldo_semanal[]',
+											'label'   => 'Suelo Semanal',
+											'rules'   => 'required'),
+								array('field'   => 'fpremio_puntualidad[]',
+											'label'   => 'Premio Puntualidad',
+											'rules'   => 'required'),
+								array('field'   => 'fpremio_eficiencia[]',
+											'label'   => 'Premio eficiencia',
+											'rules'   => 'required'),
+								array('field'   => 'fvacaciones[]',
+											'label'   => 'Vacaciones',
+											'rules'   => 'required'),
+								array('field'   => 'faguinaldo[]',
+											'label'   => 'Aguinaldo',
+											'rules'   => 'required'),
+								array('field'   => 'ftotal_pagar[]',
+											'label'   => 'Total Pagar',
+											'rules'   => 'required'),
+								);
+
+		$this->form_validation->set_rules($rules);
+	}
+
+
 	public function verifica_abono($str) {
 		$res = $this->nomina_model->get_info_abonos();
 		$abono = floatval($str);
@@ -245,6 +346,10 @@ class nomina extends MY_Controller {
 				break;
 			case 5:
 				$txt = 'El Abono se elimino correctamente.';
+				$icono = 'ok';
+				break;
+			case 6:
+				$txt = 'La Nomina de Empleado se agrego correctamente.';
 				$icono = 'ok';
 				break;
 		}

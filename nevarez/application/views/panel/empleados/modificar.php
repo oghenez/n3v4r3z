@@ -116,14 +116,14 @@
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
-						<label for="dfolio_inicio">Folio inicio:</label> <br>
-						<input type="text" name="dfolio_inicio" id="dfolio_inicio" 
-							value="<?php echo (isset($empleado['info']->folio_inicio)? $empleado['info']->folio_inicio: ''); ?>" size="30">
+						<label for="dsalario">Salario Diario:</label> <br>
+						<input type="text" name="dsalario" id="dsalario" 
+							value="<?php echo (isset($empleado['info']->salario)? $empleado['info']->salario: ''); ?>" size="30" class="">
 					</p>
 					<p class="w50 f-l">
-						<label for="dfolio_fin">Folio fin:</label> <br>
-						<input type="text" name="dfolio_fin" id="dfolio_fin" 
-							value="<?php echo (isset($empleado['info']->folio_fin)? $empleado['info']->folio_fin: ''); ?>" size="30">
+						<label for="dhora_entrada">Hora de Entrada:</label> <br>
+						<input type="text" name="dhora_entrada" id="dhora_entrada" 
+							value="<?php echo (isset($empleado['info']->hora_entrada)? $empleado['info']->hora_entrada: ''); ?>" size="30">
 					</p>
 					<div class="clear"></div>
 				</div>

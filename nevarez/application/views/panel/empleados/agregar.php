@@ -100,12 +100,12 @@
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
-						<label for="dfolio_inicio">Folio inicio:</label> <br>
-						<input type="text" name="dfolio_inicio" id="dfolio_inicio" value="<?php echo set_value('dfolio_inicio'); ?>" size="30">
+						<label for="dsalario">Salario Diario:</label> <br>
+						<input type="text" name="dsalario" id="dsalario" value="<?php echo set_value('dsalario'); ?>" size="30" class="vpositive">
 					</p>
 					<p class="w50 f-l">
-						<label for="dfolio_fin">Folio fin:</label> <br>
-						<input type="text" name="dfolio_fin" id="dfolio_fin" value="<?php echo set_value('dfolio_fin'); ?>" size="30">
+						<label for="dhora_entrada">Hora de Entrada:</label> <br>
+						<input type="text" name="dhora_entrada" id="dhora_entrada" value="<?php echo set_value('dhora_entrada'); ?>" size="30">
 					</p>
 					<div class="clear"></div>
 				</div>

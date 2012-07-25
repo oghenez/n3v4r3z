@@ -379,6 +379,92 @@ class String{
 			return self::fechaATexto($timestamp[0], $formato) . $conjuncion;
 		}
 	}
+
+	/**
+	 * obtenerSemanasDelAnio()
+	 *
+	 * Devuelve las semanas de un año
+	 *
+	 * @param   string anio
+	 * @param   string todas (si regresara todas las semana)
+	 * @param  string mes (mes del que obtendra las semanas)
+	 * @param  string dias_defasados
+	 * @return array()
+	 */
+	public static function obtenerSemanasDelAnio($anio=0,$todas=false,$mes=0,$dias_defasados=false){
+		$data = array();
+		if(intval($anio)<=0 && $dias_defasados==false) 
+			$anio = date('Y');
+	
+		$data[0] = self::obtenerPrimeraSemanaDelAnio($anio,$dias_defasados);
+			
+		$pos = 0;
+		while(
+				(
+						(($todas==false && strtotime($data[$pos]['fecha_final'])<strtotime(date('Y-m-d'))) && (strtotime($data[$pos]['fecha_inicio'])<=strtotime($anio."-12-31")))
+						||
+						($todas==true && (strtotime($data[$pos]['fecha_inicio'])<strtotime($anio."-12-31")))
+				)
+				&&
+				($pos+1<52)
+		){
+			++$pos;
+			$data[$pos]['fecha_inicio'] = self::suma_fechas($data[$pos-1]['fecha_inicio'],7);
+			$data[$pos]['fecha_final'] = self::suma_fechas($data[$pos]['fecha_inicio'],6);
+			$data[$pos]['anio'] = intval($data[$pos-1]['anio']);
+			$data[$pos]['semana'] = $pos + 1;
+		}
+		if($mes<=0)
+			return $data;
+		else{
+			$dataAux = array();
+			foreach($data as $key => $item){
+				$vec = explode('-', $item['fecha_inicio']);
+				if(intval($vec[1])==$mes)
+					$dataAux[] = $item;
+			}
+			return $dataAux;
+		}
+	}
+	public static function obtenerPrimeraSemanaDelAnio($anio = 0, $dias_defasados=false){
+		if(intval($anio)==0 && $dias_defasados==false)
+			$anio = date('Y');
+			
+		$data = array();
+		if($dias_defasados==false){
+			$dia = 1;
+			while(count($data)==0){
+				$diaSemana = -1;
+				$diaSemana = self::obtenerDiaSemana($anio."-01-0".$dia);
+				if(($dias_defasados==false && $diaSemana==0) || ($dias_defasados==true && $diaSemana==5)){//0=lunes   6=domingo
+					$data['fecha_inicio'] = $anio."-01-0".$dia;
+					$data['fecha_final'] = self::suma_fechas($data['fecha_inicio'],6);
+					$data['semana'] = 1;
+					$data['anio'] = $anio;
+				}
+				++$dia;
+			}
+		}
+	
+		return $data;
+	}
+	public static function obtenerDiaSemana($fecha){
+		$fecha=str_replace("/","-",$fecha);
+		list($anio,$mes,$dia)=explode("-",$fecha);
+		return (((mktime ( 0, 0, 0, $mes, $dia, $anio) - mktime ( 0, 0, 0, 7, 17, 2006))/(60*60*24))+700000) % 7;
+	}
+
+	public static function obtenerSemanaActual($fecha){
+		$fecha=str_replace("/","-",$fecha);
+		list($anio,$mes,$dia)=explode("-",$fecha);
+		$semanas = self::obtenerSemanasDelAnio($anio, false, $mes);
+
+		foreach ($semanas as $sem) {
+			if (strtotime($fecha) >= strtotime($sem['fecha_inicio']) && strtotime($fecha) <= strtotime($sem['fecha_final'])) 
+				return $sem['semana'];
+		}
+		return false;
+	}
 }
 
 
