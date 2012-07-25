@@ -82,8 +82,6 @@
 						</select>
 					</td>
 					<td>
-							<!-- <input type="hidden" name="fanio" value="<?php //echo $this->input->get("fanio") ?>" />
-							<input type="hidden" name="fsemana" value="<?php //echo $this->input->get("fsemana") ?>" /> -->
 							<input type="hidden" name="fids[]" value="<?php echo $emp->id_empleado ?>" id="fids" />
 							<input type="hidden" name="ffecha_inicio[]" value="<?php echo $emp->fecha_entrada ?>" id="ffecha_inicio" />
 							<input type="hidden" name="ffecha_fin[]" value="<?php echo $emp->fecha_salida ?>" id="ffecha_fin" />
