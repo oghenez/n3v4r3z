@@ -17,12 +17,12 @@
 </head>
 <body>
 <div>
-	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
-	<form action="<?= base_url('panel/nomina/abono_piloto/?'.String::getVarsLink(array('msg')));?>" method="post">
+	<div class="titulo ajus w100 am-c"><?php echo  $seo['titulo']; ?></div>
+	<form action="<?php echo  base_url('panel/nomina/abono_piloto/?'.String::getVarsLink(array('msg')));?>" method="post">
 		<div class="frmsec-left w90 f-l">
 			<p class="f-l w30">
 				<label for="ffecha">*Fecha</label><br>
-				<input type="text" name="ffecha" id="ffecha" value="<?= set_value('ffecha')!='' ? set_value('ffecha'): date("Y-m-d") ; ?>" size="20" maxlength="40" readonly>
+				<input type="text" name="ffecha" id="ffecha" value="<?php echo  set_value('ffecha')!='' ? set_value('ffecha'): date("Y-m-d") ; ?>" size="20" maxlength="40" readonly>
 			</p>
 			<p class="f-r w70">		
 				<table class="tblListados corner-all8" style="width:40% !important;margin-right:0px;">
@@ -47,7 +47,7 @@
 			</p>
 			<p class="f-l w100">
 				<label for="fconcepto">*Concepto</label><br>
-				<textarea name="fconcepto" rows="4" cols="59" autofocus><?= set_value('fconcepto')!='' ? set_value('fconcepto') : "Abono para piloto" ; ?></textarea>
+				<textarea name="fconcepto" rows="4" cols="59" autofocus><?php echo  set_value('fconcepto')!='' ? set_value('fconcepto') : "Abono para piloto" ; ?></textarea>
 			</p>
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 		</div>

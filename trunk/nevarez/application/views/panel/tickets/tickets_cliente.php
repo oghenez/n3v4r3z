@@ -17,7 +17,7 @@
 </head>
 <body>
 <div>
-	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
+	<div class="titulo ajus w100 am-c"><?php echo  $seo['titulo']; ?></div>
 	<div class="frmsec-left w100 f-l">
 			<table class="tblListados corner-all8" id="tbl_productos">
 				<tr class="header btn-gray">
@@ -26,16 +26,15 @@
 					<td>Folio</td>
 					<td></td>
 				</tr>
-				<?php if (isset($cliente['tickets'])):
-						foreach($cliente['tickets'] as $ticket):?>
+				<?php if (isset($cliente['tickets'])){
+						foreach($cliente['tickets'] as $ticket){?>
 							<tr>
-								<td><?= $ticket->fecha?></td>
-								<td><?= $ticket->cliente?></td>
-								<td><?= $ticket->folio?></td>
-								<td><input type="checkbox" name="vuelos" value="<?= $ticket->id_ticket?>"></td>
+								<td><?php echo  $ticket->fecha?></td>
+								<td><?php echo  $ticket->cliente?></td>
+								<td><?php echo  $ticket->folio?></td>
+								<td><input type="checkbox" name="vuelos" value="<?php echo  $ticket->id_ticket?>"></td>
 							</tr>
-				<?php	 endforeach;
-					 endif;?>
+				<?php	 }}?>
 			</table>
 			<input type="button" name="enviar" value="Cargar" class="btn-blue corner-all f-r" id="CgrTickets">
 	</div>

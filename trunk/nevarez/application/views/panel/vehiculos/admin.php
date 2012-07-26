@@ -2,10 +2,10 @@
 <div id="contentAll" class="f-l">
 <div class="f-l w100">
 	
-<form action="<?= base_url('panel/vehiculo/')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
+<form action="<?php echo  base_url('panel/vehiculo/')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
 	
 	<label for="fnombre">Nombre </label>
-	<input type="text" name="fnombre" value="<?= set_value_get('fnombre')?>">
+	<input type="text" name="fnombre" value="<?php echo  set_value_get('fnombre')?>">
 
 	<input type="submit" name="enviar" value="enviar" class="btn-blue corner-all">	
 </form>

@@ -17,7 +17,7 @@
 </head>
 <body>
 <div>
-	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
+	<div class="titulo ajus w100 am-c"><?php echo  $seo['titulo']; ?></div>
 	<form action="<?php echo base_url('panel/vuelos/vuelos_piloto/'); ?>" method="get" class="frmfiltros corner-all8 btn-gray">
 		<label for="ffecha_ini">De</label> 
 		<input type="text" name="ffecha_ini" id="ffecha_ini" value="<?php echo set_value_get('ffecha_ini'); ?>" class="a-c">

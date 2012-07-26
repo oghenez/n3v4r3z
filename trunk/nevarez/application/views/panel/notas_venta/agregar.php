@@ -5,7 +5,7 @@
 				<div class="corner-all">
 					<p class="w40 f-l">
 						<label for="dfolio">Folio:</label> <br>
-						<input type="text" name="dfolio" id="dfolio" value="<?= isset($nota[0][0]->folio) ? $nota[0][0]->folio:'1';?>"readonly>
+						<input type="text" name="dfolio" id="dfolio" value="<?php echo  isset($nota[0][0]->folio) ? $nota[0][0]->folio:'1';?>"readonly>
 					</p>
 					<div class="clear"></div>
 					<p class="w100">

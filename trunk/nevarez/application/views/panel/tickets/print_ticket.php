@@ -19,7 +19,7 @@
 <div class="w100">
 	<div style="width:100%;">
 		<a href="javascript:void(0);" style="float:right;" onclick="printt()">
-			<img class="hidde" alt="Imprimir" title="Imprimir" src="<?= base_url('application/images/print.png')?>" width="16" height="16">
+			<img class="hidde" alt="Imprimir" title="Imprimir" src="<?php echo  base_url('application/images/print.png')?>" width="16" height="16">
 		</a>
 	</div>
 	<div class="clear"></div>
@@ -29,16 +29,16 @@
 	</div>
 	<br><br>
 	<div>
-		<span class="f-r">Folio:  <?= $info[1]['cliente_info'][0]->folio?></span><br>
-		<span class="f-r">Fecha:  <?= $info[1]['cliente_info'][0]->fecha?></span>
+		<span class="f-r">Folio:  <?php echo  $info[1]['cliente_info'][0]->folio?></span><br>
+		<span class="f-r">Fecha:  <?php echo  $info[1]['cliente_info'][0]->fecha?></span>
 		<div class="clear"></div>
 		<br>
 		<span class="f-b" style="font-weight:bold;">Datos Cliente</span><br>
-		<span>Nombre: <?= $info[1]['cliente_info'][0]->nombre_fiscal?></span><br>
-		<span>RFC: <?= $info[1]['cliente_info'][0]->rfc?></span><br>
-		<span><?= $info[1]['cliente_info'][0]->domicilio?></span>
+		<span>Nombre: <?php echo  $info[1]['cliente_info'][0]->nombre_fiscal?></span><br>
+		<span>RFC: <?php echo  $info[1]['cliente_info'][0]->rfc?></span><br>
+		<span><?php echo  $info[1]['cliente_info'][0]->domicilio?></span>
 		<?php if($info[1]['cliente_info'][0]->otros_clientes !== null){?>
-				<br><br><span class="f-b" style="font-weight:bold;">Otros Clientes: <?= str_replace('<br>', ', ', $info[1]['cliente_info'][0]->otros_clientes)?></span><br>
+				<br><br><span class="f-b" style="font-weight:bold;">Otros Clientes: <?php echo  str_replace('<br>', ', ', $info[1]['cliente_info'][0]->otros_clientes)?></span><br>
 		<?php }?>
 	</div>
 	<br><br>
@@ -56,11 +56,11 @@
 			<?php if(isset($info[1]['vuelos_info'])):
 					foreach ($info[1]['vuelos_info'] as $vuelo):?>
 						<tr class="a-c f-12pt" style="font-size:12pt;">
-							<td><?= $vuelo->vuelos?></td>
-							<td><?= $vuelo->nombre.(($vuelo->matricula!='') ? ' | '.$vuelo->matricula : '' )?></td>
-							<td><?= $vuelo->fecha?></td>
-							<td><?= String::formatoNumero($vuelo->precio,2)?></td>
-							<td><?= String::formatoNumero($vuelo->importe,2)?></td>
+							<td><?php echo  $vuelo->vuelos?></td>
+							<td><?php echo  $vuelo->nombre.(($vuelo->matricula!='') ? ' | '.$vuelo->matricula : '' )?></td>
+							<td><?php echo  $vuelo->fecha?></td>
+							<td><?php echo  String::formatoNumero($vuelo->precio,2)?></td>
+							<td><?php echo  String::formatoNumero($vuelo->importe,2)?></td>
 						</tr>
 			<?php endforeach;endif;?>
 		</table>
@@ -86,7 +86,7 @@
 	<br><br>
 	<div class="f-12pt" style="font-size:12pt;">
 		Debemos y Pagaré incondicionalmente a la orden de ROBERTO NEVAREZ DOMINGUEZ de este lugar de PISTA AEREA S/N, RANCHITO, MICHOACAN la Cantidad de 
-		<?= String::formatoNumero($info[1]['cliente_info'][0]->total); ?> (<?= String::num2letras($info[1]['cliente_info'][0]->total,false,true); ?>) 
+		<?php echo  String::formatoNumero($info[1]['cliente_info'][0]->total); ?> (<?php echo  String::num2letras($info[1]['cliente_info'][0]->total,false,true); ?>) 
 		, valor de la mercancía recibida a mi entera satisfacción. Este pagaré es mercantil y está regido por la Ley General de Títulos Y Operaciones de Crédito 
 		en su artículo 173 parte final y artículos correlativos por no ser pagaré domiciliado. Si no es pagado antes de su vencimiento causara un interés del ____% mensual.
 	</div>

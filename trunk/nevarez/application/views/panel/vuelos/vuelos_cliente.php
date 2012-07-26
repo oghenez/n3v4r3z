@@ -17,7 +17,7 @@
 </head>
 <body>
 <div>
-	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
+	<div class="titulo ajus w100 am-c"><?php echo  $seo['titulo']; ?></div>
 	<div class="frmsec-left w100 f-l">
 			<table class="tblListados corner-all8" id="tbl_productos">
 				<tr class="header btn-gray">
@@ -28,18 +28,17 @@
 					<td>Vuelos</td>
 					<td></td>
 				</tr>
-				<?php if (isset($cliente['vuelos'])):
-						foreach($cliente['vuelos'] as $vuelo):?>
+				<?php if (isset($cliente['vuelos'])){
+						foreach($cliente['vuelos'] as $vuelo){?>
 							<tr>
-								<td><?= $vuelo->fecha?></td>
-								<td><?= $vuelo->clientes?></td>
-								<td><?= $vuelo->matricula?></td>
-								<td><?= $vuelo->piloto?></td>
-								<td><?= $vuelo->total_vuelos?></td>
-								<td><input type="checkbox" name="vuelos" value="<?= $_GET['id'].'&'.$vuelo->id_piloto.'&'.$vuelo->id_avion.'&'.$vuelo->fecha.'&'.str_replace('<br>', '-', $vuelo->clientes).'&'.((strpos($vuelo->clientes, '<br>'))? 't' : 'f')?>"></td>
+								<td><?php echo  $vuelo->fecha?></td>
+								<td><?php echo  $vuelo->clientes?></td>
+								<td><?php echo  $vuelo->matricula?></td>
+								<td><?php echo  $vuelo->piloto?></td>
+								<td><?php echo  $vuelo->total_vuelos?></td>
+								<td><input type="checkbox" name="vuelos" value="<?php echo  $_GET['id'].'&'.$vuelo->id_piloto.'&'.$vuelo->id_avion.'&'.$vuelo->fecha.'&'.str_replace('<br>', '-', $vuelo->clientes).'&'.((strpos($vuelo->clientes, '<br>'))? 't' : 'f')?>"></td>
 							</tr>
-				<?php	 endforeach;
-					 endif;?>
+				<?php	 } }?>
 			</table>
 			<input type="button" name="enviar" value="Cargar" class="btn-blue corner-all f-r" id="CgrVuelos">
 	</div>

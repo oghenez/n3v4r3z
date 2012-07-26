@@ -1,25 +1,25 @@
 <div id="contentAll" class="f-l">
-	<form action="<?= base_url('panel/vehiculo/agregar');?>" method="post" class="frm_addmod">
+	<form action="<?php echo  base_url('panel/vehiculo/agregar');?>" method="post" class="frm_addmod">
 		<div class="frmsec-left w60 f-l">
 			<p class="f-l w50">
 				<label for="fnombre">*Nombre</label><br>
-				<input type="text" name="fnombre" id="fnombre" value="<?= set_value('fnombre') ?>" size="30" autofocus maxlength="40">
+				<input type="text" name="fnombre" id="fnombre" value="<?php echo  set_value('fnombre') ?>" size="30" autofocus maxlength="40">
 			</p>
 			<p class="f-l w50">
 				<label for="fplacas">*Placas</label><br>
-				<input type="text" name="fplacas" id="fplacas" value="<?= set_value('fplacas') ?>" size="30" maxlength="40">
+				<input type="text" name="fplacas" id="fplacas" value="<?php echo  set_value('fplacas') ?>" size="30" maxlength="40">
 			</p>
 			<p class="f-l w50">
 				<label for="fmodelo">Modelo</label><br>
-				<input type="text" name="fmodelo" id="fmodelo" value="<?= set_value('fmodelo') ?>" size="30" maxlength="10">
+				<input type="text" name="fmodelo" id="fmodelo" value="<?php echo  set_value('fmodelo') ?>" size="30" maxlength="10">
 			</p>
 			<p class="f-l w50">
 				<label for="fnumserie">Número de Serie</label><br>
-				<input type=text name="fnumserie" id="fano" value="<?= set_value('fnumserie') ?>" size="30" maxlength="20">
+				<input type=text name="fnumserie" id="fano" value="<?php echo  set_value('fnumserie') ?>" size="30" maxlength="20">
 			</p>
 			<p class="f-l w100">
 				<label for="fcolor">Color</label><br>
-				<input type="text" name="fcolor" id="fcolor" value="<?= set_value('fcolor') ?>" size="30" maxlength="10">
+				<input type="text" name="fcolor" id="fcolor" value="<?php echo  set_value('fcolor') ?>" size="30" maxlength="10">
 				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 			</p>
 		</div>
