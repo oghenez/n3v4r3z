@@ -18,26 +18,26 @@
 			<td>Fecha</td>
 			<td class="a-c">Opc</td>
 		</tr>
-<?php foreach($vuelos['vuelos'] as $vuelo): ?>
-				<tr class="row-conte" id="<?= $vuelo->id_vuelo?>">
-					<td><?= $vuelo->clientes;?></td>
-					<td><?= $vuelo->piloto; ?></td>
-					<td><?= $vuelo->matricula; ?></td>
-					<td><?= $vuelo->fecha; ?></td>
+<?php foreach($vuelos['vuelos'] as $vuelo){ ?>
+				<tr class="row-conte" id="<?php echo  $vuelo->id_vuelo?>">
+					<td><?php echo  $vuelo->clientes;?></td>
+					<td><?php echo  $vuelo->piloto; ?></td>
+					<td><?php echo  $vuelo->matricula; ?></td>
+					<td><?php echo  $vuelo->fecha; ?></td>
 					<td class="tdsmenu a-c" style="width: 90px;">
-						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
+						<img alt="opc" src="<?php echo  base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
-							<?php if($vuelo->existe=='f'):?>
+							<?php if($vuelo->existe=='f'){?>
 								<p class="corner-bottom8">
-									<?=$this->empleados_model->getLinkPrivSm('vuelos/eliminar/', $vuelo->id_vuelo, 
+									<?php echo $this->empleados_model->getLinkPrivSm('vuelos/eliminar/', $vuelo->id_vuelo, 
 											"msb.confirm('Estas seguro de eliminar el vuelo?', this); return false;");?>
 									<?php ?>
 								</p>
-							<?php endif;?>
+							<?php }?>
 						</div>
 					</td>
 				</tr>
-		<?php endforeach;?>
+		<?php }?>
 	</table>
 <?php
 //Paginacion

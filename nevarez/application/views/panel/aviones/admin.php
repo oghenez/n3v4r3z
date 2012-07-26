@@ -5,7 +5,7 @@
 <form action="<?= base_url('panel/aviones/')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
 	
 	<label for="fmatricula">Matrícula </label>
-	<input type="text" name="fmatricula" value="<?= set_value_get('fmatricula')?>">
+	<input type="text" name="fmatricula" value="<?php echo set_value_get('fmatricula')?>">
 
 	<input type="submit" name="enviar" value="enviar" class="btn-blue corner-all">	
 </form>
@@ -20,25 +20,25 @@
 			<td class="a-c">Opc</td>
 		</tr>
 
-		<?php foreach($datos_a['aviones'] as $avn): ?>
+		<?php foreach($datos_a['aviones'] as $avn){ ?>
 				<tr class="row-conte">
-					<td><?= $avn->matricula;?></td>
-					<td><?= $avn->modelo; ?></td>
-					<td><?= $avn->tipo; ?></td>
-					<td><?= $avn->fecha_vence_tarjeta; ?></td>
+					<td><?php echo $avn->matricula;?></td>
+					<td><?php echo $avn->modelo; ?></td>
+					<td><?php echo $avn->tipo; ?></td>
+					<td><?php echo $avn->fecha_vence_tarjeta; ?></td>
 					<td class="tdsmenu a-c" style="width: 90px;">
-						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
+						<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
 							<p class="corner-bottom8">
-								<?= $this->empleados_model->getLinkPrivSm('aviones/modificar/', $avn->id_avion, '', ''); ?>
-								<?=$this->empleados_model->getLinkPrivSm('aviones/eliminar/', $avn->id_avion, 
+								<?php echo $this->empleados_model->getLinkPrivSm('aviones/modificar/', $avn->id_avion, '', ''); ?>
+								<?php echo $this->empleados_model->getLinkPrivSm('aviones/eliminar/', $avn->id_avion, 
 										"msb.confirm('Estas seguro de eliminar el Avión?', this); return false;");?>
 								<?php ?>
 							</p>
 						</div>
 					</td>
 				</tr>
-		<?php endforeach;?>
+		<?php }?>
 
 </table>
 <?php

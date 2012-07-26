@@ -17,28 +17,28 @@
 </head>
 <body>
 <div>
-	<div class="titulo ajus w100 am-c"><?= $seo['titulo']; ?></div>
-	<form action="<?= base_url('panel/vehiculo/modificar/?'.String::getVarsLink(array('msg')));?>" method="post">
+	<div class="titulo ajus w100 am-c"><?php echo  $seo['titulo']; ?></div>
+	<form action="<?php echo  base_url('panel/vehiculo/modificar/?'.String::getVarsLink(array('msg')));?>" method="post">
 		<div class="frmsec-left w90 f-l">
 			<p class="f-l w50">
 				<label for="fnombre">*Nombre</label><br>
-				<input type="text" name="fnombre" id="fnombre" value="<?= (isset($vehiculo[0]->nombre)? $vehiculo[0]->nombre: ''); ?>" size="40" maxlength="40" autofocus>
+				<input type="text" name="fnombre" id="fnombre" value="<?php echo  (isset($vehiculo[0]->nombre)? $vehiculo[0]->nombre: ''); ?>" size="40" maxlength="40" autofocus>
 			</p>
 			<p class="f-l w50">
 				<label for="fplacas">*Placas</label><br>
-				<input type="text" name="fplacas" id="fplacas" value="<?= (isset($vehiculo[0]->placas)? $vehiculo[0]->placas: '') ?>" size="40" maxlength="40">
+				<input type="text" name="fplacas" id="fplacas" value="<?php echo  (isset($vehiculo[0]->placas)? $vehiculo[0]->placas: '') ?>" size="40" maxlength="40">
 			</p>
 			<p class="f-l w50">
 				<label for="fmodelo">Modelo</label><br>
-				<input type="text" name="fmodelo" id="fmodelo" value="<?= (isset($vehiculo[0]->modelo)? $vehiculo[0]->modelo: '') ?>" size="40" maxlength="10">
+				<input type="text" name="fmodelo" id="fmodelo" value="<?php echo  (isset($vehiculo[0]->modelo)? $vehiculo[0]->modelo: '') ?>" size="40" maxlength="10">
 			</p>
 			<p class="f-l w50">
 				<label for="fnumserie">Número de Serie</label><br>
-				<input type=text name="fnumserie" id="fnumserie" value="<?= (isset($vehiculo[0]->numero_serie)? $vehiculo[0]->numero_serie: '') ?>" size="40" maxlength="20">
+				<input type=text name="fnumserie" id="fnumserie" value="<?php echo  (isset($vehiculo[0]->numero_serie)? $vehiculo[0]->numero_serie: '') ?>" size="40" maxlength="20">
 			</p>
 			<p class="f-l w100">
 				<label for="fcolor">Color</label><br>
-				<input type="text" name="fcolor" id="fcolor" value="<?= (isset($vehiculo[0]->color)? $vehiculo[0]->color: '') ?>" size="40" maxlength="10">
+				<input type="text" name="fcolor" id="fcolor" value="<?php echo  (isset($vehiculo[0]->color)? $vehiculo[0]->color: '') ?>" size="40" maxlength="10">
 				<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 			</p>
 		</div>

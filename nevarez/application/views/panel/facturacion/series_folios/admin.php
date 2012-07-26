@@ -2,10 +2,10 @@
 <div id="contentAll" class="f-l">
 <div class="f-l w100">
 	
-<form action="<?= base_url('panel/facturacion/index_series_folios')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
+<form action="<?php echo base_url('panel/facturacion/index_series_folios')?>" method="GET" class="frmfiltros corner-all8 btn-gray">
 	
 	<label for="fserie">Serie</label>
-	<input type="text" name="fserie" value="<?= set_value_get('fserie')?>">
+	<input type="text" name="fserie" value="<?php echo set_value_get('fserie')?>">
 
 	<input type="submit" name="enviar" value="enviar" class="btn-blue corner-all">	
 </form>
@@ -20,22 +20,22 @@
 			<td class="a-c">Opc</td>
 		</tr>
 
-		<?php foreach($datos_s['series'] as $serie): ?>
+		<?php foreach($datos_s['series'] as $serie){ ?>
 				<tr class="row-conte">
-					<td><?= $serie->serie;?></td>
-					<td><?= $serie->no_aprobacion; ?></td>
-					<td><?= $serie->folio_inicio; ?></td>
-					<td><?= $serie->folio_fin; ?></td>
+					<td><?php echo $serie->serie;?></td>
+					<td><?php echo $serie->no_aprobacion; ?></td>
+					<td><?php echo $serie->folio_inicio; ?></td>
+					<td><?php echo $serie->folio_fin; ?></td>
 					<td class="tdsmenu a-c" style="width: 90px;">
-						<img alt="opc" src="<?= base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
+						<img alt="opc" src="<?php echo base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
 							<p class="corner-bottom8">
-								<?= $this->empleados_model->getLinkPrivSm('facturacion/modificar_serie_folio/', $serie->id_serie_folio, '', ''); ?>
+								<?php echo $this->empleados_model->getLinkPrivSm('facturacion/modificar_serie_folio/', $serie->id_serie_folio, '', ''); ?>
 							</p>
 						</div>
 					</td>
 				</tr>
-		<?php endforeach;?>
+		<?php }?>
 
 </table>
 <?php

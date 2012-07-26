@@ -1,5 +1,5 @@
 <div id="contentAll" class="f-l">
-	<form action="<?= base_url('panel/aviones/agregar');?>" method="post" class="frm_addmod">
+	<form action="<?php echo  base_url('panel/aviones/agregar');?>" method="post" class="frm_addmod">
 		<div class="frmsec-left w75 f-l">
 			<p class="f-l w50">
 				<label for="dcliente" class="f-l">*Cliente</label><br>
@@ -8,43 +8,43 @@
 			</p>
 			<p class="f-l w50">
 				<label for="frfc">*RFC</label><br>
-				<input type="text" name="frfc" id="frfc" value="<?= set_value('frfc') ?>" class="not" size="35" maxlength="13" readonly>
+				<input type="text" name="frfc" id="frfc" value="<?php echo  set_value('frfc') ?>" class="not" size="35" maxlength="13" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="fcalle">Calle</label><br>
-				<input type="text" name="fcalle" id="fcalle" value="<?= set_value('fcalle') ?>" class="not" size="45" maxlength="60" readonly >
+				<input type="text" name="fcalle" id="fcalle" value="<?php echo  set_value('fcalle') ?>" class="not" size="45" maxlength="60" readonly >
 			</p>
 			<p class="f-l w25">
 				<label for="fno_exterior">No. Ext.</label><br>
-				<input type="text" name="fno_exterior" id="fno_exterior" value="<?= set_value('fno_exterior') ?>" class="not" size="13" maxlength="7" readonly>
+				<input type="text" name="fno_exterior" id="fno_exterior" value="<?php echo  set_value('fno_exterior') ?>" class="not" size="13" maxlength="7" readonly>
 			</p>
 			<p class="f-l w25">
 				<label for=fno_interior>No. Int.</label><br>
-				<input type="text" name="fno_interior" id="fno_interior" value="<?= set_value('fno_interior') ?>" class="not" size="9" maxlength="7" readonly>
+				<input type="text" name="fno_interior" id="fno_interior" value="<?php echo  set_value('fno_interior') ?>" class="not" size="9" maxlength="7" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="fcolonia">Colonia</label><br>
-				<input type="text" name="fcolonia" id="fcolonia" value="<?= set_value('fcolonia') ?>" class="not" size="35" maxlength="60" readonly>
+				<input type="text" name="fcolonia" id="fcolonia" value="<?php echo  set_value('fcolonia') ?>" class="not" size="35" maxlength="60" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="flocalidad">Localidad</label><br>
-				<input type="text" name="flocalidad" id="flocalidad" value="<?= set_value('flocalidad') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="flocalidad" id="flocalidad" value="<?php echo  set_value('flocalidad') ?>" class="not" size="35" maxlength="45" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="fmunicipio">Municipio</label><br>
-				<input type="text" name="fmunicipio" id="fmunicipio" value="<?= set_value('fmunicipio') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="fmunicipio" id="fmunicipio" value="<?php echo  set_value('fmunicipio') ?>" class="not" size="35" maxlength="45" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="festado">Estado</label><br>
-				<input type="text" name="festado" id="festado" value="<?= set_value('festado') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="festado" id="festado" value="<?php echo  set_value('festado') ?>" class="not" size="35" maxlength="45" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="fcp">Codigo Postal</label><br>
-				<input type="text" name="fcp" id="fcp" value="<?= set_value('fcp') ?>" class="not" size="35" maxlength="10" readonly>
+				<input type="text" name="fcp" id="fcp" value="<?php echo  set_value('fcp') ?>" class="not" size="35" maxlength="10" readonly>
 			</p>
 			<p class="f-l w50">
 				<label for="fpais">País</label><br>
-				<input type="text" name="fpais" id="fpais" value="<?= set_value('fpais') ?>" class="not" size="35" maxlength="60">
+				<input type="text" name="fpais" id="fpais" value="<?php echo  set_value('fpais') ?>" class="not" size="35" maxlength="60">
 			</p>
 			<p class="f-l w50">
 				<label for="fplazo_credito">*Plazo de crédito:</label> <br>
@@ -125,9 +125,9 @@
 						<label for="dleyendaserie">Leyenda-Serie</label> <br>
 						<select name="dleyendaserie" id="dleyendaserie">
 							<option value="">---------------------------</option>
-							<?php foreach($series as $s):?>
-								<option value="<?= $s->id_serie_folio ?>" <?= set_select('dleyendaserie', $s->id_serie_folio); ?>><?= $s->serie?></option>
-							<?php endforeach;?>
+							<?php foreach($series as $s){?>
+								<option value="<?php echo  $s->id_serie_folio ?>" <?php echo  set_select('dleyendaserie', $s->id_serie_folio); ?>><?php echo  $s->serie?></option>
+							<?php }?>
 						</select>
 					</div>
 					<div class="w50 f-l">
