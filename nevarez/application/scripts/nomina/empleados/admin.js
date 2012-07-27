@@ -1,8 +1,14 @@
-$(function(){
-
-	$("select#fsemana").on("change",function(){
+$(function() {
+	
+	$("select#fsemana, input#fanio").on("change",function(){
 		$("form#form-data").submit();
 	});
+
+	$("input#fanio").on('click', '$("selector")', function(event) {
+		event.preventDefault();
+		// Act on the event
+	});
+
 	$('input[type="number"]#fdias_trabajados').on('change',function(){
 		calculaTotales();
 	});

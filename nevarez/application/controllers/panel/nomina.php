@@ -196,8 +196,7 @@ class nomina extends MY_Controller {
 			array('libs/jquery.msgbox.css', 'screen'),
 			array('libs/jquery.superbox.css', 'screen'),
 			array('general/tables.css', 'screen'),
-			array('general/forms.css', 'screen'),
-			array('nomina/forms.css', 'screen')
+			array('general/forms.css', 'screen')
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
@@ -233,7 +232,6 @@ class nomina extends MY_Controller {
 		if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
 		if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
 		$params['semanas'] = String::obtenerSemanasDelAnio($_POST['fanio'],true);
-
 		$params['lista'] = $this->nomina_model->getEmpleadosNomina();
 
 		if(isset($_GET['msg']{0}))
