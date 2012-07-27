@@ -10,7 +10,7 @@
 				<?php foreach ($semanas as $s) {?>
 					<option value="<?php echo $s['semana']; ?>" <?php echo (($_POST['fsemana']==$s['semana'])?'selected':''); ?>>
 						<?php echo 'Semana '.$s['semana'].', DEL '.$s['fecha_inicio'].' AL '.$s['fecha_final'] ?></option>
-				<?} ?>
+				<?php } ?>
 			</select>
 		</div>
 	<?php if (!$lista['historial']) { ?>

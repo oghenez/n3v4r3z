@@ -415,6 +415,7 @@ class nomina_model extends privilegios_model{
 
 	public function getEmpleadosNomina()
 	{
+		$_POST['fanio'] = ($_POST['fanio'] != '') ? $_POST['fanio'] : date('Y');
 		$historial = TRUE;
 		$sql = $this->db->query("SELECT en.id_empleado, en.anio, en.semana, en.fecha_inicio, en.fecha_fin, en.fecha, en.dias_trabajados, en.salario_diario, en.sueldo_semanal, 
 																		en.premio_puntualidad, en.premio_eficiencia, en.vacaciones, en.aguinaldo, en.total_pagar, e.nombre, e.apellido_paterno, e.apellido_materno,
