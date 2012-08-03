@@ -430,8 +430,8 @@ class nomina_model extends privilegios_model{
 			$sql = $this->db->query("SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario,
 															SUM(en.dias_trabajados) as dias_aguinaldo
 														FROM empleados as e
-														INNER JOIN empleados_nomina as en ON e.id_empleado=en.id_empleado
-														WHERE status='contratado'
+														LEFT JOIN empleados_nomina as en ON e.id_empleado=en.id_empleado
+														WHERE e.status='contratado'
 														GROUP BY e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
 														ORDER BY (apellido_paterno, apellido_materno, nombre) ASC");
 			// AND date(now())>=fecha_entrada AND date(now())<=COALESCE(fecha_salida,date(now()))
