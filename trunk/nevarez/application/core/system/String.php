@@ -9,6 +9,7 @@ class String{
 	 * @param unknown_type $sigini
 	 */
 	public static function formatoNumero($number, $decimales=2, $sigini='$'){
+		$number = self::float($number);
 		return $sigini.number_format($number, $decimales, '.', ',');
 	}
 	/**
@@ -414,9 +415,9 @@ class String{
 			$data[$pos]['anio'] = intval($data[$pos-1]['anio']);
 			$data[$pos]['semana'] = $pos + 1;
 		}
-		if($mes<=0)
+		if($mes<=0){
 			return $data;
-		else{
+		}else{
 			$dataAux = array();
 			foreach($data as $key => $item){
 				$vec = explode('-', $item['fecha_inicio']);
@@ -457,8 +458,8 @@ class String{
 	public static function obtenerSemanaActual($fecha){
 		$fecha=str_replace("/","-",$fecha);
 		list($anio,$mes,$dia)=explode("-",$fecha);
-		$semanas = self::obtenerSemanasDelAnio($anio, false, $mes);
-
+		$semanas = self::obtenerSemanasDelAnio($anio, false, 0);
+		
 		foreach ($semanas as $sem) {
 			if (strtotime($fecha) >= strtotime($sem['fecha_inicio']) && strtotime($fecha) <= strtotime($sem['fecha_final'])) 
 				return $sem['semana'];
