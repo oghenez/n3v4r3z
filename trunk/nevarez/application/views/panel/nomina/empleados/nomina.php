@@ -120,7 +120,7 @@
 						<?php echo ($lista['historial'])?String::formatoNumero($emp->vacaciones):''; ?> 
 					</td>
 					<td id="total_agui" style="<?php echo ($lista['historial'])?'':'display: none;'?>background: rgba(108, 182, 255, .2)">
-						<input type="text" name="faguinaldo[]" value="<?php echo ($lista['historial'])?$emp->aguinaldo:0 ?>" id="faguinaldo" class="a-c vpositive" size="4" <?php echo ($lista['historial'])?'readonly':'' ?> />
+						<input type="text" name="faguinaldo[]" value="<?php echo ($lista['historial'])?$emp->aguinaldo:0 ?>" id="faguinaldo" class="a-c vpositive" size="4" <?php echo ($lista['historial'])?'readonly':'' ?> readonly/>
 					</td>
 					<td id="ftotal_pagar" style="font-weight: bold;background: rgba(108, 182, 255, .2)">
 						<?php echo ($lista['historial'])?String::formatoNumero($emp->total_pagar):String::formatoNumero($emp->salario * 7); ?>

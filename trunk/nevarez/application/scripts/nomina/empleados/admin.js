@@ -214,7 +214,7 @@ function muestraColumnaAguinaldo (checked) {
 		tdspan(-1);
 		$('.header-agui, .header-agui-total, td#aguinaldo, #ttotal_aguinaldo').css({"display":"none"});
 		$('td#aguinaldo').html("");
-		$('input#faguinaldo').val(0);
+		$('input#faguinaldo').val(0).attr('readonly','readonly');
 		$('td#total_agui').css({"display":"none"});
 	}calculaTotales();
 }
@@ -222,14 +222,13 @@ function muestraColumnaAguinaldo (checked) {
 function setAguinaldo (obj) {
 	parent_id	= $(obj).parent().parent().attr('id');
 	if ($(obj).is(":checked")) {
-		// tvacaciones = 15 * parseFloat($('#'+parent_id+' input#fsalario_diario').val());
 
 		taguinaldo = $("#"+parent_id+" input#faguinaldo_aux").val();
-		$('#'+parent_id+' input#faguinaldo').val(taguinaldo)
+		$('#'+parent_id+' input#faguinaldo').val(taguinaldo).removeAttr('readonly');
 		// $('#'+parent_id+' td#total_agui').html(util.darFormatoNum(taguinaldo));
 	}
 	else {
-		$('#'+parent_id+' input#faguinaldo').val(0);
+		$('#'+parent_id+' input#faguinaldo').val(0).attr('readonly','readonly');
 		// $('#'+parent_id+' td#total_agui').html(util.darFormatoNum(0));
 	}calculaTotales();
 }
