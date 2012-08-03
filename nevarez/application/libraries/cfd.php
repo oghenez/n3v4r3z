@@ -615,8 +615,32 @@ class cfd{
 			$pdf->SetWidths(array(200));
 			$pdf->Row(array($data['sello']), false);
 			
+			if($data['fobservaciones'] != ''){
+				$y = $pdf->GetY();
+				$pdf->SetY($y+3);
+				$pdf->SetX(8);
+					
+				$pdf->SetFont('Arial','B',10);
+				$pdf->SetTextColor(255,255,255);
+				$pdf->SetFillColor(140,140,140);
+
+				$pdf->SetAligns(array('L'));
+				$pdf->SetWidths(array(200));
+				$pdf->Row(array('OBSERVACIONES'), true);
+				
+				$pdf->SetX(8);
+					
+				$pdf->SetFont('Arial','',9);
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFillColor(255,255,255);
+
+				$pdf->SetAligns(array('L'));
+				$pdf->SetWidths(array(200));
+				$pdf->Row(array($data['fobservaciones']), false);
+			}
+
 			$y = $pdf->GetY();
-			
+
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(8, $y+2);
 			$pdf->Cell(200,5,'ESTE DOCUMENTO ES UNA IMPRESIÓN DE UN COMPROBANTE FISCAL DIGITAL',0,0,'C');

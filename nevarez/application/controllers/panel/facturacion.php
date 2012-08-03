@@ -360,6 +360,9 @@ class facturacion extends MY_Controller {
                                 array('field'   => 'dttotal_letra',
                                                 'label'         => 'Importe con Letra',
                                                 'rules'         => 'max_length[250]'),
+                                array('field'   => 'fobservaciones',
+                                                'label'         => 'Observaciones',
+                                                'rules'         => 'max_length[850]'),
                                 array('field'   => 'tickets',
                                                 'label'         => 'Tickets',
                                                 'rules'         => 'required')

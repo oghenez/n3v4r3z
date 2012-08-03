@@ -230,6 +230,8 @@ function ajax_submit_form(){
         post.subtotal           = parseFloat(subtotal,2);
         post.iva                        = parseFloat(iva,2);
         post.total_isr          = parseFloat(total_isr,2);
+
+        post.fobservaciones     = $('#fobservaciones').val();
         
         if(aux_isr)
                 post.total                      = parseFloat(ttcisr,2);
@@ -344,6 +346,7 @@ function limpia_campos(){
         $('#dforma_pago_parcialidad').val('');
         $('#dmetodo_pago').val('');
         $('#dmetodo_pago_digitos').val('');
+        $('#fobservaciones').val('');
         
         subtotal = 0;
         iva = 0;

@@ -51,6 +51,10 @@
 				<input type="number" name="fplazo_credito" id="fplazo_credito" class="vpositive" 
 					value="<?php echo set_value('fplazo_credito', 0); ?>" size="15" min="0" max="120"> días
 			</p>
+			<p class="f-l w50">
+				<label for="fobservaciones">Observaciones</label><br>
+				<textarea id="fobservaciones" name="fobservaciones" rows="5" cols="40"><?php echo set_value('fobservaciones'); ?></textarea>
+			</p>
 			<div class="clear"></div>
 			<fieldset>
 				<legend>Selección de Tickets</legend>

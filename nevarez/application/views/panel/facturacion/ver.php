@@ -50,6 +50,10 @@
 				<input type="number" name="fplazo_credito" id="fplazo_credito" class="vpositive" 
 					value="<?php echo $factura['plazo_credito']?>" size="15" min="0" max="120" readonly> días
 			</p>
+			<p class="f-l w50">
+				<label for="fobservaciones">Observaciones</label><br>
+				<textarea id="fobservaciones" name="fobservaciones" rows="5" cols="40"><?php echo $factura['fobservaciones']; ?></textarea>
+			</p>
 			
 			<div class="clear"></div>
 			<table class="tblListados corner-all8" id="tbl_tickets">

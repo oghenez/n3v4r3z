@@ -268,6 +268,7 @@ class facturacion_model extends privilegios_model{
 				'cp'			=> $this->input->post('fcp'),
 				'pais'			=> $this->input->post('fpais'),
 				'total_isr'		=> $this->input->post('total_isr'),
+				'observaciones'	=> $this->input->post('fobservaciones')
 		);
 		
 		if($_POST['dforma_pago']==1)
@@ -359,6 +360,7 @@ class facturacion_model extends privilegios_model{
 					'cestado'		=> $res_q1[0]->estado,
 					'ccp'		=> $res_q1[0]->cp,
 					'cpais'		=> $res_q1[0]->pais,
+					'fobservaciones'	=> $res_q1[0]->observaciones,
 					'productos' => $productos,
 				
 					'condicion_pago'=> $res_q1[0]->condicion_pago,
