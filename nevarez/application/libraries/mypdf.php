@@ -227,7 +227,7 @@ class MYpdf extends FPDF {
 	    		else	
 	    			$this->SetXY($x,$y+2);
     			
-	    		if(isset($this->links[$i]{0})){
+	    		if(isset($this->links[$i]{0}) && $header==false){
 	    			$this->SetTextColor(35, 95, 185);
 	    			$this->Cell($w, $this->FontSize, $data[$i], 0, strlen($data[$i]), $a, false, $this->links[$i]);
 	    			$this->SetTextColor(0,0,0);

@@ -7,7 +7,7 @@ class salidas extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('salidas/ver_todos/');
+	private $excepcion_privilegio = array('salidas/ver_todos/', 'salidas/pdf_rsa/');
 	
 	
 	public function _remap($method){
@@ -456,6 +456,39 @@ class salidas extends MY_Controller {
 		}
 	}
 	
+	public function rsa()
+	{
+		$this->carabiner->css(array(
+				array('general/forms.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('salidas/reporte_sa.js')
+		));
+
+		if (!isset($_GET['dfecha1'])) {
+			$_GET['dfecha1'] = date('Y-m').'-01';
+		}
+
+		if (!isset($_GET['dfecha2'])) {
+			$_GET['dfecha2'] = date('Y-m-d');
+		}
+
+		$params['seo'] = array(
+				'titulo' => 'Reporte Salida Aviones'
+		);
+
+		$this->load->view('panel/salidas/reporte_sa', $params);
+	}
+
+	public function pdf_rsa()
+	{
+		$this->load->model('salidas_model');
+		$data = $this->salidas_model->data_rsa();
+
+		// var_dump($data);
+		$this->salidas_model->pdf_rsa($data);
+	}
+
 	public function isValidDate($str){
 		if($str != ''){
 			if(String::isValidDate($str) == false){
