@@ -291,4 +291,190 @@ class salidas_model extends CI_Model{
 		}
 		return array(false, '');
 	}
+
+	public function data_rsa()
+	{
+		$tipo = 'av';
+		$_GET['dfecha1'] = (isset($_GET['dfecha1']))?$_GET['dfecha1']:date('Y-m').'-01';
+		$_GET['dfecha2'] = (isset($_GET['dfecha2']))?$_GET['dfecha2']:date('Y-m-d');
+		$_GET['didproducto'] = (isset($_GET['didproducto']))?$_GET['didproducto']:'';
+		$_GET['ida'] = (isset($_GET['ida']))?$_GET['ida']:'';
+
+		$sql = '';
+		$inner = '';
+		
+		if( $this->input->get('dfecha1') != '' )
+			$sql = " AND DATE(s.fecha)>='".$this->input->get('dfecha1')."'";
+
+		if( $this->input->get('dfecha2') != '' )
+			$sql .= " AND DATE(s.fecha)<='".$this->input->get('dfecha2')."'";
+
+		if ( empty($_GET['didproducto']) && empty($_GET['ida']) ) 
+		{
+			$query = $this->db->query("SELECT s.id_salida, (a.modelo || ' - ' || a.matricula) as avion, a.id_avion, s.fecha, SUM(sp.total) as total_salida
+																	FROM salidas s
+																	INNER JOIN aviones a ON a.id_avion=s.id_avion
+																	INNER JOIN salidas_productos sp ON s.id_salida=sp.id_salida
+																	WHERE s.status='sa' AND s.tipo_salida='av' $sql
+																	GROUP BY s.id_salida, s.fecha, a.modelo, a.matricula, a.id_avion
+																	ORDER BY s.fecha ASC
+													");
+		}
+		else
+		{
+			$tipo = 'sa';
+			if ( $_GET['didproducto'] != '' ){
+				$sql .= " AND sp.id_producto='{$_GET['didproducto']}'";
+				$inner = " INNER JOIN salidas_productos sp ON s.id_salida=sp.id_salida";
+			}
+			else
+				$sql .= " AND id_avion = '{$_GET['ida']}'";
+
+			$query = $this->db->query("SELECT s.id_salida, s.folio, s.fecha
+																	FROM salidas s
+																	$inner
+																	WHERE s.tipo_salida='av' AND s.status='sa' $sql
+																	ORDER BY fecha ASC
+															");
+
+			if ($query->num_rows() > 0) {
+				foreach ($query->result() as $key => $salida) {
+					$sql2 = ($_GET['didproducto'] != '') ? " AND sp.id_producto='{$_GET['didproducto']}'": "";
+					$salida->productos = $this->db->query("SELECT sp.id_producto, p.nombre, sp.cantidad, sp.precio_unitario, sp.total
+																	FROM salidas s
+																	INNER JOIN salidas_productos sp ON sp.id_salida=s.id_salida
+																	INNER JOIN productos p ON sp.id_producto=p.id_producto
+																	WHERE s.tipo_salida='av' AND s.status='sa' AND sp.id_salida='{$salida->id_salida}' $sql2")->result();
+				}
+			}
+		}
+		// echo '<pre>';
+		// var_dump($query->result());exit;	
+		// echo '</pre>';
+		
+
+		return array('data'=>$query->result(), 'tipo'=>$tipo);
+	}
+
+	public function pdf_rsa($data)
+	{
+		if($_GET['dfecha1']!='' && $_GET['dfecha2']!='')
+			$labelFechas = "Desde la fecha ".$_GET['dfecha1']." hasta ".$_GET['dfecha2'];
+		elseif($_GET['dfecha1']!="")
+		$labelFechas = "Desde la fecha ".$_GET['dfecha1'];
+		elseif($_GET['dfecha2']!='')
+		$labelFechas = "Hasta la fecha ".$_GET['dfecha2'];
+	
+		$this->load->library('mypdf');
+		// Creación del objeto de la clase heredada
+		$pdf = new MYpdf('P', 'mm', 'Letter');
+		$pdf->show_head = true;
+		$pdf->titulo2 = 'Reporte Salidas Vuelos';
+
+		// $lbl_pro = (!empty($_POST['didproducto']))?"Producto {$_POST['dproducto']}":"";
+
+		$pdf->titulo3 =  "\n". $labelFechas;
+		$pdf->AliasNbPages();
+		$pdf->AddPage();
+
+
+		$links = array('', '');
+		$aligns = array('C', 'C');
+		$widths = array(155, 50);
+		$header = array('Avión', 'Total');
+
+		if ($data['tipo'] == 'sa') {
+			$links = array('', '', '' , '');
+			$aligns = array('C', 'C', 'C', 'C');
+			$widths = array(55, 50, 50, 50);
+			$header = array('Nombre', 'Cantidad', 'P. UNITARIO', 'Total');
+		}
+	
+		$ttotal = 0;
+		foreach($data['data'] as $key => $item)
+		{
+
+			if ($data['tipo'] != 'av') 
+			{
+				$pdf->SetFont('Arial', 'B', 9);
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetX(6);
+				$pdf->MultiCell(200, 8, 'Salida Folio #'. $item->folio . ' Fecha ' . $item->fecha, 0, 'L');
+					
+				$pdf->SetFont('Arial', 'B', 8);
+				$pdf->SetTextColor(255, 255, 255);
+				$pdf->SetFillColor(160, 160, 160);
+				$pdf->SetX(6);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths);
+				$pdf->Row($header, true);
+
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->SetTextColor(0,0,0);
+				foreach($item->productos as $key2 => $prod) {
+					if($pdf->GetY() >= $pdf->limiteY)
+					{ //salta de pagina si exede el max
+						$pdf->AddPage();
+					}
+
+					$ttotal += floatval($prod->total);
+					$datarow = array($prod->nombre, $prod->cantidad, String::formatoNumero($prod->precio_unitario), String::formatoNumero($prod->total));
+		
+					$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&didproducto='.$prod->id_producto);
+					$pdf->SetX(6);
+					$pdf->SetAligns($aligns);
+					$pdf->SetWidths($widths);
+					$pdf->SetMyLinks($links);
+					$pdf->Row($datarow, false);
+				}
+			}
+			else 
+			{
+				if($pdf->GetY() >= $pdf->limiteY || $key == 0)
+				{ //salta de pagina si exede el max
+					if($key > 0)
+						$pdf->AddPage();
+
+					$pdf->SetFont('Arial', 'B', 8);
+					$pdf->SetTextColor(255, 255, 255);
+					$pdf->SetFillColor(160, 160, 160);
+					$pdf->SetX(6);
+					$pdf->SetAligns($aligns);
+					$pdf->SetWidths($widths);
+					$pdf->Row($header, true);
+
+				}
+
+				$ttotal += floatval($item->total_salida);
+				$datarow = array($item->avion, String::formatoNumero($item->total_salida));
+		
+				$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&ida='.$item->id_avion);
+				$pdf->SetX(6);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths);
+				$pdf->SetMyLinks($links);
+				$pdf->Row($datarow, false);
+
+			}
+			
+		}
+
+		if ( COUNT($data['data']) > 0 ) {
+			$y = $pdf->GetY();
+			$pdf->SetFont('Arial','B',10);
+			$pdf->SetTextColor(255,255,255);
+			$pdf->SetFillColor(140,140,140);
+			
+			$pdf->SetXY(130, ($y+5));
+			$pdf->Cell(31, 6, 'Total' , 1, 0, 'C',1);
+			
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFillColor(255,255,255);
+			$pdf->SetXY(161, ($y+5));
+			$pdf->Cell(50, 6,String::formatoNumero($ttotal,2) , 1, 0, 'C');			
+		}
+		
+		$pdf->Output('reporte.pdf', 'I');
+	}
+
 }

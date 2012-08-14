@@ -7,7 +7,7 @@ class vuelos extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('vuelos/vuelos_cliente/','vuelos/vuelos_piloto/');
+	private $excepcion_privilegio = array('vuelos/vuelos_cliente/','vuelos/vuelos_piloto/', 'vuelos/rv_pdf/');
 	
 	
 	public function _remap($method){
@@ -168,6 +168,37 @@ class vuelos extends MY_Controller {
 			$params['frm_errors']	= $this->showMsgs(1);
 	}
 	
+	public function reporte_vuelos()
+	{
+		$this->carabiner->css(array(
+				array('general/forms.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('vuelos/reporte_vuelos.js')
+		));
+
+		if (!isset($_POST['dfecha1'])) {
+			$_POST['dfecha1'] = date('Y-m').'-01';
+		}
+
+		if (!isset($_POST['dfecha2'])) {
+			$_POST['dfecha2'] = date('Y-m-d');
+		}
+
+		$params['seo'] = array(
+				'titulo' => 'Reporte Vuelos'
+		);
+
+		$this->load->view('panel/vuelos/reporte_vuelos', $params);
+	}
+
+	public function rv_pdf()
+	{
+		$this->load->model('vuelos_model');
+		$data = $this->vuelos_model->data_rv();
+		$this->vuelos_model->pdf_rv($data);
+	}
+
 	/**
 	 * Muestra el listado de vuelos para un cliente
 	 * Usado en el superbox.
