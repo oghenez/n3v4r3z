@@ -19,6 +19,10 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
+		$data = $this->db->query("select * from actualizaciones where sql like 'INSERT INTO \"privilegios\"%' order by fecha asc");
+		foreach($data->result() as $itm){
+			echo $itm->sql.";<br>";
+		}
 		$this->load->view('welcome_message');
 	}
 }

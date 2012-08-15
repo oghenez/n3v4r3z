@@ -269,6 +269,10 @@ class vuelos_model extends CI_Model{
 			$y = $pdf->GetY();
 			$pdf->SetFont('Arial','B',9);
 
+			if($pdf->GetY()+6 >= $pdf->limiteY){
+				$pdf->AddPage();
+				$y = $pdf->GetY();
+			}
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFillColor(255,255,255);
 			$pdf->SetXY(106, $y+5);
