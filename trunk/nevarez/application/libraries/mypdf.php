@@ -69,7 +69,7 @@ class MYpdf extends FPDF {
     	 
     	$this->Line(6, 26, 210, 26);
     	
-    	$this->limiteY = 260; //limite de alto
+    	$this->limiteY = 235; //limite de alto
     }
     /**
      * Carta horizontal

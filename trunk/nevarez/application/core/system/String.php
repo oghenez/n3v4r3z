@@ -19,6 +19,7 @@ class String{
 	 */
 	public static function float($number, $int=false, $decimales=2){
 		$decimales = $int? 0: $decimales;
+		$number = $number==''? '0': $number;
 		$number = str_replace(array('$', ','), '', $number);
 		return number_format($number, $decimales, '.', '');
 	}
