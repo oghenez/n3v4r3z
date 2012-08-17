@@ -5,7 +5,7 @@
 				<label for="dproducto">*Tipo</label>
 				<select id="dproducto" name="dproducto">
 					<?php foreach ($prod_venta as $p){?>
-						<option value="<?php echo $p->id_producto?>" <?php echo set_select('dproducto',  $p->id_producto); ?>><?php echo $p->nombre?></option>
+						<option value="<?php echo $p->id_producto?>" <?php echo set_select('dproducto',  $p->id_producto, ($p->nombre=='Vuelos'? true: false) ); ?>><?php echo $p->nombre?></option>
 					<?php }?>
 				</select>
 			</p>
