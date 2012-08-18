@@ -6,7 +6,7 @@ class aviones extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('aviones/ajax_get_aviones/');
+	private $excepcion_privilegio = array('aviones/ajax_get_aviones/', 'aviones/pdf_hva/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -163,7 +163,40 @@ class aviones extends MY_Controller {
 				redirect(base_url('panel/aviones/?&msg=2'));
 		}
 	}
-	
+
+	public function hva()
+	{
+		$this->carabiner->css(array(
+				array('general/forms.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('aviones/reporte_hva.js')
+		));
+
+		if (!isset($_GET['dfecha1'])) {
+			$_GET['dfecha1'] = date('Y-m').'-01';
+		}
+
+		if (!isset($_GET['dfecha2'])) {
+			$_GET['dfecha2'] = date('Y-m-d');
+		}
+
+		$params['seo'] = array(
+				'titulo' => 'Reporte Horas de vuelo por avión'
+		);
+
+		$this->load->view('panel/aviones/reporte_hva', $params);
+	}
+
+	public function pdf_hva()
+	{
+		$this->load->model('aviones_model');
+		$data = $this->aviones_model->data_hva();
+
+		// var_dump($data);
+		$this->aviones_model->pdf_hva($data);
+	}
+
 	/**
 	 * Obtiene lostado de aviones para el autocomplete, ajax
 	 */

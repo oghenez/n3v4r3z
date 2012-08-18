@@ -48,6 +48,26 @@ class String{
 			return false;
 		return true;
 	}
+
+	/**
+	 * Valida si una cadena es una fecha y hora en 24hrs valida 
+	 */
+	public static function isValidDateTime($str_fechaHora){
+		$dateTime = explode(' ', $str_fechaHora);
+		if (count($dateTime) == 1) // Entra si es unicamente la hora(HH:MM)
+			if ( preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]/', $dateTime[0], $matches))
+				return true;
+		elseif (count($dateTime) == 2){ // Entra si es la fecha y hora
+			$time = explode(':', $dateTime[1]);
+			if (count($time) == 2) // Entra si es la fecha y hora(HH:MM)
+				if ( self::isValidDate($dateTime[0]) && preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]/', $dateTime[1], $matches))
+					return true;	
+			elseif (count($time == 3)) // Entra si es la fecha y hora(HH:MM:SS)
+				if ( self::isValidDate($dateTime[0]) && preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]/', $dateTime[1], $matches))
+					return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Limpia una cadena
@@ -296,6 +316,27 @@ class String{
 		else
 			return date($formato, strtotime($fecha." ".$ndias." day"));
 	}
+	/**
+		* Realiza la suma dos horas Ej: '17:54:00' + '23:17:00' = '41:11:00'
+	**/
+	public static function suma_horas_minutos_seg($time1, $time2) {
+	  $times = array($time1, $time2);
+	  $seconds = 0;
+	  foreach ($times as $time)
+	  {
+	    list($hour,$minute,$second) = explode(':', $time);
+	    $seconds += $hour*3600;
+	    $seconds += $minute*60;
+	    $seconds += $second;
+	  }
+	  $hours = floor($seconds/3600);
+	  $seconds -= $hours*3600;
+	  $minutes  = floor($seconds/60);
+	  $seconds -= $minutes*60;
+	  // return "{$hours}:{$minutes}:{$seconds}";
+	  return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds); 
+	}
+
 	
 	/**
 	 * mes()

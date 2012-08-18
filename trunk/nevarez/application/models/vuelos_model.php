@@ -30,7 +30,7 @@ class vuelos_model extends CI_Model{
 			$sql = " AND DATE(v.fecha)=DATE(now())";
 
 		$query = BDUtil::pagination("
-				SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe
+				SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe, v.hora_llegada
 				FROM vuelos as v
 				INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
 				INNER JOIN aviones as a ON v.id_avion = a.id_avion
@@ -322,4 +322,9 @@ class vuelos_model extends CI_Model{
 		$pdf->Output('reporte_vuelos.pdf', 'I');
 	}
 	
+	public function ajax_hora_llegada()
+	{
+		$this->db->update('vuelos', array('hora_llegada'=>date('Y-m-d').' '.$_POST['val']), array('id_vuelo'=>$_POST['id']));
+		return true;
+	}
 }

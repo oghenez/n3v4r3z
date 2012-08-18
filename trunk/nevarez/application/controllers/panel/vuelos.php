@@ -7,7 +7,7 @@ class vuelos extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('vuelos/vuelos_cliente/','vuelos/vuelos_piloto/', 'vuelos/rv_pdf/');
+	private $excepcion_privilegio = array('vuelos/vuelos_cliente/','vuelos/vuelos_piloto/', 'vuelos/rv_pdf/', 'vuelos/ajax_hora_llegada/');
 	
 	
 	public function _remap($method){
@@ -266,6 +266,26 @@ class vuelos extends MY_Controller {
 	
 			$this->load->view('panel/vuelos/vuelos_piloto',$params);
 	}
+
+	public function ajax_hora_llegada()
+	{
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('val', 'Hora Llegada', 'max_length[5]|callback_isValidDateTime');
+
+		if ($this->form_validation->run() == FALSE) 
+				$params['msg'] = $this->showMsgs(6);
+		else
+		{
+			$this->load->model('vuelos_model');
+   		$result = $this->vuelos_model->ajax_hora_llegada();
+
+   		if ($result)
+    		$params['msg'] = $this->showMsgs(7);	
+    	else
+    		$params['msg'] = $this->showMsgs(6);	
+		}            
+    echo json_encode($params);
+	}
 	
 	private function configAddVuelo($tipo){
 		$this->load->library('form_validation');
@@ -280,8 +300,8 @@ class vuelos extends MY_Controller {
 						'label'		=> 'Piloto',
 						'rules'		=> 'required|max_length[25]'),
 				array('field'	=> 'dfecha',
-						'label'		=> 'Fecha',
-						'rules'		=> 'required|max_length[16]'),
+						'label'		=> 'Fecha/Hora',
+						'rules'		=> 'required|max_length[16]|callback_isValidDateTime'),
 				array('field'	=> 'dcliente',
 						'label'		=> '',
 						'rules'		=> ''),
@@ -331,6 +351,18 @@ class vuelos extends MY_Controller {
 		return true;
 	}
 	
+	/**
+	 * Form_validation: Valida si una fecha y hora esta en formato correcto
+	 */
+	public function isValidDateTime($str){
+		if($str != ''){
+			if(String::isValidDateTime($str) == false){
+				$this->form_validation->set_message('isValidDateTime', 'El campo %s no tiene una Fecha/Hora valida');
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 * Muestra mensajes cuando se realiza alguna accion
@@ -358,6 +390,14 @@ class vuelos extends MY_Controller {
 				break;
 			case 5:
 				$txt = 'El Vuelo se elimino correctamente.';
+				$icono = 'ok';
+				break;
+			case 6: 
+				$txt = 'La hora de llegada especificada no es correcta';
+				$icono = 'error';
+				break;
+			case 7: 
+				$txt = 'Hora de llegada actualizada correctamente';
 				$icono = 'ok';
 				break;
 		}

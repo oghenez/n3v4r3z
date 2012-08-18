@@ -28,7 +28,7 @@ $(function(){
 		}
 	});
 	
-	$('#dfecha').datetimepicker('setDate', (new Date()));
+	// $('#dfecha').datetimepicker('setDate', (new Date()));
 	
 	$("#davion").autocomplete({
 		source: base_url+'panel/aviones/ajax_get_aviones',
@@ -53,7 +53,7 @@ $(function(){
 		}
 	});
 	
-	$("input[type=text]").on("keydown", function(event){
+	$("input[type=text]").not('.not').on("keydown", function(event){
 		if(event.which == 8 || event == 46){
 			var input = this.id;
 			var hidde = 'h'+input.substr(1);

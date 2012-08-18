@@ -309,23 +309,32 @@ class salidas_model extends CI_Model{
 		if( $this->input->get('dfecha2') != '' )
 			$sql .= " AND DATE(s.fecha)<='".$this->input->get('dfecha2')."'";
 
-		if ( empty($_GET['didproducto']) && empty($_GET['ida']) ) 
+		if ( empty($_GET['ida']) && !isset($_GET['tp'])) // empty($_GET['didproducto']) && 
 		{
-			$query = $this->db->query("SELECT s.id_salida, (a.modelo || ' - ' || a.matricula) as avion, a.id_avion, s.fecha, SUM(sp.total) as total_salida
-																	FROM salidas s
-																	INNER JOIN aviones a ON a.id_avion=s.id_avion
+			if ( $this->input->get('didproducto') != '' ) 
+				$sql .= " AND sp.id_producto='{$this->input->get('didproducto')}'";
+
+			$query = $this->db->query("SELECT a.id_avion, a.matricula as avion, SUM(sp.total) as total_salida
+																	FROM aviones a
+																	INNER JOIN salidas s ON a.id_avion=s.id_avion
 																	INNER JOIN salidas_productos sp ON s.id_salida=sp.id_salida
 																	WHERE s.status='sa' AND s.tipo_salida='av' $sql
-																	GROUP BY s.id_salida, s.fecha, a.modelo, a.matricula, a.id_avion
-																	ORDER BY s.fecha ASC
-													");
+																	GROUP BY a.id_avion, a.matricula
+																	ORDER BY a.matricula ASC
+													");	
 		}
 		else
 		{
 			$tipo = 'sa';
-			if ( $_GET['didproducto'] != '' ){
-				$sql .= " AND sp.id_producto='{$_GET['didproducto']}'";
+			$_GET['idp'] = (isset($_GET['idp']))?$_GET['idp']:'';
+			$_GET['ida'] = (isset($_GET['ida']))?$_GET['ida']:'';
+			if ( $_GET['idp'] != '' && $_GET['ida'] != ''){
+				$sql .= " AND sp.id_producto='{$_GET['idp']}' AND id_avion = '{$_GET['ida']}'";
 				$inner = " INNER JOIN salidas_productos sp ON s.id_salida=sp.id_salida";
+			}
+			elseif ( isset($_GET['tp']) ) {
+				$sql .= " AND sp.id_producto='{$_GET['idp']}'";
+				$inner = " INNER JOIN salidas_productos sp ON s.id_salida=sp.id_salida";	
 			}
 			else
 				$sql .= " AND id_avion = '{$_GET['ida']}'";
@@ -339,7 +348,7 @@ class salidas_model extends CI_Model{
 
 			if ($query->num_rows() > 0) {
 				foreach ($query->result() as $key => $salida) {
-					$sql2 = ($_GET['didproducto'] != '') ? " AND sp.id_producto='{$_GET['didproducto']}'": "";
+					$sql2 = ($_GET['idp'] != '') ? " AND sp.id_producto='{$_GET['idp']}'": "";
 					$salida->productos = $this->db->query("SELECT sp.id_producto, p.nombre, sp.cantidad, sp.precio_unitario, sp.total
 																	FROM salidas s
 																	INNER JOIN salidas_productos sp ON sp.id_salida=s.id_salida
@@ -371,9 +380,18 @@ class salidas_model extends CI_Model{
 		$pdf->show_head = true;
 		$pdf->titulo2 = 'Reporte Salidas Vuelos';
 
-		// $lbl_pro = (!empty($_POST['didproducto']))?"Producto {$_POST['dproducto']}":"";
+		$lbl_pro = '';
+		if (isset($_GET['ida'])) 
+		{
+			if ($_GET['ida'] != '') 
+			{
+				$this->load->database();
+				$m = $this->db->select('matricula')->from('aviones')->where('id_avion',$_GET['ida'])->get();
+				$lbl_pro = " Avion Matricula {$m->row()->matricula}";
+			}
+		}
 
-		$pdf->titulo3 =  "\n". $labelFechas;
+		$pdf->titulo3 =  "$lbl_pro \n". $labelFechas;
 		$pdf->AliasNbPages();
 		$pdf->AddPage();
 
@@ -419,8 +437,8 @@ class salidas_model extends CI_Model{
 
 					$ttotal += floatval($prod->total);
 					$datarow = array($prod->nombre, $prod->cantidad, String::formatoNumero($prod->precio_unitario), String::formatoNumero($prod->total));
-		
-					$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&didproducto='.$prod->id_producto);
+					
+					$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&idp='.$prod->id_producto.'&tp=t');
 					$pdf->SetX(6);
 					$pdf->SetAligns($aligns);
 					$pdf->SetWidths($widths);
@@ -447,8 +465,8 @@ class salidas_model extends CI_Model{
 
 				$ttotal += floatval($item->total_salida);
 				$datarow = array($item->avion, String::formatoNumero($item->total_salida));
-		
-				$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&ida='.$item->id_avion);
+				$get_pid = ($_GET['didproducto'] != '' )?'&idp='.$_GET['didproducto']:'';
+				$links[0] = base_url('panel/salidas/pdf_rsa/?dfecha1='.$_GET['dfecha1'].'&dfecha2='.$_GET['dfecha2'].'&ida='.$item->id_avion.$get_pid);
 				$pdf->SetX(6);
 				$pdf->SetAligns($aligns);
 				$pdf->SetWidths($widths);

@@ -15,7 +15,8 @@
 			<td>Nombre del Cliente</td>
 			<td>Piloto</td>
 			<td>Avión</td>
-			<td>Fecha</td>
+			<td>Fecha/Hora Salida</td>
+			<td>Hora Llegada</td>
 			<td class="a-c">Opc</td>
 		</tr>
 <?php foreach($vuelos['vuelos'] as $vuelo){ ?>
@@ -23,7 +24,10 @@
 					<td><?php echo  $vuelo->clientes;?></td>
 					<td><?php echo  $vuelo->piloto; ?></td>
 					<td><?php echo  $vuelo->matricula; ?></td>
-					<td><?php echo  $vuelo->fecha; ?></td>
+					<td><?php echo  substr($vuelo->fecha, 0, 19); ?></td>
+					<td>
+						<input type="text" name="<? echo 'vuelo'.$vuelo->id_vuelo ?>" value="<? echo substr($vuelo->hora_llegada, 11, -6);?>" id="hora_llegada"  class="a-c" size="4" maxlength="5">
+					</td>
 					<td class="tdsmenu a-c" style="width: 90px;">
 						<img alt="opc" src="<?php echo  base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">
 						<div class="submenul">
@@ -53,6 +57,16 @@ $this->pagination->initialize(array(
 $pagination = $this->pagination->create_links();
 echo '<div class="pagination w100">'.$pagination.'</div>'; 
 ?>
+</div>
+
+<div id="container" style="display:none">
+	<div id="withIcon">
+		<a class="ui-notify-close ui-notify-cross" href="#">x</a>
+		<div style="float:left;margin:0 10px 0 0"><img src="#{icon}" alt="warning" width="64" height="64"></div>
+		<h1>#{title}</h1>
+		<p>#{text}</p>
+		<div class="clear"></div>
+	</div>
 </div>
 
 <!-- Bloque de alertas -->
