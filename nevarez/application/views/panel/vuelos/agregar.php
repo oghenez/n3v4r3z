@@ -10,8 +10,8 @@
 				</select>
 			</p>
 			<p class="f-r">
-				<label for="dfecha">*Fecha</label>
-				<input type="text" name="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d");?>" size="15" id="dfecha" readonly class="a-c">
+				<label for="dfecha">*Fecha/Hora</label>
+				<input type="text" name="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d H:i");?>" size="15" id="dfecha" class="a-c not">
 			</p>
 			<div class="clear"></div>
 			
