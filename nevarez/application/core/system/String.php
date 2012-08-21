@@ -54,17 +54,21 @@ class String{
 	 */
 	public static function isValidDateTime($str_fechaHora){
 		$dateTime = explode(' ', $str_fechaHora);
-		if (count($dateTime) == 1) // Entra si es unicamente la hora(HH:MM)
+
+		if (count($dateTime) == 1){ // Entra si es unicamente la hora(HH:MM)
 			if ( preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]/', $dateTime[0], $matches))
 				return true;
+		}
 		elseif (count($dateTime) == 2){ // Entra si es la fecha y hora
 			$time = explode(':', $dateTime[1]);
-			if (count($time) == 2) // Entra si es la fecha y hora(HH:MM)
+			if (count($time) == 2){ // Entra si es la fecha y hora(HH:MM)
 				if ( self::isValidDate($dateTime[0]) && preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]/', $dateTime[1], $matches))
-					return true;	
-			elseif (count($time == 3)) // Entra si es la fecha y hora(HH:MM:SS)
+					return true;
+			}
+			elseif (count($time) == 3){ // Entra si es la fecha y hora(HH:MM:SS)
 				if ( self::isValidDate($dateTime[0]) && preg_match_all('/(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]/', $dateTime[1], $matches))
 					return true;
+			}
 		}
 		return false;
 	}
