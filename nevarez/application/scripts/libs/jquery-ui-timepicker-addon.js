@@ -161,6 +161,7 @@ $.extend(Timepicker.prototype, {
 				if ($.isFunction(o.onClose))
 					o.onClose.call($input[0], dateText, dp_inst, tp_inst);
 			},
+			
 			timepicker: tp_inst // add timepicker as a property of datepicker: $.datepicker._get(dp_inst, 'timepicker');
 		});
 		tp_inst.amNames = $.map(tp_inst._defaults.amNames, function(val) { return val.toUpperCase() });

@@ -48,6 +48,7 @@ class vuelos extends MY_Controller {
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.msgbox.min.js'),
+			array('libs/jquery-ui-timepicker-addon.js'),
 			array('general/msgbox.js'),
 			array('vuelos/admin.js')
 		));
