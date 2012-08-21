@@ -640,7 +640,7 @@ class facturacion_model extends privilegios_model{
 		if($sql->num_rows() > 0){
 			$res = $sql->result();
 			foreach( $res as $f){
-				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".substr($f->fecha,0,19)."|".$f->total."|".$f->importe_iva."|".(($f->status == "ca")?"1":"0")."|I||||\n";
+				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".str_replace('-','/',substr($f->fecha,0,19))."|".number_format($f->total,2,'.','')."|".number_format($f->importe_iva,2,'.','')."|".(($f->status == "ca")?"1":"0")."|I||||\n";
 			}
 		}
 		
@@ -693,7 +693,7 @@ class facturacion_model extends privilegios_model{
 			$pdf->SetTextColor(0,0,0);
 				
 			$datos = array($item->rfc, $item->serie, $item->folio, $item->anio, $item->no_aprobacion,
-							$item->fecha, String::formatoNumero($item->total),String::formatoNumero($item->importe_iva), ($item->status=='ca')?'Cancelada':'Pagada');
+							str_replace('-','/',$item->fecha), String::formatoNumero($item->total),String::formatoNumero($item->importe_iva), ($item->status=='ca')?'Cancelada':'Pagada');
 				
 			$pdf->SetX(5);
 			$pdf->SetAligns($aligns);
