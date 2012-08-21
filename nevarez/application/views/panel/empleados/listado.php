@@ -37,6 +37,7 @@
 						echo $this->empleados_model->getLinkPrivSm('empleados/modificar/', $emplea->id_empleado); 
 						echo $this->empleados_model->getLinkPrivSm('empleados/descontratar/', $emplea->id_empleado, 
 								"msb.confirm('Estas seguro de descontratar el empleado?', this); return false;");
+						echo $this->empleados_model->getLinkPrivSm('asistencia/registrar_huella/', $emplea->id_empleado); 
 						?>
 					</p>
 				</div>
