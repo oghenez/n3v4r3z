@@ -640,7 +640,11 @@ class facturacion_model extends privilegios_model{
 		if($sql->num_rows() > 0){
 			$res = $sql->result();
 			foreach( $res as $f){
-				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".str_replace('-','/',substr($f->fecha,0,19))."|".number_format($f->total,2,'.','')."|".number_format($f->importe_iva,2,'.','')."|".(($f->status == "ca")?"1":"0")."|I||||\n";
+				$s = substr($f->fecha,0,19);
+				list($y, $m, $d) = explode('-',substr($s,0,10));
+				list($h, $mi, $s) = explode(':', substr($s,11, 19));
+
+				$str_data .= "|".$f->rfc."|".$f->serie."|".$f->folio."|".$f->anio.$f->no_aprobacion."|".date('d/m/Y H:i:s',mktime($h,$mi,$s, $m, $d, $y))."|".number_format($f->total,2,'.','')."|".number_format($f->importe_iva,2,'.','')."|".(($f->status == "ca")?"1":"0")."|I||||\n";
 			}
 		}
 		
