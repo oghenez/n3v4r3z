@@ -13,9 +13,9 @@ $(function() {
 		calculaTotales();
 	});
 
-	$('input[type="checkbox"]#semana').on('change',function(){
-			muestraColumnaSemana($(this).is(':checked'));
-	});
+	// $('input[type="checkbox"]#semana').on('change',function(){
+	// 		muestraColumnaSemana($(this).is(':checked'));
+	// });
 
 	$('body').on('change', "input[type='checkbox']#semana-single" ,function(){
 			setPremioPuntualidad(this);
@@ -141,24 +141,24 @@ function calculaTotales () {
 	
 }
 
-function muestraColumnaSemana (checked) {
-	if (checked) {
-		tdspan(1);
-		$('.header-sema, .header-sema-total, td#semana, #ttotal_puntualidad').css({"display":""});
-		$('td#semana').html('<input type="checkbox" id="semana-single" checked/>');
+// function muestraColumnaSemana (checked) {
+// 	if (checked) {
+// 		tdspan(1);
+// 		$('.header-sema, .header-sema-total, td#semana, #ttotal_puntualidad').css({"display":""});
+// 		$('td#semana').html('<input type="checkbox" id="semana-single" checked/>');
 
-		$('input#fpremio_puntualidad').val(100);
-		$('td#total_premio_puntialidad').css({"display":""}).html(util.darFormatoNum(100));
-	}
-	else {
-		tdspan(-1);
-		$('.header-sema, .header-sema-total, td#semana, #ttotal_puntualidad').css({"display":"none"});
-		$('td#semana').html("");
+// 		$('input#fpremio_puntualidad').val(100);
+// 		$('td#total_premio_puntialidad').css({"display":""}).html(util.darFormatoNum(100));
+// 	}
+// 	else {
+// 		tdspan(-1);
+// 		$('.header-sema, .header-sema-total, td#semana, #ttotal_puntualidad').css({"display":"none"});
+// 		$('td#semana').html("");
 
-		$('input#fpremio_puntualidad').val(0);
-		$('td#total_premio_puntialidad').css({"display":"none"}).html(util.darFormatoNum(0));
-	}calculaTotales();
-}
+// 		$('input#fpremio_puntualidad').val(0);
+// 		$('td#total_premio_puntialidad').css({"display":"none"}).html(util.darFormatoNum(0));
+// 	}calculaTotales();
+// }
 
 function setPremioPuntualidad (obj) {
 	parent_id	= $(obj).parent().parent().attr('id');
