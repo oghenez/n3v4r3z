@@ -413,30 +413,85 @@ class nomina_model extends privilegios_model{
 		return array(true);
 	}
 
-	public function getEmpleadosNomina()
+	public function getEmpleadosNomina($verificar_nomina=true, $reporte=false)
 	{
-		$_POST['fanio'] = ($_POST['fanio'] != '') ? $_POST['fanio'] : date('Y');
-		$historial = TRUE;
-		$sql = $this->db->query("SELECT en.id_empleado, en.anio, en.semana, en.fecha_inicio, en.fecha_fin, en.fecha, en.dias_trabajados, en.salario_diario, en.sueldo_semanal, 
-																		en.premio_puntualidad, en.premio_eficiencia, en.vacaciones, en.aguinaldo, en.total_pagar, e.nombre, e.apellido_paterno, e.apellido_materno,
-																		e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
-														FROM empleados_nomina as en
-														INNER JOIN empleados as e ON e.id_empleado=en.id_empleado
-														WHERE en.anio = {$_POST['fanio']} AND en.semana = {$_POST['fsemana']}
-														ORDER BY (e.apellido_paterno, e.apellido_materno, e.nombre) ASC");
+		if ($reporte) {
+			if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
+			if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+		}
 
+		$_POST['fanio'] = ($_POST['fanio'] != '') ? $_POST['fanio'] : date('Y');
+		$sql->num_rows = 0;
+		if ( $verificar_nomina ) {
+			$historial = TRUE;
+			$sql = $this->db->query("SELECT en.id_empleado, en.anio, en.semana, en.fecha_inicio, en.fecha_fin, en.fecha, en.dias_trabajados, en.salario_diario, en.sueldo_semanal, 
+																			en.premio_puntualidad, en.premio_eficiencia, en.vacaciones, en.aguinaldo, en.total_pagar, e.nombre, e.apellido_paterno, e.apellido_materno,
+																			e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
+															FROM empleados_nomina as en
+															INNER JOIN empleados as e ON e.id_empleado=en.id_empleado
+															WHERE en.anio = {$_POST['fanio']} AND en.semana = {$_POST['fsemana']}
+															ORDER BY (e.apellido_paterno, e.apellido_materno, e.nombre) ASC");
+		}
+		
 		if ($sql->num_rows == 0) {
 			$historial = FALSE;
-			$sql = $this->db->query("SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario,
-															SUM(en.dias_trabajados) as dias_aguinaldo
-														FROM empleados as e
-														LEFT JOIN empleados_nomina as en ON e.id_empleado=en.id_empleado
-														WHERE e.status='contratado'
-														GROUP BY e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
-														ORDER BY (apellido_paterno, apellido_materno, nombre) ASC");
+
+			$semanas = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+			foreach ($semanas as $s) {
+				if ($s['semana'] == $_POST['fsemana']) {
+					$finicio_semana = $s['fecha_inicio'];
+					$ffin_semana = $s['fecha_final'];
+					break;
+				}
+			}
+			
+			$sql = $this->db->query("SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, 
+																		e.hora_entrada, e.salario, SUM(en.dias_trabajados) as dias_aguinaldo, 
+																		( SELECT COUNT(eas.id_empleado) 
+																		   FROM empleados_asistencias as eas 
+																		   WHERE eas.id_empleado=e.id_empleado AND DATE(eas.fecha_entrada)>='$finicio_semana' AND DATE(eas.fecha_entrada)<='$ffin_semana' AND eas.falta<>'t'
+																		) as dias_trabajados,
+																		( SELECT COUNT(eas.id_empleado) 
+																		   FROM empleados_asistencias as eas 
+																		   WHERE eas.id_empleado=e.id_empleado AND eas.retardo='t' AND DATE(eas.fecha_entrada)>='$finicio_semana' AND DATE(eas.fecha_entrada)<='$ffin_semana' 
+																		) as retardos,
+																		( SELECT 6 - COUNT(eas.id_empleado) 
+																		   FROM empleados_asistencias as eas 
+																		   WHERE eas.id_empleado=e.id_empleado AND eas.falta<>'t' AND DATE(eas.fecha_entrada)>='$finicio_semana' AND DATE(eas.fecha_entrada)<='$ffin_semana' 
+																		) as dias_faltados,
+																		( SELECT COUNT(eas.id_empleado)
+																		   FROM empleados_asistencias as eas 
+																		   WHERE eas.id_empleado=e.id_empleado AND DATE(eas.fecha_entrada)='$ffin_semana' 
+																		) as trabajo_domingo
+																	FROM empleados as e
+																	LEFT JOIN empleados_nomina as en ON e.id_empleado=en.id_empleado
+																	WHERE e.status='contratado'
+																	GROUP BY e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
+																	ORDER BY (apellido_paterno, apellido_materno, nombre) ASC
+															");
 			// AND date(now())>=fecha_entrada AND date(now())<=COALESCE(fecha_salida,date(now()))
 
+			$total_asis_todos = $this->db->select('COUNT(id_empleado) as total_asi')->
+																			from('empleados_asistencias')->
+																			where("DATE(fecha_entrada)>='$finicio_semana' AND DATE(fecha_entrada)<='$ffin_semana'")->
+																			get()->
+																			row()->total_asi;
+			$hoy = date("Y-m-d");
 			foreach ($sql->result() as $emp) {
+				$emp->dias_asistidos = $emp->dias_trabajados;
+				if ( $total_asis_todos > 0 || ( strtotime($hoy)>=strtotime($finicio_semana) && strtotime($hoy)<=strtotime($ffin_semana) )) {	
+					if ( $emp->trabajo_domingo == 0 ) {
+						$emp->dias_asistidos += 1;
+						$emp->dias_trabajados += 1;
+					}
+					if ( $emp->dias_faltados < 0 ) 
+						$emp->dias_faltados = 0;
+					if ( $emp->retardos > 2 )
+						$emp->dias_trabajados -= floor($emp->retardos/3);
+				}
+				else {
+					$emp->dias_faltados = 0;
+				}
 				$emp->dias_aguinaldo = (intval($emp->dias_aguinaldo) > 343)?343:intval($emp->dias_aguinaldo);
 				$total = (($emp->dias_aguinaldo * 15) / 343) * $emp->salario;
 				$emp->aguinaldo = floatval(round($total,2));
@@ -474,5 +529,4 @@ class nomina_model extends privilegios_model{
 		$this->db->insert_batch('empleados_nomina',$data);
 		return array(TRUE);
 	}
-
 }?>

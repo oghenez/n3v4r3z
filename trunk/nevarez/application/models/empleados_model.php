@@ -319,4 +319,117 @@ class empleados_model extends privilegios_model{
 	
 		return $response;
 	}
+
+	/**
+	 * Genera el reporte de las asistencias de empleados
+	 * @param unknown_type $data
+	 */
+	public function pdf_rda($data){
+
+		$semanas = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+		foreach ($semanas as $s) {
+			if ($s['semana'] == $_POST['fsemana']) {
+				$finicio_semana = $s['fecha_inicio'];
+				$ffin_semana = $s['fecha_final'];
+				break;
+			}
+		}
+		$labelFechas = "Semana {$_POST['fsemana']} del $finicio_semana al $ffin_semana";
+	
+		$this->load->library('mypdf');
+		// Creación del objeto de la clase heredada
+		$pdf = new MYpdf('P', 'mm', 'Letter');
+		$pdf->show_head = true;
+		$pdf->titulo2 = 'Reporte de Asistencias';
+
+		$pdf->titulo3 =  "Año {$_POST['fanio']} \n". $labelFechas;
+		$pdf->AliasNbPages();
+		$pdf->AddPage();
+			
+		// $links = array('', '', '', '', '', '', '');
+		$aligns = array('C', 'C', 'C', 'C', 'C');
+		$widths = array(105, 30, 20, 20, 30);
+		$header = array('Empleado', 'Dias Asistidos', 'Retardos', 'Faltas', 'Dias Trabajados');
+
+		foreach($data['empleados'] as $key => $item){
+				if($pdf->GetY() >= $pdf->limiteY || $key==0){ //salta de pagina si exede el max
+					if($key > 0)
+						$pdf->AddPage();
+						
+					$pdf->SetFont('Arial','B',9);
+					$pdf->SetTextColor(255,255,255);
+					$pdf->SetFillColor(140,140,140);
+					$pdf->SetX(6);
+					$pdf->SetAligns($aligns);
+					$pdf->SetWidths($widths);
+					$pdf->Row($header, true);
+				}
+					
+				$pdf->SetFont('Arial','',8);
+				$pdf->SetTextColor(0,0,0);
+
+				$datos = array($item->apellido_paterno.' '.$item->apellido_materno.' '.$item->nombre, $item->dias_asistidos, $item->retardos, $item->dias_faltados, 
+											$item->dias_trabajados);
+					
+				$pdf->SetX(6);
+				$pdf->SetAligns($aligns);
+				$pdf->SetWidths($widths);
+				$pdf->Row($datos, false);
+		}
+
+		// if ( count($data['empleados']) == 0 ) {
+		// 	$y = $pdf->GetY();
+		// 	$pdf->SetFont('Arial','B',9);
+
+		// 	if($pdf->GetY()+6 >= $pdf->limiteY){
+		// 		$pdf->AddPage();
+		// 		$y = $pdf->GetY();
+		// 	}
+		// 	$pdf->SetTextColor(0,0,0);
+		// 	$pdf->SetFillColor(255,255,255);
+		// 	$pdf->SetXY(106, $y+5);
+		// 	$pdf->Cell(30, 6, 'De los Cuales: ', 0, 0, 'C', 1);
+
+		// 	$y = $y + 5;
+		// 	$pdf->SetFont('Arial','',8);
+		// 	foreach ($data['tipos'] as $key => $tipo) {
+		// 		if($pdf->GetY() >= $pdf->limiteY || $key==0){ //salta de pagina si exede el max
+		// 			if($key > 0)
+		// 				$pdf->AddPage();
+		// 		}
+		// 		$y += 6;
+		// 		$pdf->SetTextColor(255,255,255);
+		// 		$pdf->SetFillColor(140,140,140);
+		// 		$pdf->SetXY(106, $y);
+		// 		$pdf->Cell(30, 6, $tipo->nombre , 1, 0, 'C',1);
+		// 		$pdf->SetXY(151, $y);
+		// 		$pdf->Cell(30, 6, 'Sub-Total' , 1, 0, 'C',1);
+
+		// 		$pdf->SetTextColor(0,0,0);
+		// 		$pdf->SetFillColor(255,255,255);	
+		// 		$pdf->SetXY(136, $y);
+		// 		$pdf->Cell(15, 6, $tipo->tvuelos , 1, 0, 'C',1);
+		// 		$pdf->SetXY(181, $y);
+		// 		$pdf->Cell(30, 6, String::formatoNumero($tipo->ttotal), 1, 0, 'C',1);
+		// 	}
+
+		// 	$pdf->SetFont('Arial','B',9);
+
+		// 	$pdf->SetTextColor(255,255,255);
+		// 	$pdf->SetFillColor(140,140,140);
+		// 	$pdf->SetXY(106, ($y+5));
+		// 	$pdf->Cell(30, 6, 'Total Vuelos' , 1, 0, 'C',1);
+		// 	$pdf->SetXY(151, ($y+5));
+		// 	$pdf->Cell(30, 6, 'Total' , 1, 0, 'C',1);
+
+		// 	$pdf->SetTextColor(0,0,0);
+		// 	$pdf->SetFillColor(255,255,255);	
+		// 	$pdf->SetXY(136, ($y+5));
+		// 	$pdf->Cell(15, 6, $tvuelos , 1, 0, 'C',1);
+		// 	$pdf->SetXY(181, ($y+5));
+		// 	$pdf->Cell(30, 6, String::formatoNumero($ttotal), 1, 0, 'C',1);
+		// }			
+
+		$pdf->Output('reporte_asistencias.pdf', 'I');
+	}
 }
