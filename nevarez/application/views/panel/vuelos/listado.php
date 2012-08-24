@@ -26,7 +26,7 @@
 					<td><?php echo  $vuelo->matricula; ?></td>
 					<td><?php echo  substr($vuelo->fecha, 0, 19); ?></td>
 					<td>
-						<input type="text" name="<?php echo 'vuelo'.$vuelo->id_vuelo ?>" value="<?php echo substr($vuelo->hora_llegada, 11, -6);?>" id="hora_llegada"  class="a-c" size="4" maxlength="5">
+						<input type="text" class="hora_lleg" name="<?php echo 'vuelo'.$vuelo->id_vuelo ?>" value="<?php echo substr($vuelo->hora_llegada, 11, -6);?>" id="hora_llegada"  class="a-c" size="4" maxlength="5">
 					</td>
 					<td class="tdsmenu a-c" style="width: 90px;">
 						<img alt="opc" src="<?php echo  base_url('application/images/privilegios/gear.png'); ?>" width="16" height="16">

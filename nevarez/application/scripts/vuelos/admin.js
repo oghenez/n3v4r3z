@@ -27,6 +27,14 @@ $(function(){
 		 	h_on_select = $(input).val();
 		}
 	});
+
+	$(".hora_lleg").focus(function(){
+		var vthis = this;
+		setTimeout(function(){
+			vthis.select();
+		}, 100);
+	});
+
 });
 
 
