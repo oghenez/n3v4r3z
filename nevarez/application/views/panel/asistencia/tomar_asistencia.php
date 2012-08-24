@@ -82,7 +82,7 @@
 			<div class="clear"></div>
 		<br />
 			  
-		<textarea name="log" id = "log" rows = "10" cols = "75" ></textarea>
+		<textarea name="log" id="log" rows="10" cols="75" ></textarea>
 </div>
 
 
