@@ -7,7 +7,7 @@ class empleados extends MY_Controller {
 	 * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
 	 * @var unknown_type
 	 */
-	private $excepcion_privilegio = array('empleados/ajax_get_trabajadores/');
+	private $excepcion_privilegio = array('empleados/ajax_get_trabajadores/', 'empleados/rda_pdf/');
 	
 	public function _remap($method){
 		$this->carabiner->css(array(
@@ -396,6 +396,40 @@ class empleados extends MY_Controller {
 			return false;	
 		}
 		return true;
+	}
+
+
+/**
+	* Reporte de Asistencias
+	*
+  */
+
+	public function rda()
+	{
+		$this->carabiner->css(array(
+				array('general/forms.css', 'screen')
+		));
+		$this->carabiner->js(array(
+				array('empleados/reporte_asistencias.js')
+		));
+
+		if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
+		if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+		$params['semanas'] = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+
+		$params['seo'] = array(
+				'titulo' => 'Reporte de Asistencias'
+		);
+
+		$this->load->view('panel/empleados/reporte_asistencias', $params);
+	}
+
+	public function rda_pdf()
+	{
+		$this->load->model('empleados_model');
+		$this->load->model('nomina_model');
+		$data = $this->nomina_model->getEmpleadosNomina(false, true);
+		$this->empleados_model->pdf_rda($data);
 	}
 
 	/**
