@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<form action="<?php echo base_url('panel/vuelos/rv_pdf')?>" id="frmreporte" class="frm_addmod f-l w20" method="POST" target="ifrmReporte">
+<form action="<?php echo base_url('panel/vuelos/rv_pdf')?>" id="frmreporte" class="frm_addmod f-l w20" method="get" target="ifrmReporte">
 	<fieldset>
 		<legend>Rango de fechas</legend>
 		<label for="dfecha1">*Inicio:</label> <br>

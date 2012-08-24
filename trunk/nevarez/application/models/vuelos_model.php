@@ -153,24 +153,24 @@ class vuelos_model extends CI_Model{
 
 	public function data_rv()
 	{
-		$_POST['dfecha1'] = (isset($_POST['dfecha1']))?$_POST['dfecha1']:date('Y-m').'-01';
-		$_POST['dfecha2'] = (isset($_POST['dfecha2']))?$_POST['dfecha2']:date('Y-m-d');
-		$_POST['did_cliente'] = (isset($_POST['did_cliente']))?$_POST['did_cliente']:'';
-		$_POST['did_proveedor'] = (isset($_POST['did_proveedor']))?$_POST['did_proveedor']:'';
+		$_GET['dfecha1'] = (isset($_GET['dfecha1']))?$_GET['dfecha1']:date('Y-m').'-01';
+		$_GET['dfecha2'] = (isset($_GET['dfecha2']))?$_GET['dfecha2']:date('Y-m-d');
+		$_GET['did_cliente'] = (isset($_GET['did_cliente']))?$_GET['did_cliente']:'';
+		$_GET['did_proveedor'] = (isset($_GET['did_proveedor']))?$_GET['did_proveedor']:'';
 
 		$sql= '';
 		$inner_cli= '';
-		if( $this->input->post('dfecha1') != '' )
-			$sql = " AND DATE(v.fecha)>='".$this->input->post('dfecha1')."'";
+		if( $this->input->get('dfecha1') != '' )
+			$sql = " AND DATE(v.fecha)>='".$this->input->get('dfecha1')."'";
 
-		if( $this->input->post('dfecha2') != '' )
-			$sql .= " AND DATE(v.fecha)<='".$this->input->post('dfecha2')."'";
+		if( $this->input->get('dfecha2') != '' )
+			$sql .= " AND DATE(v.fecha)<='".$this->input->get('dfecha2')."'";
 
-		if ( $_POST['did_cliente'] != '' )
-			$inner_cli = " INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo AND vc.id_cliente='{$_POST['did_cliente']}'";
+		if ( $_GET['did_cliente'] != '' )
+			$inner_cli = " INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo AND vc.id_cliente='{$_GET['did_cliente']}'";
 
-		if ( $_POST['did_proveedor'] != '' ) 
-			$sql .= " AND p.id_proveedor='{$_POST['did_proveedor']}'";
+		if ( $_GET['did_proveedor'] != '' ) 
+			$sql .= " AND p.id_proveedor='{$_GET['did_proveedor']}'";
 
 		$query = $this->db->query("SELECT v.fecha, get_clientes_vuelo(v.id_vuelo,null) as clientes, p.nombre as piloto, (a.modelo || ' - ' || a.matricula ) as avion, 
 															1 as vuelos, pp.precio, pp.nombre as tipo_vuelo, pp.id_familia
@@ -201,12 +201,12 @@ class vuelos_model extends CI_Model{
 	 * @param unknown_type $data
 	 */
 	public function pdf_rv($data){
-		if($_POST['dfecha1']!='' && $_POST['dfecha2']!='')
-			$labelFechas = "Desde la fecha ".$_POST['dfecha1']." hasta ".$_POST['dfecha2'];
-		elseif($_POST['dfecha1']!="")
-		$labelFechas = "Desde la fecha ".$_POST['dfecha1'];
-		elseif($_POST['dfecha2']!='')
-		$labelFechas = "Hasta la fecha ".$_POST['dfecha2'];
+		if($_GET['dfecha1']!='' && $_GET['dfecha2']!='')
+			$labelFechas = "Desde la fecha ".$_GET['dfecha1']." hasta ".$_GET['dfecha2'];
+		elseif($_GET['dfecha1']!="")
+		$labelFechas = "Desde la fecha ".$_GET['dfecha1'];
+		elseif($_GET['dfecha2']!='')
+		$labelFechas = "Hasta la fecha ".$_GET['dfecha2'];
 	
 		$this->load->library('mypdf');
 		// Creación del objeto de la clase heredada
@@ -214,8 +214,8 @@ class vuelos_model extends CI_Model{
 		$pdf->show_head = true;
 		$pdf->titulo2 = 'Reporte de Vuelos';
 
-		$lbl_cli = (!empty($_POST['did_cliente']))?"Del Cliente {$_POST['dcliente']}":"";
-		$lbl_pil = (!empty($_POST['did_proveedor']))?  (($lbl_cli!='')?" y Piloto {$_POST['dproveedor']}":"Del Piloto: {$_POST['dproveedor']}"):"";
+		$lbl_cli = (!empty($_GET['did_cliente']))?"Del Cliente {$_GET['dcliente']}":"";
+		$lbl_pil = (!empty($_GET['did_proveedor']))?  (($lbl_cli!='')?" y Piloto {$_GET['dproveedor']}":"Del Piloto: {$_GET['dproveedor']}"):"";
 
 		$pdf->titulo3 =  $lbl_cli . $lbl_pil . "\n". $labelFechas;
 		$pdf->AliasNbPages();
