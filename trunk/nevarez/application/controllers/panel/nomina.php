@@ -231,6 +231,10 @@ class nomina extends MY_Controller {
 
 		if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
 		if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+
+		$_GET['fanio']	= $_POST['fanio'];
+		$_GET['fsemana'] = $_POST['fsemana'];
+
 		$params['semanas'] = String::obtenerSemanasDelAnio($_POST['fanio'],true);
 		$params['lista'] = $this->nomina_model->getEmpleadosNomina();
 

@@ -17,15 +17,15 @@
 </head>
 <body>
 
-<form action="<?php echo base_url('panel/empleados/rda_pdf')?>" id="frmreporte" class="frm_addmod f-l w20" method="POST" target="ifrmReporte">
+<form action="<?php echo base_url('panel/empleados/rda_pdf')?>" id="frmreporte" class="frm_addmod f-l w20" method="GET" target="ifrmReporte">
 	<fieldset>
 		<legend>Seleccione Año y Semana</legend>
 		<label for="fanio">Año:</label> 
-		<input type="number" name="fanio" id="fanio" value="<?php echo $this->input->post('fanio'); ?>" class="a-c vpos-int">
+		<input type="number" name="fanio" id="fanio" value="<?php echo $this->input->get('fanio'); ?>" class="a-c vpos-int">
 			
 		<select name="fsemana" id="fsemana">
 			<?php foreach ($semanas as $s) {?>
-				<option value="<?php echo $s['semana']; ?>" <?php echo (($_POST['fsemana']==$s['semana'])?'selected':''); ?>>
+				<option value="<?php echo $s['semana']; ?>" <?php echo (($_GET['fsemana']==$s['semana'])?'selected':''); ?>>
 					<?php echo 'Semana '.$s['semana'].', DEL '.$s['fecha_inicio'].' AL '.$s['fecha_final'] ?></option>
 			<?php } ?>
 		</select>

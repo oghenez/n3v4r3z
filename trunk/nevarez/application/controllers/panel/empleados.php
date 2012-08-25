@@ -413,9 +413,9 @@ class empleados extends MY_Controller {
 				array('empleados/reporte_asistencias.js')
 		));
 
-		if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
-		if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
-		$params['semanas'] = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+		if (!isset($_GET['fanio'])) $_GET['fanio'] = date('Y');
+		if (!isset($_GET['fsemana'])) $_GET['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+		$params['semanas'] = String::obtenerSemanasDelAnio($_GET['fanio'],true);
 
 		$params['seo'] = array(
 				'titulo' => 'Reporte de Asistencias'

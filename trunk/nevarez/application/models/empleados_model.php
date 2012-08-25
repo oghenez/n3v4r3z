@@ -326,15 +326,15 @@ class empleados_model extends privilegios_model{
 	 */
 	public function pdf_rda($data){
 
-		$semanas = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+		$semanas = String::obtenerSemanasDelAnio($_GET['fanio'],true);
 		foreach ($semanas as $s) {
-			if ($s['semana'] == $_POST['fsemana']) {
+			if ($s['semana'] == $_GET['fsemana']) {
 				$finicio_semana = $s['fecha_inicio'];
 				$ffin_semana = $s['fecha_final'];
 				break;
 			}
 		}
-		$labelFechas = "Semana {$_POST['fsemana']} del $finicio_semana al $ffin_semana";
+		$labelFechas = "Semana {$_GET['fsemana']} del $finicio_semana al $ffin_semana";
 	
 		$this->load->library('mypdf');
 		// Creación del objeto de la clase heredada
@@ -342,7 +342,7 @@ class empleados_model extends privilegios_model{
 		$pdf->show_head = true;
 		$pdf->titulo2 = 'Reporte de Asistencias';
 
-		$pdf->titulo3 =  "Año {$_POST['fanio']} \n". $labelFechas;
+		$pdf->titulo3 =  "Año {$_GET['fanio']} \n". $labelFechas;
 		$pdf->AliasNbPages();
 		$pdf->AddPage();
 			
