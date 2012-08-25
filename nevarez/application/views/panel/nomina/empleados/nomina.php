@@ -72,7 +72,7 @@
 				<tr id="<?php echo str_replace('.', '-', $emp->id_empleado)?>">
 					<td id="semana"> 
 							<?php echo ($lista['historial'])?'<input type="checkbox" id="semana-single" '.(($emp->premio_puntualidad != 0)?'checked':'').' disabled/>':
-							'<input type="checkbox" id="semana-single" '.(($emp->dias_trabajados==7)?"checked":"").' />'?> 
+							'<input type="checkbox" id="semana-single" '.(($emp->dias_trabajados==7 && $emp->retardos == 0)?"checked":"").' />'?> 
 					</td>
 					<td id="vacaciones" <?php echo ($lista['historial'])?'':'style="display:none;"' ?>> 
 							<?php echo ($lista['historial'])?'<input type="checkbox" id="vacaciones-single" '.(($emp->vacaciones != 0)?'checked':'').' disabled/>':'' ?> 

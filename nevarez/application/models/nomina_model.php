@@ -416,11 +416,11 @@ class nomina_model extends privilegios_model{
 	public function getEmpleadosNomina($verificar_nomina=true, $reporte=false)
 	{
 		if ($reporte) {
-			if (!isset($_POST['fanio'])) $_POST['fanio'] = date('Y');
-			if (!isset($_POST['fsemana'])) $_POST['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
+			if (!isset($_GET['fanio'])) $_GET['fanio'] = date('Y');
+			if (!isset($_GET['fsemana'])) $_GET['fsemana'] = String::obtenerSemanaActual(date('Y-m-d'));
 		}
 
-		$_POST['fanio'] = ($_POST['fanio'] != '') ? $_POST['fanio'] : date('Y');
+		$_GET['fanio'] = ($_GET['fanio'] != '') ? $_GET['fanio'] : date('Y');
 		$sql->num_rows = 0;
 		if ( $verificar_nomina ) {
 			$historial = TRUE;
@@ -429,16 +429,16 @@ class nomina_model extends privilegios_model{
 																			e.curp, e.fecha_entrada, e.fecha_salida, e.hora_entrada, e.salario
 															FROM empleados_nomina as en
 															INNER JOIN empleados as e ON e.id_empleado=en.id_empleado
-															WHERE en.anio = {$_POST['fanio']} AND en.semana = {$_POST['fsemana']}
+															WHERE en.anio = {$_GET['fanio']} AND en.semana = {$_GET['fsemana']}
 															ORDER BY (e.apellido_paterno, e.apellido_materno, e.nombre) ASC");
 		}
 		
 		if ($sql->num_rows == 0) {
 			$historial = FALSE;
 
-			$semanas = String::obtenerSemanasDelAnio($_POST['fanio'],true);
+			$semanas = String::obtenerSemanasDelAnio($_GET['fanio'],true);
 			foreach ($semanas as $s) {
-				if ($s['semana'] == $_POST['fsemana']) {
+				if ($s['semana'] == $_GET['fsemana']) {
 					$finicio_semana = $s['fecha_inicio'];
 					$ffin_semana = $s['fecha_final'];
 					break;
@@ -479,11 +479,18 @@ class nomina_model extends privilegios_model{
 			$hoy = date("Y-m-d");
 			foreach ($sql->result() as $emp) {
 				$emp->dias_asistidos = $emp->dias_trabajados;
-				if ( $total_asis_todos > 0 || ( strtotime($hoy)>=strtotime($finicio_semana) && strtotime($hoy)<=strtotime($ffin_semana) )) {	
+				if ( $total_asis_todos > 0 || ( strtotime($hoy)>=strtotime($finicio_semana) && strtotime($hoy)<=strtotime($ffin_semana) )) {
+
+					if ( (($emp->dias_trabajados + $emp->dias_faltados) < 7) && $emp->trabajo_domingo == 1) {
+						$dif = 7 - ($emp->dias_trabajados + $emp->dias_faltados);
+						$emp->dias_faltados += 1;
+					}	
+
 					if ( $emp->trabajo_domingo == 0 ) {
 						$emp->dias_asistidos += 1;
 						$emp->dias_trabajados += 1;
 					}
+
 					if ( $emp->dias_faltados < 0 ) 
 						$emp->dias_faltados = 0;
 					if ( $emp->retardos > 2 )
