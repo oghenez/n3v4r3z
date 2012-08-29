@@ -61,6 +61,7 @@ function post_identify(Objpost){
 			document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
 		}
 		else if(Objpost.ret == 1){
+			alert(Objpost.id);
 			document.getElementById('log').value = document.getElementById('log').value + "Identificado como: " + Objpost.id + "\n";
 			document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
 			$("#img_foto").attr("src", Objpost.img);
