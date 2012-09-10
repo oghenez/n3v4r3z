@@ -1,5 +1,21 @@
 h_on_select = '';
 $(function(){
+
+	$("#fcliente").on("keydown", function(event){
+		if(event.which == 8 || event == 46){
+			var input = this.id;
+			var hidde = 'h'+input.substr(1);
+			$(this).val("");
+			$("#fidcliente").val("");
+		}
+	}).autocomplete({
+		source: base_url+'panel/clientes/ajax_get_clientes',
+		minLength: 1,
+		selectFirst: true,
+		select: function( event, ui ) {
+			$("#fidcliente").val(ui.item.id);
+		}
+	});
 	
 	$('#ffecha_ini').datepicker({
 		 dateFormat: 'yy-mm-dd', //formato de la fecha - dd,mm,yy=dia,mes,año numericos  DD,MM=dia,mes en texto
