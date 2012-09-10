@@ -13,7 +13,7 @@ class vuelos_model extends CI_Model{
 		$sql = '';
 		//paginacion
 		$params = array(
-				'result_items_per_page' => '30',
+				'result_items_per_page' => '40',
 				'result_page' => (isset($_GET['pag'])? $_GET['pag']: 0)
 		);
 		if($params['result_page'] % $params['result_items_per_page'] == 0)
@@ -26,14 +26,19 @@ class vuelos_model extends CI_Model{
 		if($this->input->get('ffecha_fin') != '')
 			$sql .= ($this->input->get('ffecha_ini') != '') ? " AND DATE(v.fecha)<='".$this->input->get('ffecha_fin')."'" : " AND DATE(v.fecha)='".$this->input->get('ffecha_fin')."'";
 		
+		$innersql = '';
+		if($this->input->get('fidcliente') != '')
+			$innersql = "INNER JOIN vuelos_clientes AS vc ON (vc.id_vuelo = v.id_vuelo AND vc.id_cliente = '".$this->input->get('fidcliente')."')";
+
 		if($sql=='')
 			$sql = " AND DATE(v.fecha)=DATE(now())";
 
 		$query = BDUtil::pagination("
 				SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe, v.hora_llegada
 				FROM vuelos as v
-				INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
-				INNER JOIN aviones as a ON v.id_avion = a.id_avion
+					INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
+					INNER JOIN aviones as a ON v.id_avion = a.id_avion
+					".$innersql."
 				WHERE pi.status='ac' AND a.status='ac'				
 				$sql
 				ORDER BY (DATE(v.fecha),get_clientes_vuelo(v.id_vuelo,null), pi.nombre,a.matricula) DESC
@@ -167,10 +172,10 @@ class vuelos_model extends CI_Model{
 			$sql .= " AND DATE(v.fecha)<='".$this->input->get('dfecha2')."'";
 
 		if ( $_GET['did_cliente'] != '' )
-			$inner_cli = " INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo AND vc.id_cliente='{$_GET['did_cliente']}'";
+			$inner_cli = " INNER JOIN vuelos_clientes as vc ON (v.id_vuelo=vc.id_vuelo AND vc.id_cliente='".$_GET['did_cliente']."')";
 
 		if ( $_GET['did_proveedor'] != '' ) 
-			$sql .= " AND p.id_proveedor='{$_GET['did_proveedor']}'";
+			$sql .= " AND p.id_proveedor='".$_GET['did_proveedor']."'";
 
 		$query = $this->db->query("SELECT v.fecha, get_clientes_vuelo(v.id_vuelo,null) as clientes, p.nombre as piloto, (a.modelo || ' - ' || a.matricula ) as avion, 
 															1 as vuelos, pp.precio, pp.nombre as tipo_vuelo, pp.id_familia
@@ -184,10 +189,11 @@ class vuelos_model extends CI_Model{
 													INNER JOIN productos p ON plp.id_producto=p.id_producto 
 												) 
 												pp ON pp.id_producto=v.id_producto
-											$inner_cli
-											WHERE p.status='ac' AND pp.status='ac' AND a.status='ac' $sql
+											".$inner_cli."
+											WHERE p.status='ac' AND pp.status='ac' AND a.status='ac' ".$sql."
 											ORDER BY fecha ASC"
 									);
+
 		$query_tipos = array();
 		if ($query->num_rows() > 0 ) {
 			$query_tipos = $this->db->query("SELECT nombre, 0 as tvuelos, 0 as ttotal FROM productos WHERE id_familia='{$query->first_row()->id_familia}'");
