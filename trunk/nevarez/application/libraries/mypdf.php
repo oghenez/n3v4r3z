@@ -56,7 +56,7 @@ class MYpdf extends FPDF {
     	$this->Cell(141, 6, $this->titulo2, 0, 0, 'C');
     	 
     	if($this->titulo3 != ''){
-    		$this->SetFont('Arial','B',9);
+    		$this->SetFont('Arial','B',8);
     		$this->SetXY(46, 17);
     		$this->MultiCell(141, 4, $this->titulo3, 0, 'C', false);
     	}
