@@ -33,25 +33,47 @@ class vuelos_model extends CI_Model{
 		if($sql=='')
 			$sql = " AND DATE(v.fecha)=DATE(now())";
 
-		$query = BDUtil::pagination("
-				SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, pi.nombre as piloto, a.matricula, v.fecha, existe_tickets_vuelos(v.id_vuelo) as existe, v.hora_llegada
+		$query = BDUtil::pagination(
+			"SELECT v.id_vuelo, get_clientes_vuelo(v.id_vuelo,null) as clientes, 
+							pi.nombre as piloto, a.matricula, v.fecha, 
+							existe_tickets_vuelos(v.id_vuelo) as existe, v.hora_llegada,
+							COALESCE((
+								SELECT precio
+								FROM productos_listas_precios plp 
+								WHERE plp.id_producto=v.id_producto 
+									AND plp.id_lista=cli.id_lista_precio
+								),get_precio_default(v.id_producto)) AS precio
 				FROM vuelos as v
 					INNER JOIN proveedores as pi ON v.id_piloto = pi.id_proveedor
 					INNER JOIN aviones as a ON v.id_avion = a.id_avion
+					INNER JOIN 
+										(
+										 SELECT vc.id_vuelo, c.id_lista_precio
+										 FROM clientes c 
+											INNER JOIN vuelos_clientes vc ON vc.id_cliente=c.id_cliente
+										) as cli ON v.id_vuelo=cli.id_vuelo
 					".$innersql."
 				WHERE pi.status='ac' AND a.status='ac'				
 				$sql
 				ORDER BY (DATE(v.fecha),get_clientes_vuelo(v.id_vuelo,null), pi.nombre,a.matricula) DESC
 				", $params, true);
 		$res = $this->db->query($query['query']);
-		
+
 		$response = array(
 			'vuelos' 			=> array(),
 			'total_rows' 		=> $query['total_rows'],
 			'items_per_page' 	=> $params['result_items_per_page'],
-			'result_page' 		=> $params['result_page']
+			'result_page' 		=> $params['result_page'],
+			'ttotal' => ''
 		);
 		$response['vuelos'] = $res->result();
+
+		$ttotal = 0;
+		foreach ($query['resultset']->result() as $itm) {
+			$ttotal += $itm->precio;
+		}
+		$response['ttotal'] = $ttotal;
+
 		return $response;
 	}
 	
@@ -177,8 +199,7 @@ class vuelos_model extends CI_Model{
 		if ( $_GET['did_proveedor'] != '' ) 
 			$sql .= " AND p.id_proveedor='".$_GET['did_proveedor']."'";
 
-		$query = $this->db->query("SELECT v.fecha, get_clientes_vuelo(v.id_vuelo,null) as clientes, p.nombre as piloto, (a.modelo || ' - ' || a.matricula ) as avion, 
-															1 as vuelos, pp.precio, pp.nombre as tipo_vuelo, pp.id_familia
+		$query = $this->db->query("SELECT v.fecha, get_clientes_vuelo(v.id_vuelo,null) as clientes, p.nombre as piloto, (a.modelo || ' - ' || a.matricula ) as avion, 1 as vuelos, pp.precio, pp.nombre as tipo_vuelo, pp.id_familia
 											FROM vuelos v
 											INNER JOIN proveedores p ON v.id_piloto=p.id_proveedor
 											INNER JOIN aviones a ON v.id_avion=a.id_avion
@@ -193,6 +214,43 @@ class vuelos_model extends CI_Model{
 											WHERE p.status='ac' AND pp.status='ac' AND a.status='ac' ".$sql."
 											ORDER BY fecha ASC"
 									);
+
+		$query = $this->db->query(
+							"SELECT id_vuelo, fecha, piloto,
+											 avion, vuelos, clientes, tipo_vuelo, precio,
+											 id_familia
+							FROM ( 
+								SELECT v.id_vuelo, v.fecha, 
+									p.nombre as piloto, (a.modelo || ' - ' || a.matricula ) AS avion, 
+									1 as vuelos, pr.nombre AS tipo_vuelo, pr.id_familia,
+									COALESCE((
+										SELECT precio 
+										FROM productos_listas_precios plp 
+										WHERE plp.id_producto=v.id_producto 
+											AND plp.id_lista=cli.id_lista_precio
+										),get_precio_default(v.id_producto)) AS precio,
+										(SELECT array_to_string(ARRAY(SELECT c.nombre_fiscal 
+											FROM clientes c 
+											INNER JOIN vuelos_clientes vc ON c.id_cliente=vc.id_cliente
+											WHERE vc.id_vuelo=v.id_vuelo AND c.status<>'e'
+											ORDER BY c.nombre_fiscal ASC), '<br>')) AS clientes	
+									FROM vuelos v
+									INNER JOIN 
+										(
+										 SELECT vc.id_vuelo, c.id_lista_precio
+										 FROM clientes c 
+											INNER JOIN vuelos_clientes vc ON vc.id_cliente=c.id_cliente
+										) as cli ON v.id_vuelo=cli.id_vuelo
+									INNER JOIN proveedores p ON (v.id_piloto=p.id_proveedor)
+									INNER JOIN aviones a ON (v.id_avion=a.id_avion)
+									INNER JOIN productos pr ON (v.id_producto=pr.id_producto)
+									".$inner_cli."
+									WHERE p.status='ac' 
+										AND pr.status='ac' 
+										AND a.status='ac' 
+										".$sql."
+							) as tre
+							ORDER BY fecha ASC");
 
 		$query_tipos = array();
 		if ($query->num_rows() > 0 ) {

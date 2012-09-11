@@ -23,7 +23,9 @@
 			<td>Hora Llegada</td>
 			<td class="a-c">Opc</td>
 		</tr>
-<?php foreach($vuelos['vuelos'] as $vuelo){ ?>
+<?php $ttotal_pag=0; foreach($vuelos['vuelos'] as $vuelo){ 
+			$ttotal_pag += $vuelo->precio;
+	?>
 				<tr class="row-conte" id="<?php echo  $vuelo->id_vuelo?>">
 					<td><?php echo  $vuelo->clientes;?></td>
 					<td><?php echo  $vuelo->piloto; ?></td>
@@ -47,8 +49,19 @@
 				</tr>
 		<?php }?>
 	</table>
-<?php
-//Paginacion
+<div class="clear"></div>
+<table class="tblListados corner-all8 f-r" style="margin-right:1%;text-align:center; width:20% !important;">
+	<tr>
+		<td style="text-align:right;">Total x Pagina</td>
+		<td id="ta_isr" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero($ttotal_pag); ?></td>
+	</tr>
+	<tr>
+		<td style="text-align:right;">Total</td>
+		<td id="ta_total" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero($vuelos['ttotal']); ?></td>
+	</tr>
+</table>
+<div class="clear"></div>
+<?php //Paginacion
 $this->pagination->initialize(array(
 		'base_url' 			=> base_url($this->uri->uri_string()).'?'.String::getVarsLink(array('pag')).'&',
 		'total_rows'		=> $vuelos['total_rows'],
