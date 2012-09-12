@@ -23,6 +23,13 @@ class Welcome extends CI_Controller {
 		foreach($data->result() as $itm){
 			echo $itm->sql.";<br>";
 		}
+		echo "<br><br>";
+		
+		$data = $this->db->query("select * from actualizaciones where sql like 'UPDATE \"privilegios\" SET%' order by fecha asc");
+		foreach($data->result() as $itm){
+			echo $itm->sql.";<br>";
+		}
+		
 		$this->load->view('welcome_message');
 	}
 }

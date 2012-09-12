@@ -182,6 +182,13 @@ class cfd{
 			$fecha = $this->obtenFechaMes($data['fecha_xml']);
 			$dir_anio = $fecha[0];
 			$dir_mes = $this->mesToString($fecha[1]);
+			
+			if(!file_exists(APPPATH.'/media/cfd/facturasXML/'.$dir_anio.'/')){
+				$this->crearFolder(APPPATH.'/media/cfd/facturasXML/', $dir_anio.'/');
+			}
+			if(!file_exists(APPPATH.'/media/cfd/facturasXML/'.$dir_anio.'/'.$dir_mes.'/')){
+				$this->crearFolder(APPPATH.'/media/cfd/facturasXML/'.$dir_anio.'/', $dir_mes.'/');
+			}
 		}
 		$path_guardar = APPPATH.'/media/cfd/facturasXML/'.$dir_anio.'/'.$dir_mes.'/'.
 				$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.xml';

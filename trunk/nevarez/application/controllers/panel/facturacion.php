@@ -11,7 +11,8 @@ class facturacion extends MY_Controller {
          * @var unknown_type
          */
         private $excepcion_privilegio = array('facturacion/ajax_get_total_tickets/','facturacion/ajax_get_folio/','facturacion/ajax_agrega_factura/','facturacion/imprimir_pdf/',
-                                              'facturacion/ajax_actualiza_digitos/','facturacion/pdf_rm/','facturacion/descargar_rm/');
+                                              'facturacion/ajax_actualiza_digitos/','facturacion/pdf_rm/','facturacion/descargar_rm/',
+                                              'facturacion/parchefac/');
         
         public function _remap($method){
                 $this->carabiner->css(array(
@@ -39,6 +40,14 @@ class facturacion extends MY_Controller {
                                 redirect(base_url('panel/home?msg=1'));
                 }else
                         redirect(base_url('panel/home'));
+        }
+
+        /**
+        * parche regenera los archivos de las facturas
+        */
+        private function parchefac(){
+            $this->load->model('facturacion_model');
+            $this->facturacion_model->regeneraFacturas();
         }
         
         private function index(){

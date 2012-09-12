@@ -128,10 +128,29 @@ class facturacion_model extends privilegios_model{
 		$this->db->update('facturacion',array('metodo_pago_digitos'=>$this->input->post('digitos')),array('id_factura'=>$this->input->post('id')));		
 		$data = $this->getDataFactura($this->input->post('id'),true);
 		$cadena = $this->cfd->obtenCadenaOriginal($data);
-		$this->db->update('facturacion',array('cadena_original'=>$cadena),array('id_factura'=>$this->input->post('id')));
+		$sello 	= $this->cfd->obtenSello($cadena); // OBTIENE EL SELLO DIGITAL
+
+		$this->db->update('facturacion',array('cadena_original'=>$cadena, 'sello'=>$sello), array('id_factura'=>$this->input->post('id')));
 		$data = $this->getDataFactura($this->input->post('id'),true);
 		$this->cfd->actualizarArchivos($data);
 		return array(true);
+	}
+
+	public function regeneraFacturas(){
+		$this->load->library('cfd');
+		$data = $this->db->select("*")->from('facturacion')->order_by("folio", 'asc')->get();
+
+		foreach ($data->result() as $value) {
+			$data_fac = $this->getDataFactura($value->id_factura, true);
+			$cadena = $this->cfd->obtenCadenaOriginal($data_fac);
+			$sello 	= $this->cfd->obtenSello($cadena); // OBTIENE EL SELLO DIGITAL
+
+			$this->db->update('facturacion',array('cadena_original'=>$cadena, 'sello'=>$sello), 
+					array('id_factura'=>$value->id_factura) );
+			$data_fac = $this->getDataFactura($value->id_factura, true);
+			$this->cfd->actualizarArchivos($data_fac);
+			echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." <br>\n";
+		}
 	}
 	
 	public function addFactura(){
@@ -156,8 +175,8 @@ class facturacion_model extends privilegios_model{
 					'ano_aprobacion'=> $this->input->post('dano_aprobacion'),
 					'tipo_comprobante'	=> $this->input->post('dtipo_comprobante'), 
 					'forma_pago'		=> $forma_pago, 
-					'subtotal'			=> String::float($this->input->post('subtotal')), 
-					'total'				=> String::float($this->input->post('total')),
+					'subtotal'			=> $this->input->post('subtotal'), 
+					'total'				=> $this->input->post('total'),
 					'metodo_pago'		=> $this->input->post('dmetodo_pago'), 
 					'no_cuenta_pago'	=> $no_cta_pago,
 					'moneda'			=> 'pesos',
@@ -385,7 +404,7 @@ class facturacion_model extends privilegios_model{
 		$iva_10 = 0;
 		$iva_0	= 0;
 		$total_iva = 0;
-		$tot_prod_iva_0 = 0 ;
+		$tot_prod_iva_0 = 0;
 		
 		$ivas = array();
 		$res_q1= $this->db->select("id_ticket")->from("facturacion_tickets")->where("id_factura",$id_factura)->get()->result();
@@ -408,11 +427,12 @@ class facturacion_model extends privilegios_model{
 				}
 		}
 		
+		$ivas['ivas'] = array();
 		if($iva_16>0)
 			$ivas['ivas'][] = array('tasa_iva'=>'16','importe_iva'=>$iva_16);
 		if($iva_10>0)
 			$ivas['ivas'][] = array('tasa_iva'=>'10','importe_iva'=>$iva_10);
-		if($tot_prod_iva_0>0)
+		//if($tot_prod_iva_0>0)
 			$ivas['ivas'][] = array('tasa_iva'=>'0','importe_iva'=>$iva_0);
 
 		$ivas['iva_total'] = $iva_16 + $iva_10 + $iva_0;
