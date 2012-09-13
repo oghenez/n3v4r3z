@@ -245,7 +245,7 @@ class cuentas_cobrar_model extends CI_Model{
 							WHERE valida_ticket_fac(t.id_ticket)='t' 
 								AND t.id_cliente = '".$_GET['id_cliente']."' 
 								AND t.status <> 'ca'
-								AND ta.tipo <> 'ca' AND Date(ta.fecha) <= '".$fecha2."'".$sqlt."
+								AND ta.tipo <> 'ca' AND Date(ta.fecha) <= '".$fecha1."'".$sqlt."
 							GROUP BY t.id_cliente
 						) AS taa ON c.id_cliente = taa.id_cliente
 					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND valida_ticket_fac(t.id_ticket)='t' AND t.status <> 'ca' AND Date(t.fecha) <= '".$fecha1."'".$sqlt."
