@@ -460,8 +460,8 @@ class facturacion_model extends privilegios_model{
 			}
 			else{
 				if(!is_null($abono)){
-					$total = $abono;
-					if(floatval(($abono+$factura_info->abonado))>=floatval($factura_info->total))
+					$total = ($abono > $factura_info->restante)?$factura_info->restante:$abono;
+					if(floatval(($total+$factura_info->abonado))>=floatval($factura_info->total))
 						$pagado=true;
 				}
 				else{
@@ -519,6 +519,16 @@ class facturacion_model extends privilegios_model{
 			->get();
 		}		
 		return $res->row();
+	}
+
+	public function eliminar_abono()
+	{
+		$this->db->delete('facturacion_abonos',array('id_abono' => $_GET['ida']));
+		$info_abonos = $this->get_info_abonos();
+
+		if ($info_abonos->restante != 0 )
+			$this->db->update('facturacion',array('status'=>'p'),array('id_factura'=>$_GET['id']));
+		return true;
 	}
 	
 	public function getSeriesFolios(){

@@ -102,15 +102,8 @@ foreach($cuentasp['cuentas'] as $cuenta){
 			<td><?php echo $cuenta->fecha; ?></td>
 			<td><?php echo $cuenta->serie; ?></td>
 			<td>
-				<?php if ($cuenta->tipo == 'f') { ?>
-					<a href="<?php echo base_url('panel/facturacion/ver/').
-						'?id='.$cuenta->id_factura?>" class="linksm lkzoom"><?php echo $cuenta->folio; ?></a>
-				<?php }else {?>
-					<a href="<?php echo base_url('panel//tickets/ver/').
-						'?id='.$cuenta->id_factura?>" class="linksm lkzoom"><?php echo $cuenta->folio; ?></a>
-					</td>
-				<?php }?>
-
+					<a href="<?php echo base_url('panel/cuentas_cobrar/detalle/').
+						'?id_cliente='.$_GET['id_cliente'].'&id='.$cuenta->id_factura.'&tipo='.(($cuenta->tipo == 'f')?'f':'t').'&ffecha1='.$_GET['ffecha1'].'&ffecha2='.$_GET['ffecha2'].'&ftipo='.$_GET['ftipo'] ?>" class="linksm lkzoom"><?php echo $cuenta->folio; ?></a>
 			<td><?php echo $cuenta->concepto ?></td>
 			<td><?php echo String::formatoNumero($cuenta->cargo); ?></td>
 			<td><?php echo String::formatoNumero($cuenta->abono); ?></td>

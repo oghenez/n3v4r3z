@@ -1,49 +1,50 @@
 
 <div id="contentAll" class="f-l">
 	<div class="w15 f-l">
-		<a href="<?php echo base_url('panel/cuentas_pagar/cuenta_proveedor/?'.String::getVarsLink(array('id_compra'))); ?>" class="linksm">
+		<a href="<?php echo base_url('panel/cuentas_cobrar/cuenta_cliente/?'.String::getVarsLink(array('id_factura'))); ?>" class="linksm">
 			<img src="<?php echo base_url('application/images/privilegios/atras.png'); ?>" width="16" height="16"> Atras</a>
-		<a href="<?php echo base_url('panel/cuentas_pagar/detalle_pdf/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
+		<a href="<?php echo base_url('panel/cuentas_cobrar/detalle_pdf/?'.String::getVarsLink()); ?>" class="linksm" target="_blank">
 			<img src="<?php echo base_url('application/images/privilegios/pdf.png'); ?>" width="20" height="20"> Imprimir</a>
 	</div>
 	
 	<fieldset class="w40 f-r" style="color: #555; font-size: .9em;">
-		<legend>Datos de la factura</legend>
-		<strong>Fecha:</strong> <?php echo $cuentasp['compra']->fecha; ?> <br>
-		<strong>Serie:</strong> <?php echo $cuentasp['compra']->serie; ?> 
-		<strong>Folio:</strong> <?php echo $cuentasp['compra']->folio; ?> <br>
-		<strong>Condicion pago: </strong> <?php echo $cuentasp['compra']->condicion_pago=='co'? 'Contado': 'Credito'; ?> 
-		<strong>Plazo credito: </strong> <?php echo $cuentasp['compra']->condicion_pago=='co'? 0: $cuentasp['compra']->plazo_credito; ?> <br>
+		<legend>Datos de<?php echo ($_GET['tipo']=='f')?' la factura':'l ticket' ?></legend>
+		<strong>Fecha:</strong> <?php echo $cuentasp['cobro'][0]->fecha; ?> <br>
+		<strong>Serie:</strong> <?php echo $cuentasp['cobro'][0]->serie; ?> <br>
+		<strong>Folio:</strong> <?php echo $cuentasp['cobro'][0]->folio; ?> <br>
+		<strong>Condicion pago: </strong> <?php echo $cuentasp['cobro'][0]->condicion_pago=='co'? 'Contado': 'Credito'; ?> 
+		<strong>Plazo credito: </strong> <?php echo $cuentasp['cobro'][0]->condicion_pago=='co'? 0: $cuentasp['cobro'][0]->plazo_credito; ?> <br>
 		<strong>Estado:</strong> <span id="inf_fact_estado"></span>
 	</fieldset>
 	
 	<fieldset class="w40 f-r" style="color: #555; font-size: .9em;">
-		<legend>Datos del proveedor</legend>
-		<strong>Nombre:</strong> <?php echo $cuentasp['proveedor']->nombre; ?> <br>
+		<legend>Datos del cliente</legend>
+		<strong>Nombre:</strong> <?php echo $cuentasp['cliente']->nombre_fiscal; ?> <br>
 		<strong>Dirección: </strong> 
 				<?php
-					$info = $cuentasp['proveedor']->calle!=''? $cuentasp['proveedor']->calle: '';
-					$info .= $cuentasp['proveedor']->no_exterior!=''? ' #'.$cuentasp['proveedor']->no_exterior: '';
-					$info .= $cuentasp['proveedor']->no_interior!=''? '-'.$cuentasp['proveedor']->no_interior: '';
-					$info .= $cuentasp['proveedor']->colonia!=''? ', '.$cuentasp['proveedor']->colonia: '';
-					$info .= "\n".($cuentasp['proveedor']->localidad!=''? $cuentasp['proveedor']->localidad: '');
-					$info .= $cuentasp['proveedor']->municipio!=''? ', '.$cuentasp['proveedor']->municipio: '';
-					$info .= $cuentasp['proveedor']->estado!=''? ', '.$cuentasp['proveedor']->estado: '';
+					$info = $cuentasp['cliente']->calle!=''? $cuentasp['cliente']->calle: '';
+					$info .= $cuentasp['cliente']->no_exterior!=''? ' #'.$cuentasp['cliente']->no_exterior: '';
+					$info .= $cuentasp['cliente']->no_interior!=''? '-'.$cuentasp['cliente']->no_interior: '';
+					$info .= $cuentasp['cliente']->colonia!=''? ', '.$cuentasp['cliente']->colonia: '';
+					$info .= "\n".($cuentasp['cliente']->localidad!=''? $cuentasp['cliente']->localidad: '');
+					$info .= $cuentasp['cliente']->municipio!=''? ', '.$cuentasp['cliente']->municipio: '';
+					$info .= $cuentasp['cliente']->estado!=''? ', '.$cuentasp['cliente']->estado: '';
 					echo $info;
 				?> <br>
-		<strong>Teléfono: </strong> <?php echo $cuentasp['proveedor']->telefono; ?> 
-		<strong>Email: </strong> <?php echo $cuentasp['proveedor']->email; ?>
+		<strong>Teléfono: </strong> <?php echo $cuentasp['cliente']->telefono; ?> 
+		<strong>Email: </strong> <?php echo $cuentasp['cliente']->email; ?>
 	</fieldset>
 	<div class="clear"></div>
 	
 	<div class="w40 f-r a-r" style="font-size: 1.1em;">
 		<?php
-		$status = (isset($cuentasp['compra']->status)? $cuentasp['compra']->status: 'pa');
-		
+		$status = (isset($cuentasp['cobro'][0]->status)? $cuentasp['cobro'][0]->status: 'pa');
+
 		if($status == 'p'){
-			$tien = $this->empleados_model->getLinkPrivSm('compras/pagar/', $this->input->get('id_compra'), '', ' rel="superbox[iframe][800x500]"');
+			$controler = ($_GET['tipo'] == 'f')?'facturacion':'tickets';
+			$tien = $this->empleados_model->getLinkPrivSm($controler.'/pagar/', $this->input->get('id'), '', ' rel="superbox[iframe][600x400]"');
 			if($tien!='')
-				echo '<a href="'.base_url('panel/compras/pagar/?id='.$this->input->get('id_compra').'&tipo=abono').'" class="linksm" rel="superbox[iframe][800x500]">
+				echo '<a href="'.base_url('panel/'.$controler.'/pagar/?id='.$this->input->get('id').'&tipo=abono').'" class="linksm" rel="superbox[iframe][600x400]">
 				<img src="'.base_url('application/images/privilegios/add.png').'" width="10" height="10"> Abonar</a>';
 			echo $tien;
 		}
@@ -54,7 +55,7 @@
 		<tr>
 			<td colspan="2"></td>
 			<td colspan="3" class="a-c"> <strong>Total: <?php echo String::formatoNumero(
-					(isset($cuentasp['compra']->total)? $cuentasp['compra']->total: 0) ); ?></strong></td>
+					(isset($cuentasp['cobro'][0]->total)? $cuentasp['cobro'][0]->total: 0) ); ?></strong></td>
 		</tr>
 		<tr class="header btn-gray">
 			<td>Fecha</td>
@@ -65,8 +66,8 @@
 		</tr>
 <?php
 $total_abono = 0;
-$total_saldo = $cuentasp['compra']->total;
-foreach($cuentasp['cuentas'] as $cuenta){
+$total_saldo = $cuentasp['cobro'][0]->total;
+foreach($cuentasp['abonos'] as $cuenta){
 	$total_abono += $cuenta->abono;
 	$total_saldo -= $cuenta->abono;
 ?>
@@ -77,8 +78,16 @@ foreach($cuentasp['cuentas'] as $cuenta){
 			<td><?php echo String::formatoNumero($total_saldo); ?></td>
 			<td class="tdsmenu a-c" style="width: 70px;">
 			<?php
-			echo $this->empleados_model->getLinkPrivSm('compras/delete_abono/', $cuenta->id_abono,
-					"msb.confirm('Estas seguro de eliminar el abono?', this); return false;", '', '&'.String::getVarsLink());
+			if ($_GET['tipo'] == 't')
+			{
+				echo $this->empleados_model->getLinkPrivSm('tickets/eliminar_abono/', array('ida' => $cuenta->id_abono),
+					"msb.confirm('Estas seguro de eliminar el abono?', this); return false;", '', '&'.String::getVarsLink(array('msg')));
+			}
+			elseif ($_GET['tipo'] == 'f')
+			{
+				echo $this->empleados_model->getLinkPrivSm('facturacion/eliminar_abono/', array('ida' => $cuenta->id_abono),
+					"msb.confirm('Estas seguro de eliminar el abono?', this); return false;", '', '&'.String::getVarsLink(array('msg')));	
+			}
 			?>
 			</td>
 		</tr>

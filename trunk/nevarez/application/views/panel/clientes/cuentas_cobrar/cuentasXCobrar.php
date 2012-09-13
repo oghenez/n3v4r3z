@@ -25,7 +25,7 @@
 	
 	<table class="tblListados corner-all8">
 		<tr class="header btn-gray">
-			<td>Proveedor</td>
+			<td>Cliente</td>
 			<td>Saldo</td>
 		</tr>
 <?php
@@ -40,8 +40,12 @@ foreach($cuentasp['cuentas'] as $cuenta){
 		</tr>
 <?php }?>
 		<tr style="background-color:#ccc;font-weight: bold;">
-			<td class="a-r">Total:</td>
+			<td class="a-r">Total x Página:</td>
 			<td><?php echo String::formatoNumero($total_saldo); ?></td>
+		</tr>
+		<tr style="background-color:#ccc;font-weight: bold;">
+			<td class="a-r">Total:</td>
+			<td><?php echo String::formatoNumero($cuentasp['ttotal']); ?></td>
 		</tr>
 	</table>
 <?php

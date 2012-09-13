@@ -245,7 +245,11 @@ class tickets_model extends privilegios_model{
 				$pagado = true;
 			}
 			else{
-				
+				if(!is_null($abono)){
+					$total = ($abono > $ticket_info->restante)?$ticket_info->restante:$abono;
+					if(floatval(($total+$ticket_info->abonado))>=floatval($ticket_info->total))
+						$pagado=true;
+				}
 			}
 			
 			$id_abono = BDUtil::getId();
@@ -283,6 +287,16 @@ class tickets_model extends privilegios_model{
 					 			->get();
  		}
 		return $res->row();
+	}
+
+	public function eliminar_abono()
+	{
+		$this->db->delete('tickets_abonos',array('id_abono' => $_GET['ida']));
+		$info_abonos = $this->get_info_abonos();
+
+		if ($info_abonos->restante != 0 )
+			$this->db->update('tickets',array('status'=>'p'),array('id_ticket'=>$_GET['id']));
+		return true;
 	}
 	
 	public function exist($table, $sql, $return_res=false){

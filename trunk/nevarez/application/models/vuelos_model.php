@@ -61,18 +61,15 @@ class vuelos_model extends CI_Model{
 
 		$response = array(
 			'vuelos' 			=> array(),
+			'tvuelos' => 0,
 			'total_rows' 		=> $query['total_rows'],
 			'items_per_page' 	=> $params['result_items_per_page'],
 			'result_page' 		=> $params['result_page'],
-			'ttotal' => ''
+			'ttotal' => 0
 		);
 		$response['vuelos'] = $res->result();
-
-		$ttotal = 0;
-		foreach ($query['resultset']->result() as $itm) {
-			$ttotal += $itm->precio;
-		}
-		$response['ttotal'] = $ttotal;
+		$response['tvuelos'] = $res->num_rows();
+		$response['ttotal'] = $query['resultset']->num_rows();
 
 		return $response;
 	}
