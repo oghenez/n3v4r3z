@@ -40,9 +40,16 @@
 						</tr>
 				</table>
 			</p>
+			<?php if (isset($_GET['tipo'])) {?>
+			<p>
+				<label for="fabono">*Total a Abonar</label><br>
+				<input type="text" name="fabono" id="fabono" class="vpositive" size="30" value="<?php echo set_value('fabono')?>">
+			</p>
+			<?php }?>
 			<p class="f-l w100">
 				<label for="fconcepto">*Concepto</label><br>
-				<textarea name="fconcepto" rows="4" cols="53" autofocus><?php echo  set_value('fconcepto')!='' ? set_value('fconcepto') : "Pago total del ticket ($folio)"; ?></textarea>
+				<textarea name="fconcepto" rows="4" cols="53" autofocus><?php echo  set_value('fconcepto')!='' ? set_value('fconcepto') : 
+				(isset($_GET['tipo'])?"Abono del ticket ($folio)":"Pago total del ticket ($folio)"); ?></textarea>
 			</p>
 			<input type="submit" name="enviar" value="Guardar" class="btn-blue corner-all f-r">
 		</div>

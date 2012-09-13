@@ -53,11 +53,11 @@
 <table class="tblListados corner-all8 f-r" style="margin-right:1%;text-align:center; width:20% !important;">
 	<tr>
 		<td style="text-align:right;">Total x Pagina</td>
-		<td id="ta_isr" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero($ttotal_pag); ?></td>
+		<td id="ta_isr" class="a-r" style="background-color:#ccc;"><?php echo $vuelos['tvuelos']; ?></td>
 	</tr>
 	<tr>
 		<td style="text-align:right;">Total</td>
-		<td id="ta_total" class="a-r" style="background-color:#ccc;"><?php echo String::formatoNumero($vuelos['ttotal']); ?></td>
+		<td id="ta_total" class="a-r" style="background-color:#ccc;"><?php echo $vuelos['ttotal']; ?></td>
 	</tr>
 </table>
 <div class="clear"></div>

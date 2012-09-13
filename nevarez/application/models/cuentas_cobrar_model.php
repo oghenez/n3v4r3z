@@ -23,6 +23,8 @@ class cuentas_cobrar_model extends CI_Model{
 		$_GET['ffecha1'] = $this->input->get('ffecha1')==''? date("Y-m-").'01': $this->input->get('ffecha1');
 		$_GET['ffecha2'] = $this->input->get('ffecha2')==''? date("Y-m-d"): $this->input->get('ffecha2');
 		$fecha = $_GET['ffecha1'] > $_GET['ffecha2']? $_GET['ffecha1']: $_GET['ffecha2'];
+		$_GET['ftipo'] = (isset($_GET['ftipo']))?$_GET['ftipo']:'pp';
+
 		$sql = $this->input->get('ftipo')=='pv'? " AND (Date('".$fecha."'::timestamp with time zone)-Date(f.fecha)) > f.plazo_credito": '';
 		$sqlt = $this->input->get('ftipo')=='pv'? " AND (Date('".$fecha."'::timestamp with time zone)-Date(t.fecha)) > t.dias_credito": '';
 		
@@ -93,10 +95,15 @@ class cuentas_cobrar_model extends CI_Model{
 				'cuentas' => array(),
 				'total_rows' 		=> $query['total_rows'],
 				'items_per_page' 	=> $params['result_items_per_page'],
-				'result_page' 		=> $params['result_page']
+				'result_page' 		=> $params['result_page'],
+				'ttotal' => 0
 		);
 		if($res->num_rows() > 0)
 			$response['cuentas'] = $res->result();
+
+		foreach ($query['resultset']->result() as $cliente) {
+			$response['ttotal'] += $cliente->saldo;
+		}
 		
 		return $response;
 	}
@@ -489,7 +496,7 @@ class cuentas_cobrar_model extends CI_Model{
 	/**
 	 * Desglosa los abonos que se realizaron a una factura
 	 */
-	public function getDetalleFacturaData(){
+	public function getDetalleTicketFacturaData(){
 		$sql = '';
 	
 		//Filtros para buscar
@@ -510,38 +517,56 @@ class cuentas_cobrar_model extends CI_Model{
 			$sql2 = 'WHERE saldo > 0';
 		}
 	
-		//Obtenemos la info de una compra
-		$this->load->model('compras_model');
-		$compra = $this->compras_model->getInfoCompra($_GET['id_compra'], true);
-	
-	
-		//Obtenemos los abonos
-		$res = $this->db->query("
-			SELECT
-				id_abono, 
-				Date(fecha) AS fecha, 
-				total AS abono, 
-				concepto,
-				tipo
-			FROM compras_abonos
-			WHERE id_compra = '".$_GET['id_compra']."' AND tipo <> 'ca' 
-				AND Date(fecha) <= '".$fecha2."' 
-			ORDER BY fecha ASC
-		");
-	
+
+		if ($_GET['tipo'] == 'f')
+		{
+			$data['info'] = $this->db->query(
+											"SELECT DATE(fecha) as fecha, serie, folio, condicion_pago, status, total,
+												plazo_credito
+												FROM facturacion
+												WHERE id_factura='".$_GET['id']."'")->result();
+			$sql = array('tabla' => 'facturacion_abonos', 
+										'where_field' => 'id_factura');
+		}
+		else
+		{
+			$data['info'] = $this->db->query(
+											"SELECT fecha, '' as serie, folio, 	
+												tipo_pago as condicion_pago,
+												status, total, 
+												dias_credito as plazo_credito
+											FROM tickets
+											WHERE id_ticket='".$_GET['id']."'")->result();
+			$sql = array('tabla' => 'tickets_abonos', 
+										'where_field' => 'id_ticket');
+		}
+
+			//Obtenemos los abonos de la factura o ticket
+			$res = $this->db->query("
+				SELECT
+					id_abono, 
+					Date(fecha) AS fecha, 
+					total AS abono, 
+					concepto,
+					tipo
+				FROM ".$sql['tabla']."
+				WHERE ".$sql['where_field']." = '".$_GET['id']."' AND tipo <> 'ca' 
+					AND Date(fecha) <= '".$fecha2."' 
+				ORDER BY fecha ASC
+			");	
 	
 		//obtenemos la info del proveedor
-		$this->load->model('proveedores_model');
-		$prov = $this->proveedores_model->getInfoProveedor($_GET['id_proveedor'], true);
+		$this->load->model('clientes_model');
+		$prov = $this->clientes_model->getInfoCliente($_GET['id_cliente'], true);
 	
 		$response = array(
-				'cuentas' 			=> array(),
-				'compra'			=> $compra['info'],
-				'proveedor' 		=> $prov['info'],
+				'abonos' 			=> array(),
+				'cobro'					=> $data['info'],
+				'cliente' 		=> $prov['info'],
 				'fecha1' 			=> $fecha1
 		);
 		if($res->num_rows() > 0)
-			$response['cuentas'] = $res->result();
+			$response['abonos'] = $res->result();
 	
 		return $response;
 	}
@@ -549,14 +574,14 @@ class cuentas_cobrar_model extends CI_Model{
 	/**
 	 * Descarga el listado de cuentas por pagar en formato pdf
 	 */
-	public function detalleFacturaPdf(){
-		$res = $this->getDetalleFacturaData();
+	public function detalleTicketFacturaPdf(){
+		$res = $this->getDetalleTicketFacturaData();
 	
 		$this->load->library('mypdf');
 		// Creación del objeto de la clase heredada
 		$pdf = new MYpdf('P', 'mm', 'Letter');
-		$pdf->titulo2 = 'Detalle de factura '.$res['compra']->serie.'-'.$res['compra']->folio.' ('.$res['compra']->fecha.')';
-		$pdf->titulo3 = $res['proveedor']->nombre."\n";
+		$pdf->titulo2 = 'Detalle de factura '.$res['cobro'][0]->serie.'-'.$res['cobro'][0]->folio.' ('.$res['cobro'][0]->fecha.')';
+		$pdf->titulo3 = $res['cliente']->nombre_fiscal."\n";
 		$pdf->titulo3 .= 'Del: '.$this->input->get('ffecha1')." Al ".$this->input->get('ffecha2');
 		$pdf->AliasNbPages();
 		//$pdf->AddPage();
@@ -567,11 +592,11 @@ class cuentas_cobrar_model extends CI_Model{
 		$header = array('Fecha', 'Concepto', 'Abono', 'Saldo');
 	
 		$total_abono = 0;
-		$total_saldo = $res['compra']->total;
+		$total_saldo = $res['cobro'][0]->total;
 	
 		$bad_cargot = true;
 	
-		foreach($res['cuentas'] as $key => $item){
+		foreach($res['abonos'] as $key => $item){
 			$total_abono += $item->abono;
 			$total_saldo -= $item->abono;
 			
@@ -586,7 +611,7 @@ class cuentas_cobrar_model extends CI_Model{
 					$pdf->SetX(6);
 					$pdf->SetAligns(array('R'));
 					$pdf->SetWidths(array(201));
-					$pdf->Row(array('Total: '.String::formatoNumero($res['compra']->total)), true);
+					$pdf->Row(array('Total: '.String::formatoNumero($res['cobro'][0]->total)), true);
 					$bad_cargot = false;
 				}
 				
@@ -615,7 +640,7 @@ class cuentas_cobrar_model extends CI_Model{
 				String::formatoNumero($total_abono),
 				String::formatoNumero($total_saldo)), true);
 	
-		$pdf->Output('detalle_factura.pdf', 'I');
+		$pdf->Output('detalle.pdf', 'I');
 	}
 	
 }

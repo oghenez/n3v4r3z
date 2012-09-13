@@ -9,6 +9,7 @@ class cuentas_cobrar extends MY_Controller {
 	private $excepcion_privilegio = array(
 			'cuentas_cobrar/cxp_pdf/', 'cuentas_cobrar/cxp_xls/',
 			'cuentas_cobrar/cdp_pdf/', 'cuentas_cobrar/cdp_xls/',
+			'cuentas_cobrar/detalle/',
 			'cuentas_cobrar/detalle_pdf/');
 	
 	public function _remap($method){
@@ -63,7 +64,7 @@ class cuentas_cobrar extends MY_Controller {
 		);
 		
 		$this->load->model('cuentas_cobrar_model');
-		$params['cuentasp'] = $this->cuentas_cobrar_model->getCuentasXCobrarData();
+		$params['cuentasp'] = $this->cuentas_cobrar_model->getCuentasXCobrarData(40);
 		
 		if(isset($_GET['msg']{0}))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
@@ -166,16 +167,16 @@ class cuentas_cobrar extends MY_Controller {
 		$this->load->library('pagination');
 	
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
-		$params['opcmenu_active'] = 'Compras'; //activa la opcion del menu
+		$params['opcmenu_active'] = 'Clientes'; //activa la opcion del menu
 		$params['seo'] = array(
-				'titulo' => 'Detalle de factura '
+				'titulo' => 'Detalle de '. (($_GET['tipo']=='f')?'factura ':'ticket ')
 		);
 	
-		if(isset($_GET['id_proveedor']{0}) && isset($_GET['id_compra']{0})){
-			$this->load->model('cuentas_pagar_model');
-			$params['cuentasp'] = $this->cuentas_pagar_model->getDetalleFacturaData();
-				
-			$params['seo']['titulo'] .= $params['cuentasp']['compra']->serie.'-'.$params['cuentasp']['compra']->folio;
+		if(isset($_GET['id']{0}) && isset($_GET['id_cliente']{0})){
+			$this->load->model('cuentas_cobrar_model');
+			$params['cuentasp'] = $this->cuentas_cobrar_model->getDetalleTicketFacturaData();
+
+			$params['seo']['titulo'] .= $params['cuentasp']['cobro'][0]->serie.'-'.$params['cuentasp']['cobro'][0]->folio;
 				
 			if(isset($_GET['msg']{0}))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
@@ -184,7 +185,7 @@ class cuentas_cobrar extends MY_Controller {
 
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
-		$this->load->view('panel/compras/cuentas_pagar/detalle', $params);
+		$this->load->view('panel/clientes/cuentas_cobrar/detalle', $params);
 		$this->load->view('panel/footer');
 	}
 	
@@ -193,13 +194,9 @@ class cuentas_cobrar extends MY_Controller {
 	 * muestra el saldo de acuerdo al rango de fechas
 	 */
 	public function detalle_pdf(){
-		$this->load->model('cuentas_pagar_model');
-		$this->cuentas_pagar_model->detalleFacturaPdf();
-	}
-	
-	
-	
-	
+		$this->load->model('cuentas_cobrar_model');
+		$this->cuentas_cobrar_model->detalleTicketFacturaPdf();
+	}	
 	
 	/**
 	 * Agrega una compra a la bd

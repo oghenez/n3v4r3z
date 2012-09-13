@@ -153,35 +153,62 @@ class facturacion extends MY_Controller {
         }
         
         private function pagar(){
-                if(isset($_GET['id']{0})){
-                        $this->carabiner->css(array(
-                                        array('general/forms.css', 'screen'),
-                                        array('general/tables.css', 'screen'),
-                        ));
-                        $this->carabiner->js(array(
-                                        array('facturacion/pago_factura.js')
-                        ));
-                        $this->load->model('facturacion_model');
-                        $this->configAddPago();
-                        if($this->form_validation->run() == FALSE){
-                                $params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
-                        }
-                        else{
-                                $res = $this->facturacion_model->abonar_factura(true);
-                                if($res[0]){
-                                        $params['frm_errors'] = $this->showMsgs('7');
-                                        $params['load'] = true;
-                                }else $params['frm_errors']= $this->showMsgs(2, $res['msg']);
-                        }
-                        $res_q= $this->db->select('serie,folio')->from('facturacion')->where('id_factura',$_GET['id'])->get()->result();
-                        $params['serie'] = $res_q[0]->serie;
-                        $params['folio'] = $res_q[0]->folio;
-                        $res = $this->facturacion_model->get_info_abonos();
-                        $params['total'] = $res;
-                        $params['seo']['titulo'] = 'Pagar Factura';
-                        $this->load->view('panel/facturacion/pago_factura',$params);
-                }else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
-        }       
+          if(isset($_GET['id']{0})){
+            $this->carabiner->css(array(
+                array('general/forms.css', 'screen'),
+                array('general/tables.css', 'screen'),
+            ));
+            $this->carabiner->js(array(
+                array('facturacion/pago_factura.js')
+            ));
+            $this->load->model('facturacion_model');
+            $this->configAddPago();
+            if($this->form_validation->run() == FALSE){
+              $params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
+            }
+            else{
+              if (isset($_GET['tipo'])){
+                $res = $this->facturacion_model->abonar_factura(false, $_GET['id'], $_POST['fabono']);
+                $msg = 10;
+              }
+              else{
+                $res = $this->facturacion_model->abonar_factura(true);
+                $msg = 12;
+              }
+              
+              if($res[0]){
+                $params['frm_errors'] = $this->showMsgs($msg);
+                $params['load'] = true;
+              }else $params['frm_errors']= $this->showMsgs(2, $res['msg']);
+            }
+            
+            $res_q= $this->db->select('serie,folio')->from('facturacion')->where('id_factura',$_GET['id'])->get()->result();
+            
+            $params['serie'] = $res_q[0]->serie;
+            $params['folio'] = $res_q[0]->folio;
+            $res = $this->facturacion_model->get_info_abonos();
+            $params['total'] = $res;
+
+            $params['seo']['titulo'] = 'Pagar Factura';
+            if (isset($_GET['tipo'])){
+              $params['seo']['titulo'] = 'Abonar Factura';
+            }
+
+            $this->load->view('panel/facturacion/pago_factura',$params);
+          }else redirect(base_url('panel/facturacion/?'.String::getVarsLink(array('msg')).'&msg=1'));
+        }
+
+        public function eliminar_abono(){
+          if (isset($_GET['ida']{0}))
+          {
+            $this->load->model('facturacion_model');
+            $res = $this->facturacion_model->eliminar_abono();
+            if ($res){
+              redirect(base_url('panel/cuentas_cobrar/detalle/?'.String::getVarsLink(array('msg','ida')).'&msg=3'));
+            }
+          }
+          else redirect(base_url('panel/cuentas_cobrar/detalle/?'.String::getVarsLink(array('msg','ida')).'&msg=1'));
+        }
         
         private function reporte_mensual() {            
         	$this->carabiner->css(array(
@@ -250,16 +277,22 @@ class facturacion extends MY_Controller {
         }
         
         public function configAddPago(){
-                $this->load->library('form_validation');
-                $rules = array(
-                                array('field'   => 'ffecha',
-                                                'label'         => 'Fecha',
-                                                'rules'         => 'required|max_length[10]|callback_isValidDate'),
-                                array('field'   => 'fconcepto',
-                                                'label'         => 'Concepto',
-                                                'rules'         => 'required|max_length[200]')
-                );
-                $this->form_validation->set_rules($rules);
+          $this->load->library('form_validation');
+          $rules = array(
+                      array('field'   => 'ffecha',
+                            'label'         => 'Fecha',
+                            'rules'         => 'required|max_length[10]|callback_isValidDate'),
+                      array('field'   => 'fconcepto',
+                            'label'         => 'Concepto',
+                            'rules'         => 'required|max_length[200]')
+          );
+
+          if (isset($_GET['tipo']))
+            $rules[] = array('field' => 'fabono',
+                            'label' => 'Total a Abonar',
+                            'rules' => 'required|callback_verifica_abono');
+
+          $this->form_validation->set_rules($rules);
         }
 
         private function ajax_get_folio(){
@@ -629,6 +662,20 @@ class facturacion extends MY_Controller {
                 }
                         
         }
+
+        public function verifica_abono($str) {
+          // $res = $this->nomina_model->get_info_abonos();
+          $res = $this->facturacion_model->get_info_abonos();
+          $abono = floatval($str);
+          if($abono > $res->restante){
+            $this->form_validation->set_message('verifica_abono', 'El Abono que ingreso no puede ser mayor al Saldo');
+            return false;
+          }
+          if($abono == 0){
+            $this->form_validation->set_message('verifica_abono', 'El Abono que ingreso no puede ser de Cero (0)');
+            return false;
+          }
+        }
         
         /**
          * Muestra mensajes cuando se realiza alguna accion
@@ -666,7 +713,7 @@ class facturacion extends MY_Controller {
                                 $txt = 'La Serie y Folio se modifico correctamente.';
                                 $icono = 'ok';
                                 break;
-                        case 7:
+                        case 12:
                                 $txt = 'La Factura se pagó correctamente.';
                                 $icono = 'ok';
                                 break;
@@ -676,6 +723,14 @@ class facturacion extends MY_Controller {
                                 break;
                          case 9:
                                 $txt = 'El Reporte se genero correctamente';
+                                $icono = 'ok';
+                                break;
+                         case 10:
+                                $txt = 'El abono se agrego correctamente';
+                                $icono = 'ok';
+                                break;
+                         case 11:
+                                $txt = 'El abono se elimino correctamente';
                                 $icono = 'ok';
                                 break;
                 }

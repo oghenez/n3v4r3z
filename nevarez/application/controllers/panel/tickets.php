@@ -165,10 +165,18 @@ class tickets extends MY_Controller {
 				$params['frm_errors']= $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
 			}
 			else{
-				$res = $this->tickets_model->abonar_ticket(true);
+				
+				if (isset($_GET['tipo'])){
+					$res = $this->tickets_model->abonar_ticket(false, $_GET['id'], $_POST['fabono']);
+					$msg = 7;
+				}
+				else{
+					$res = $this->tickets_model->abonar_ticket(true);
+					$msg = 6;
+				}
 				
 				if($res[0]){
-					$params['frm_errors'] = $this->showMsgs('6');
+					$params['frm_errors'] = $this->showMsgs($msg);
 					$params['load'] = true;
 				}
 				else
@@ -180,12 +188,26 @@ class tickets extends MY_Controller {
 			$params['total'] = $res;
 			
 			$params['seo']['titulo'] = 'Pagar Ticket';
-			
+			if (isset($_GET['tipo'])){
+				$params['seo']['titulo'] = 'Abonar Ticket';
+			}
 			$this->load->view('panel/tickets/pago_ticket',$params);
 		}
 		else redirect(base_url('panel/tickets/?'.String::getVarsLink().'&msg=1'));
 	}
 	
+	public function eliminar_abono(){
+		if (isset($_GET['ida']{0}))
+		{
+			$this->load->model('tickets_model');
+			$res = $this->tickets_model->eliminar_abono();
+			if ($res){
+				redirect(base_url('panel/cuentas_cobrar/detalle/?'.String::getVarsLink(array('msg','ida')).'&msg=3'));
+			}
+		}
+		else redirect(base_url('panel/cuentas_cobrar/detalle/?'.String::getVarsLink(array('msg','ida')).'&msg=1'));
+	}
+
 	public function imprime_ticket(){
 		if(isset($_GET['id']{0})){
 			
@@ -206,7 +228,7 @@ class tickets extends MY_Controller {
 		}
 	}
 	
-	public function tickets_cliente(){			
+	public function tickets_cliente(){
 		$this->carabiner->css(array(
 				array('general/forms.css', 'screen'),
 				array('general/tables.css', 'screen')
@@ -227,7 +249,7 @@ class tickets extends MY_Controller {
 	
 	
 	public function configAddPago(){
-	
+
 		$this->load->library('form_validation');
 		$rules = array(
 				array('field'	=> 'ffecha',
@@ -237,6 +259,12 @@ class tickets extends MY_Controller {
 						'label'		=> 'Concepto',
 						'rules'		=> 'required|max_length[200]')
 		);
+
+		if (isset($_GET['tipo']))
+			$rules[] = array('field' => 'fabono',
+											'label' => 'Total a Abonar',
+											'rules' => 'required|callback_verifica_abono');
+
 		$this->form_validation->set_rules($rules);
 	}
 	
@@ -324,6 +352,20 @@ class tickets extends MY_Controller {
 		}
 		return true;
 	}
+
+	public function verifica_abono($str) {
+		// $res = $this->nomina_model->get_info_abonos();
+		$res = $this->tickets_model->get_info_abonos();
+		$abono = floatval($str);
+		if($abono > $res->restante){
+			$this->form_validation->set_message('verifica_abono', 'El Abono que ingreso no puede ser mayor al Saldo');
+			return false;
+		}
+		if($abono == 0){
+			$this->form_validation->set_message('verifica_abono', 'El Abono que ingreso no puede ser de Cero (0)');
+			return false;
+		}
+	}
 	
 	/**
 	 * Muestra mensajes cuando se realiza alguna accion
@@ -355,6 +397,10 @@ class tickets extends MY_Controller {
 				break;
 			case 6:
 				$txt = 'El Ticket se pagó correctamente.';
+				$icono = 'ok';
+				break;
+			case 7:
+				$txt = 'El abono se agrego correctamente';
 				$icono = 'ok';
 				break;
 		}
