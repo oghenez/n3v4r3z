@@ -88,8 +88,16 @@ class tickets_model extends privilegios_model{
 					FROM vuelos as v
 					INNER JOIN productos as p ON v.id_producto=p.id_producto
 					INNER JOIN vuelos_clientes as vc ON v.id_vuelo=vc.id_vuelo
+					LEFT JOIN (
+						SELECT tv.id_vuelo FROM tickets_vuelos as tv 
+						INNER JOIN tickets as t ON tv.id_ticket = t.id_ticket
+						WHERE t.status<>'ca'
+						group by tv.id_vuelo
+				   ) AS tva ON tva.id_vuelo = v.id_vuelo
 					LEFT JOIN (SELECT plp.id_producto, plp.precio FROM productos_listas_precios as plp INNER JOIN clientes as c ON plp.id_lista=c.id_lista_precio WHERE c.id_cliente='{$v['id_cliente']}') as plp ON plp.id_producto=v.id_producto
-					WHERE vc.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' AND DATE(v.fecha) = '{$v['fecha']}' AND get_clientes_vuelo(v.id_vuelo,null) = '{$v['clientes']}';
+					WHERE vc.id_cliente = '{$v['id_cliente']}' AND v.id_piloto = '{$v['id_piloto']}' AND v.id_avion = '{$v['id_avion']}' 
+						AND tva.id_vuelo is null 
+						AND DATE(v.fecha) = '{$v['fecha']}' AND get_clientes_vuelo(v.id_vuelo,null) = '{$v['clientes']}';
 			");
 
 			if($res->num_rows()>0)
