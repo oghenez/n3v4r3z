@@ -114,5 +114,53 @@ class alertas_model extends privilegios_model{
 		}
 		return $html_alert;
 	}
+
+	public function cobranza($value='')
+	{
+		$query = $this->db->query("
+				SELECT *, alerta_dias(fecha_vencimiento) || descripcion as descripcion,
+							 DATE(fecha_vencimiento) - DATE(now()) as dias_restantes
+				FROM alertas
+				WHERE tabla_obj IN ('facturacion', 'tickets') AND 
+							DATE(fecha_vencimiento) - DATE(now()) > -30 AND
+							DATE(fecha_vencimiento) - DATE(now()) <= 10
+				ORDER BY DATE(fecha_vencimiento) ASC
+				");
+		$html_alert = '';
+		if($query->num_rows() > 0){
+			$params['data']['alertas'] = $query->result();
+			$params['total'] = $query->num_rows();
+			
+			foreach ($params['data']['alertas'] as $key => $h) {
+				if ($h->dias_restantes<=0)
+					$params['data']['alertas'][$key]->style = 'style="background-color:#FFE1E1;"';
+				else
+					$params['data']['alertas'][$key]->style = '';
+			}
+			$html_alert = $this->load->view("panel/alertas/alerta_cobranza.php",$params,TRUE);
+		}
+		return $html_alert;
+	}
+
+	public function cuentas_pagar($value='')
+	{
+		$query = $this->db->query("
+				SELECT *, alerta_dias(fecha_vencimiento) || descripcion as descripcion,
+							 DATE(fecha_vencimiento) - DATE(now()) as dias_restantes
+				FROM alertas
+				WHERE tabla_obj IN ('compras') AND 
+							DATE(fecha_vencimiento) - DATE(now()) > -30 AND
+							DATE(fecha_vencimiento) - DATE(now()) <= 10
+				ORDER BY DATE(fecha_vencimiento) ASC
+				");
+		$html_alert = '';
+		if($query->num_rows() > 0){
+			$params['data']['alertas'] = $query->result();
+			$params['total'] = $query->num_rows();
+			$html_alert = $this->load->view("panel/alertas/alerta_cuentas_pagar.php",$params,TRUE);
+		}
+		return $html_alert;
+	}
+
 	
 }

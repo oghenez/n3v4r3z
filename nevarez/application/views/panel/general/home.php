@@ -4,6 +4,8 @@
 	<?php echo $this->empleados_model->getAlertPriv('alertas/herramientas/');?>
 	<?php echo $this->empleados_model->getAlertPriv('alertas/aviones/');?>
 	<?php echo $this->empleados_model->getAlertPriv('alertas/pilotos/');?>
+	<?php echo $this->empleados_model->getAlertPriv('alertas/cobranza/');?>
+	<?php echo $this->empleados_model->getAlertPriv('alertas/cuentas_pagar/');?>
 	
 </div>
 <!-- Bloque de alertas -->

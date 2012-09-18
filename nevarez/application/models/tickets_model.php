@@ -71,6 +71,7 @@ class tickets_model extends privilegios_model{
 		$res = $this->db->query("SELECT id_ticket, fecha, folio, cliente, otros_clientes, vuelos
 								FROM get_tickets_pendientes
 								$where
+								ORDER BY (fecha, cliente) DESC
 								");
 		$tickets = array();
 		if($res->num_rows() > 0)
