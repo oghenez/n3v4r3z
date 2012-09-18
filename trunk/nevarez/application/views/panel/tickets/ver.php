@@ -50,8 +50,7 @@
 							<td id="ta_total" class="a-r" style="background-color:#ccc;"><?php echo  String::formatoNumero($info[1]['cliente_info'][0]->total); ?></td>
 						</tr>
 					</table>
-					
-					
+										
 					<div class="clear"></div>
 				</div>			
 		</div>

@@ -58,6 +58,7 @@
 			<div class="clear"></div>
 			<table class="tblListados corner-all8" id="tbl_tickets">
 				<tr class="header btn-gray">
+					<td>F. Ticket</td>
 					<td>Cantidad</td>
 					<td>Unidad</td>
 					<td>Descripción</td>
@@ -66,6 +67,7 @@
 				</tr>
 				<?php foreach($factura['productos'] as $p){?>
 					<tr>
+						<td><?php echo $p['folio']?></td>
 						<td><?php echo $p['cantidad']?></td>
 						<td><?php echo $p['unidad']?></td>
 						<td><?php echo $p['descripcion']?></td>

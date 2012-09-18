@@ -334,17 +334,19 @@ class facturacion_model extends privilegios_model{
 		$res_q1 = $this->db->select("*")->from('facturacion')->where('id_factura',$id_factura)->get()->result();
 			
 		$res_q2 = $this->db->query("
-					SELECT tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe
+					SELECT tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe,
+						t.folio
 					FROM facturacion as f
 					INNER JOIN facturacion_tickets as ft ON f.id_factura=ft.id_factura
 					INNER JOIN tickets_vuelos_productos as tvp ON ft.id_ticket=tvp.id_ticket
+					INNER JOIN tickets as t ON t.id_ticket=ft.id_ticket
 					WHERE f.id_factura='$id_factura'
-					GROUP BY tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe
+					GROUP BY tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe, t.folio
 				");
 					
 		$productos = array();
 		foreach($res_q2->result() as $itm)
-			$productos[] = array('cantidad'=>$itm->cantidad, 'unidad'=>$itm->unidad, 'descripcion'=>$itm->descripcion, 'precio_unit'=>$itm->precio_unitario, 'importe'=>$itm->importe);
+			$productos[] = array('folio'=>$itm->folio,'cantidad'=>$itm->cantidad, 'unidad'=>$itm->unidad, 'descripcion'=>$itm->descripcion, 'precio_unit'=>$itm->precio_unitario, 'importe'=>$itm->importe);
 		
 		$data = array(
 					'serie' => $res_q1[0]->serie,
