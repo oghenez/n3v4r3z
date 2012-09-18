@@ -117,13 +117,13 @@ class alertas_model extends privilegios_model{
 
 	public function cobranza($value='')
 	{
+		// DATE(fecha_vencimiento) - DATE(now()) > -30 AND
 		$query = $this->db->query("
 				SELECT *, alerta_dias(fecha_vencimiento) || descripcion as descripcion,
 							 DATE(fecha_vencimiento) - DATE(now()) as dias_restantes
 				FROM alertas
 				WHERE tabla_obj IN ('facturacion', 'tickets') AND 
-							DATE(fecha_vencimiento) - DATE(now()) > -30 AND
-							DATE(fecha_vencimiento) - DATE(now()) <= 10
+							DATE(fecha_vencimiento) - DATE(now()) <= 0
 				ORDER BY DATE(fecha_vencimiento) ASC
 				");
 		$html_alert = '';
@@ -144,13 +144,13 @@ class alertas_model extends privilegios_model{
 
 	public function cuentas_pagar($value='')
 	{
+		// DATE(fecha_vencimiento) - DATE(now()) > -30 AND
 		$query = $this->db->query("
 				SELECT *, alerta_dias(fecha_vencimiento) || descripcion as descripcion,
 							 DATE(fecha_vencimiento) - DATE(now()) as dias_restantes
 				FROM alertas
 				WHERE tabla_obj IN ('compras') AND 
-							DATE(fecha_vencimiento) - DATE(now()) > -30 AND
-							DATE(fecha_vencimiento) - DATE(now()) <= 10
+							DATE(fecha_vencimiento) - DATE(now()) <= 0
 				ORDER BY DATE(fecha_vencimiento) ASC
 				");
 		$html_alert = '';
