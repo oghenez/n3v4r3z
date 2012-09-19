@@ -124,7 +124,7 @@ class alertas_model extends privilegios_model{
 				FROM alertas
 				WHERE tabla_obj IN ('facturacion', 'tickets') AND 
 							DATE(fecha_vencimiento) - DATE(now()) <= 0
-				ORDER BY DATE(fecha_vencimiento) ASC
+				ORDER BY DATE(fecha_vencimiento) DESC
 				");
 		$html_alert = '';
 		if($query->num_rows() > 0){
@@ -151,7 +151,7 @@ class alertas_model extends privilegios_model{
 				FROM alertas
 				WHERE tabla_obj IN ('compras') AND 
 							DATE(fecha_vencimiento) - DATE(now()) <= 0
-				ORDER BY DATE(fecha_vencimiento) ASC
+				ORDER BY DATE(fecha_vencimiento) DESC
 				");
 		$html_alert = '';
 		if($query->num_rows() > 0){
