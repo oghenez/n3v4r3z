@@ -16,7 +16,15 @@
 							<div class="submenul">
 								<p class="corner-bottom8">
 									<?php
-									echo $this->empleados_model->getLinkPrivSm('facturacion/ver/', $alerta->id_obj1);
+									if ($alerta->tabla_obj == 'facturacion')
+									{
+										echo $this->empleados_model->getLinkPrivSm('facturacion/ver/', $alerta->id_obj1);
+									}
+									else
+									{
+										echo $this->empleados_model->getLinkPrivSm('tickets/ver/', $alerta->id_obj1);
+									}
+									
 									echo $this->empleados_model->getLinkPrivSm('alertas/eliminar/', $alerta->id_alerta,
 											"msb.confirm('Estas seguro de eliminar esta alerta? <br>Ya no se podrá revertir el cambio', this); return false;", '', '&r=h');
 									?>

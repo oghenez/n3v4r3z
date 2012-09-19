@@ -16,6 +16,8 @@
 							<div class="submenul">
 								<p class="corner-bottom8">
 									<?php
+									$is_gasto = ($alerta->id_obj2 == 'gasto')?'t':'f';
+									echo $this->empleados_model->getLinkPrivSm('compras/ver/', $alerta->id_obj1, '', '', '&gasto='.$is_gasto.'&tipo=pr');
 									echo $this->empleados_model->getLinkPrivSm('alertas/eliminar/', $alerta->id_alerta,
 											"msb.confirm('Estas seguro de eliminar esta alerta? <br>Ya no se podrá revertir el cambio', this); return false;", '', '&r=h');
 									?>
