@@ -111,7 +111,7 @@
 			<div class="frmsec-right w100 f-l">
 				<div class="frmbox-r p5-tb corner-right8">
 					<label for="dfecha">*Fecha</label> <br>
-					<input type="text" name="dfecha" id="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d h:m:s"); ?>" class="a-c" size="18" readonly>
+					<input type="text" name="dfecha" id="dfecha" value="<?php echo (set_value('dfecha')!='') ? set_value('dfecha'): date("Y-m-d H:i:s"); ?>" class="a-c" size="18" readonly>
 					<p class="w100 f-l">
 							<label for="dcondicion_pago">*Condicion de Pago</label> <br>
 							<select name="dcondicion_pago" id="dcondicion_pago">

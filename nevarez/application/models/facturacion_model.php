@@ -141,6 +141,10 @@ class facturacion_model extends privilegios_model{
 		$data = $this->db->select("*")->from('facturacion')->order_by("folio", 'asc')->get();
 
 		foreach ($data->result() as $value) {
+			$fecha = str_replace(' ', 'T', substr($value->fecha, 0, 19));
+			$this->db->update('facturacion', array('fecha_xml'=>$fecha), 
+					array('id_factura'=>$value->id_factura) );
+
 			$data_fac = $this->getDataFactura($value->id_factura, true);
 			$cadena = $this->cfd->obtenCadenaOriginal($data_fac);
 			$sello 	= $this->cfd->obtenSello($cadena); // OBTIENE EL SELLO DIGITAL
@@ -149,7 +153,7 @@ class facturacion_model extends privilegios_model{
 					array('id_factura'=>$value->id_factura) );
 			$data_fac = $this->getDataFactura($value->id_factura, true);
 			$this->cfd->actualizarArchivos($data_fac);
-			echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." <br>\n";
+			echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." ".$fecha."<br>\n";
 		}
 	}
 	
@@ -270,7 +274,7 @@ class facturacion_model extends privilegios_model{
 				'sello'				=> $sello,
 				'cadena_original'	=> $cadena_original,
 				'no_certificado'	=> $this->input->post('dno_certificado'),
-				'version'			=> '2.2',
+				'version'			=> $this->cfd->version,
 				'fecha_xml'			=> $fecha_xml,
 				'metodo_pago'		=> $this->input->post('dmetodo_pago'),
 				'condicion_pago'	=> ($_POST['dcondicion_pago']=='credito') ? 'cr' : 'co',
