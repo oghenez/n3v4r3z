@@ -6,7 +6,7 @@ class cfd{
 	private $path_key = '';
 	private $pass_key = 'Pista001';//CHONITA09
 	
-	private $version = '2.2';
+	public $version = '2.2';
 	
 	private $rfc = 'NEDR620710H76';
 	private $razon_social = 'ROBERTO NEVAREZ DOMINGUEZ';
