@@ -234,8 +234,8 @@ class cuentas_cobrar_model extends CI_Model{
 						c.nombre_fiscal,
 						Sum(t.total) AS total,
 						0 AS iva,
-						COALESCE(taa.abonos, 0) as abonos,
-						COALESCE(Sum(t.total) - COALESCE(taa.abonos,0), 0) AS saldo,
+						COALESCE(Sum(taa.abonos), 0) as abonos,
+						COALESCE(Sum(t.total) - COALESCE(Sum(taa.abonos),0), 0) AS saldo,
 						't' as tipo
 					FROM 
 						clientes AS c
@@ -243,6 +243,7 @@ class cuentas_cobrar_model extends CI_Model{
 						LEFT JOIN (
 							SELECT 
 								t.id_cliente,
+								t.id_ticket,
 								Sum(ta.total) AS abonos
 							FROM
 								tickets AS t INNER JOIN tickets_abonos AS ta ON t.id_ticket = ta.id_ticket
@@ -250,8 +251,8 @@ class cuentas_cobrar_model extends CI_Model{
 								AND t.id_cliente = '".$_GET['id_cliente']."' 
 								AND t.status <> 'ca'
 								AND ta.tipo <> 'ca' AND Date(ta.fecha) <= '".$fecha2."'".$sqlt."
-							GROUP BY t.id_cliente
-						) AS taa ON c.id_cliente = taa.id_cliente
+							GROUP BY t.id_cliente, t.id_ticket
+						) AS taa ON c.id_cliente = taa.id_cliente AND t.id_ticket=taa.id_ticket
 					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND valida_ticket_fac(t.id_ticket)='t' 
 								AND t.status <> 'ca' AND Date(t.fecha) < '".$fecha1."'".$sqlt."
 					GROUP BY c.id_cliente, c.nombre_fiscal, taa.abonos, tipo
