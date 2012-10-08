@@ -64,11 +64,11 @@
 			<td></td>
 			<td>Saldo anterior a <?php echo $cuentasp['fecha1']; ?></td>
 			<td><?php echo String::formatoNumero(
-					(isset($cuentasp['anterior']->total)? $cuentasp['anterior']->total: 0) ); ?></td>
+					(isset($cuentasp['anterior'][0]->total)? $cuentasp['anterior'][0]->total: 0) ); ?></td>
 			<td><?php echo String::formatoNumero(
-					(isset($cuentasp['anterior']->abonos)? $cuentasp['anterior']->abonos: 0) ); ?></td>
+					(isset($cuentasp['anterior'][0]->abonos)? $cuentasp['anterior'][0]->abonos: 0) ); ?></td>
 			<td><?php echo String::formatoNumero(
-					(isset($cuentasp['anterior']->saldo)? $cuentasp['anterior']->saldo: 0) ); ?></td>
+					(isset($cuentasp['anterior'][0]->saldo)? $cuentasp['anterior'][0]->saldo: 0) ); ?></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -77,10 +77,10 @@
 $total_cargo = 0;
 $total_abono = 0;
 $total_saldo = 0;
-if(isset($cuentasp['anterior']->saldo)){ //se suma a los totales saldo anterior
-	$total_cargo += $cuentasp['anterior']->total;
-	$total_abono += $cuentasp['anterior']->abonos;
-	$total_saldo += $cuentasp['anterior']->saldo;
+if(isset($cuentasp['anterior'][0]->saldo)){ //se suma a los totales saldo anterior
+	$total_cargo += $cuentasp['anterior'][0]->total;
+	$total_abono += $cuentasp['anterior'][0]->abonos;
+	$total_saldo += $cuentasp['anterior'][0]->saldo;
 }
 foreach($cuentasp['cuentas'] as $cuenta){
 	$ver = true;

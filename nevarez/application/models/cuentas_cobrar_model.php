@@ -126,7 +126,8 @@ class cuentas_cobrar_model extends CI_Model{
 		$widths = array(150, 55);
 		$header = array('Cliente', 'Saldo');
 		
-		$res = $this->getCuentasXCobrarData();
+		$res = $this->getCuentasXCobrarData(40);
+
 		$total_saldo = 0;
 		foreach($res['cuentas'] as $key => $item){
 			$band_head = false;
@@ -195,7 +196,8 @@ class cuentas_cobrar_model extends CI_Model{
 				Sum(total) AS total,
 				Sum(iva) AS iva, 
 				Sum(abonos) AS abonos, 
-				Sum(saldo)::numeric(12, 2) AS saldo
+				Sum(saldo)::numeric(12, 2) AS saldo,
+				tipo
 			FROM 
 				(
 					SELECT 
@@ -203,8 +205,9 @@ class cuentas_cobrar_model extends CI_Model{
 						c.nombre_fiscal,
 						Sum(f.total) AS total,
 						Sum(f.importe_iva) AS iva, 
-						faa.abonos, 
-						COALESCE(Sum(f.total) - COALESCE(faa.abonos,0), 0) AS saldo
+						COALESCE(Sum(faa.abonos),0) as abonos, 
+						COALESCE(Sum(f.total) - COALESCE(Sum(faa.abonos),0), 0) AS saldo,
+						'f' as tipo
 					FROM
 						clientes AS c
 						INNER JOIN facturacion AS f ON c.id_cliente = f.id_cliente
@@ -217,12 +220,12 @@ class cuentas_cobrar_model extends CI_Model{
 								facturacion AS f INNER JOIN facturacion_abonos AS fa ON f.id_factura = fa.id_factura
 							WHERE f.status <> 'ca'
 								AND f.id_cliente = '".$_GET['id_cliente']."' 
-								AND fa.tipo <> 'ca' AND Date(fa.fecha) <= '".$fecha2."'".$sql."
+								AND fa.tipo <> 'ca' AND Date(fa.fecha) < '".$fecha1."'".$sql."
 							GROUP BY f.id_cliente, f.id_factura
 						) AS faa ON f.id_cliente = faa.id_cliente AND f.id_factura = faa.id_factura
 					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND f.status <> 'ca'
 						AND Date(f.fecha) < '".$fecha1."'".$sql."
-					GROUP BY c.id_cliente, c.nombre_fiscal, faa.abonos
+					GROUP BY c.id_cliente, c.nombre_fiscal, faa.abonos, tipo
 
 					UNION ALL
 
@@ -231,8 +234,9 @@ class cuentas_cobrar_model extends CI_Model{
 						c.nombre_fiscal,
 						Sum(t.total) AS total,
 						0 AS iva,
-						taa.abonos,
-						COALESCE(Sum(t.total) - COALESCE(taa.abonos,0), 0) AS saldo
+						COALESCE(taa.abonos, 0) as abonos,
+						COALESCE(Sum(t.total) - COALESCE(taa.abonos,0), 0) AS saldo,
+						't' as tipo
 					FROM 
 						clientes AS c
 						INNER JOIN tickets AS t ON c.id_cliente = t.id_cliente
@@ -245,17 +249,18 @@ class cuentas_cobrar_model extends CI_Model{
 							WHERE valida_ticket_fac(t.id_ticket)='t' 
 								AND t.id_cliente = '".$_GET['id_cliente']."' 
 								AND t.status <> 'ca'
-								AND ta.tipo <> 'ca' AND Date(ta.fecha) <= '".$fecha1."'".$sqlt."
+								AND ta.tipo <> 'ca' AND Date(ta.fecha) < '".$fecha1."'".$sqlt."
 							GROUP BY t.id_cliente
 						) AS taa ON c.id_cliente = taa.id_cliente
-					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND valida_ticket_fac(t.id_ticket)='t' AND t.status <> 'ca' AND Date(t.fecha) <= '".$fecha1."'".$sqlt."
-					GROUP BY c.id_cliente, c.nombre_fiscal, taa.abonos
+					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND valida_ticket_fac(t.id_ticket)='t' 
+								AND t.status <> 'ca' AND Date(t.fecha) < '".$fecha1."'".$sqlt."
+					GROUP BY c.id_cliente, c.nombre_fiscal, taa.abonos, tipo
 
 				) AS sal
 			".$sql2."
-			GROUP BY id_cliente
-		");		
-		
+			GROUP BY id_cliente, tipo
+		");
+
 		/*** Facturas y tickets en el rango de fechas ***/
 		$res = $this->db->query("
 			(SELECT
@@ -336,9 +341,18 @@ class cuentas_cobrar_model extends CI_Model{
 		);
 		if($res->num_rows() > 0)
 			$response['cuentas'] = $res->result();
-		if($saldo_anterior->num_rows() > 0)
-			$response['anterior'] = $saldo_anterior->row();
-		
+
+		if($saldo_anterior->num_rows() > 0){
+			$response['anterior'] = $saldo_anterior->result();
+			foreach ($response['anterior'] as $key => $c) {
+				if ($key > 0){
+					$response['anterior'][0]->total += $c->total;
+					$response['anterior'][0]->abonos += $c->abonos;
+					$response['anterior'][0]->saldo += $c->saldo;
+				}
+			}
+		}
+
 		return $response;
 	}
 	
@@ -348,6 +362,9 @@ class cuentas_cobrar_model extends CI_Model{
 	public function cuentaClientePdf(){
 		$res = $this->getCuentaClienteData();
 		
+		if (count($res['anterior']) > 0)
+			$res['anterior'] = $res['anterior'][0];
+
 		$this->load->library('mypdf');
 		// Creación del objeto de la clase heredada
 		$pdf = new MYpdf('L', 'mm', 'Letter');
@@ -436,6 +453,9 @@ class cuentas_cobrar_model extends CI_Model{
 	
 	public function cuentaClienteExcel(){
 		$res = $this->getCuentaClienteData();
+		
+		if (count($res['anterior']) > 0)
+			$res['anterior'] = $res['anterior'][0];
 		
 		$this->load->library('myexcel');
 		$xls = new myexcel();
