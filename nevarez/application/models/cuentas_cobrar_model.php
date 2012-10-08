@@ -220,7 +220,7 @@ class cuentas_cobrar_model extends CI_Model{
 								facturacion AS f INNER JOIN facturacion_abonos AS fa ON f.id_factura = fa.id_factura
 							WHERE f.status <> 'ca'
 								AND f.id_cliente = '".$_GET['id_cliente']."' 
-								AND fa.tipo <> 'ca' AND Date(fa.fecha) < '".$fecha1."'".$sql."
+								AND fa.tipo <> 'ca' AND Date(fa.fecha) < '".$fecha2."'".$sql."
 							GROUP BY f.id_cliente, f.id_factura
 						) AS faa ON f.id_cliente = faa.id_cliente AND f.id_factura = faa.id_factura
 					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND f.status <> 'ca'
@@ -249,7 +249,7 @@ class cuentas_cobrar_model extends CI_Model{
 							WHERE valida_ticket_fac(t.id_ticket)='t' 
 								AND t.id_cliente = '".$_GET['id_cliente']."' 
 								AND t.status <> 'ca'
-								AND ta.tipo <> 'ca' AND Date(ta.fecha) < '".$fecha1."'".$sqlt."
+								AND ta.tipo <> 'ca' AND Date(ta.fecha) < '".$fecha2."'".$sqlt."
 							GROUP BY t.id_cliente
 						) AS taa ON c.id_cliente = taa.id_cliente
 					WHERE c.id_cliente = '".$_GET['id_cliente']."' AND valida_ticket_fac(t.id_ticket)='t' 
