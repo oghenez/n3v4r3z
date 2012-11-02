@@ -209,7 +209,7 @@ class vuelos_model extends CI_Model{
 												pp ON pp.id_producto=v.id_producto
 											".$inner_cli."
 											WHERE p.status='ac' AND pp.status='ac' AND a.status='ac' ".$sql."
-											ORDER BY fecha ASC"
+											ORDER BY (DATE(v.fecha), get_clientes_vuelo(v.id_vuelo,null)) DESC"
 									);
 
 		$query = $this->db->query(
@@ -247,7 +247,7 @@ class vuelos_model extends CI_Model{
 										AND a.status='ac' 
 										".$sql."
 							) as tre
-							ORDER BY fecha ASC");
+							ORDER BY clientes DESC");
 
 		$query_tipos = array();
 		if ($query->num_rows() > 0 ) {

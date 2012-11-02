@@ -10,7 +10,7 @@ class cfd{
 	
 	private $rfc = 'NEDR620710H76';
 	private $razon_social = 'ROBERTO NEVAREZ DOMINGUEZ';
-	private $regimen_fiscal = 'Actividad empresarial y profesional, Régimen de honorarios';
+	private $regimen_fiscal = 'Actividad empresarial, régimen general de ley'; //'Actividad empresarial y profesional, Régimen de honorarios';
 	private $calle = 'Pista Aérea';
 	private $no_exterior = 'S/N';
 	private $no_interior = '';
@@ -333,7 +333,7 @@ class cfd{
 			
 			$pdf->SetFont('Arial','B',17);
 			$pdf->SetXY(38, $y-30);
-			$pdf->Cell(120, 6, "ROBERTO NEVAREZ DOMINGUEZ" , 0, 0, 'C');
+			$pdf->Cell(120, 6, $this->razon_social , 0, 0, 'C');
 			
 			$pdf->SetFont('Arial','',13);
 			$pdf->SetXY(38, $y-23);
@@ -342,7 +342,7 @@ class cfd{
 			// ----------- FOLIO ------------------
 			$pdf->SetFont('Arial','',13);
 			$pdf->SetXY(164, ($y-29));
-			$pdf->Cell(38, 7, 'Recibo de honorarios' , 0, 0, 'C');
+			$pdf->Cell(38, 7, (substr($data['fecha_xml'], 0, 10) < '2012-10-31'? 'Recibo de honorarios': 'Factura') , 0, 0, 'C');
 			
 			$pdf->SetXY(158, ($y-22));
 			$pdf->Cell(50, 13, '' , 1, 0, 'C');
@@ -540,8 +540,12 @@ class cfd{
 			$pdf->SetXY(144, ($y+11));
 			$pdf->Cell(31, 6, 'IVA' , 1, 0, 'C',1);
 			$pdf->SetXY(144, ($y+17));
-			$pdf->Cell(31, 6, 'Retencion ISR' , 1, 0, 'C',1);
-			$pdf->SetXY(144, ($y+23));
+			
+			if (isset($data['total_isr'])) {
+				$pdf->Cell(31, 6, 'Retencion ISR' , 1, 0, 'C',1);
+				$pdf->SetXY(144, ($y+23));
+			}
+
 			$pdf->Cell(31, 6, 'Total' , 1, 0, 'C',1);
 			
 			$pdf->SetTextColor(0,0,0);
@@ -551,8 +555,12 @@ class cfd{
 			$pdf->SetXY(175, ($y+11));
 			$pdf->Cell(33, 6, String::formatoNumero($data['importe_iva'],2) , 1, 0, 'C');
 			$pdf->SetXY(175, ($y+17));
-			$pdf->Cell(33, 6, (isset($data['total_isr'])) ? String::formatoNumero($data['total_isr'],2) : '$0.00' , 1, 0, 'C');
-			$pdf->SetXY(175, ($y+23));
+
+			if (isset($data['total_isr'])) {
+				$pdf->Cell(33, 6, (isset($data['total_isr'])) ? String::formatoNumero($data['total_isr'],2) : '$0.00' , 1, 0, 'C');
+				$pdf->SetXY(175, ($y+23));
+			}
+
 			$pdf->Cell(33, 6, String::formatoNumero($data['total'],2) , 1, 0, 'C');
 			
 			//------------ TOTAL CON LETRA--------------------
