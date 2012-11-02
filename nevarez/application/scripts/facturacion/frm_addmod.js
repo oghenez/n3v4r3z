@@ -14,6 +14,7 @@ var total_isr = 0;
 var ttcisr = 0;
 
 $(function(){
+    actualDate(true);
     $.superbox();
     $("#dcliente").autocomplete({
         source: base_url+'panel/clientes/ajax_get_clientes',

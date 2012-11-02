@@ -7,6 +7,8 @@ class MY_Controller extends CI_Controller{
 	function MY_Controller($redirect=true){
 		parent::__construct();
 		
+		date_default_timezone_set('America/Mexico_City');
+
 		$this->limpiaParams();
 		
 		$this->load->helper(array('form', 'url'));
