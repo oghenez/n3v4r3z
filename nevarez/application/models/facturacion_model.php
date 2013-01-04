@@ -40,11 +40,13 @@ class facturacion_model extends privilegios_model{
 	
 		// 		if($this->input->get('ffecha_ini') == '' && $this->input->get('ffecha_fin') == '')
 			// 			$sql .= " AND DATE(tnv.fecha)=DATE(now())";
+		if($this->input->get('fidcliente') != '')
+			$sql .= " AND f.id_cliente = '".$this->input->get('fidcliente')."'";
 	
 		$query = BDUtil::pagination("
 				SELECT f.id_factura, f.serie, f.folio, f.fecha, f.condicion_pago, nombre as cliente, f.status
 				FROM facturacion as f
-				WHERE $sql
+				WHERE ".$sql."
 				ORDER BY (f.id_factura, DATE(f.fecha)) DESC
 				", $params, true);
 				$res = $this->db->query($query['query']);

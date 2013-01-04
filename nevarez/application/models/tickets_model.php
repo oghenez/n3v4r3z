@@ -45,12 +45,15 @@ class tickets_model extends privilegios_model{
 		
 		if($this->input->get('ffecha_ini') == '' && $this->input->get('ffecha_fin') == '')
 			$sql .= " AND DATE(t.fecha)=DATE(now())";
+
+		if($this->input->get('fidcliente') != '')
+			$sql .= " AND c.id_cliente = '".$this->input->get('fidcliente')."'";
 		
 		$query = BDUtil::pagination("
 				SELECT t.id_ticket, t.folio, t.fecha, t.tipo_pago, c.nombre_fiscal as cliente, t.status, valida_ticket(t.id_ticket) as disponible
 				FROM tickets as t
 				INNER JOIN clientes as c ON t.id_cliente=c.id_cliente
-				WHERE $sql
+				WHERE ".$sql."
 				ORDER BY (folio,DATE(t.fecha)) DESC
 				", $params, true);
 				$res = $this->db->query($query['query']);
