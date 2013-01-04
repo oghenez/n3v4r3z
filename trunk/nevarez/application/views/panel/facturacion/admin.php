@@ -1,5 +1,9 @@
 <div id="contentAll" class="f-l">
 	<form action="<?php echo base_url('panel/facturacion'); ?>" method="get" class="frmfiltros corner-all8 btn-gray">
+		<label for="fcliente">Cliente</label>
+		<input type="text" name="fcliente" value="<?php echo $this->input->get('fcliente');?>" size="35" id="fcliente" class="a-c" autofocus>
+		<input type="hidden" name="fidcliente" id="fidcliente" value="<?php echo $this->input->get('fidcliente');?>">
+		
 		<label for="ffecha_ini">De</label> 
 		<input type="text" name="ffecha_ini" id="ffecha_ini" value="<?php echo set_value_get('ffecha_ini'); ?>" class="a-c" readonly>
 		
