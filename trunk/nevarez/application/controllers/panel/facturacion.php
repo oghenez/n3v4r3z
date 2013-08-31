@@ -13,7 +13,8 @@ class facturacion extends MY_Controller {
     private $excepcion_privilegio = array('facturacion/ajax_get_total_tickets/','facturacion/ajax_get_folio/','facturacion/ajax_agrega_factura/','facturacion/imprimir_pdf/',
                                           'facturacion/ajax_actualiza_digitos/','facturacion/pdf_rm/','facturacion/descargar_rm/',
                                           'facturacion/parchefac/',
-                                          'facturacion/ajax_valida_folio/');
+                                          'facturacion/ajax_valida_folio/',
+                                          'facturacion/imprimir_pdfm/');
     
     public function _remap($method){
         $this->carabiner->css(array(
@@ -48,7 +49,7 @@ class facturacion extends MY_Controller {
     */
     private function parchefac(){
         $this->load->model('facturacion_model');
-        $this->facturacion_model->regeneraFacturas();
+        $this->facturacion_model->regeneraFacturas2();
     }
     
     private function index(){
@@ -308,21 +309,29 @@ class facturacion extends MY_Controller {
     }
 
     private function ajax_valida_folio(){
-        if (isset($_POST['serie']) && isset($_POST['folio'])) 
+        $e = 1;
+        if (isset($_POST['serie']) && isset($_POST['folio']{0})) 
         {
-            $e = 0;
             if ($_POST['serie'] != '' && $_POST['folio'] != '') 
             {
+                $e = 0;
                 $res = $this->db->query("SELECT COUNT(id_factura) as t
                                   FROM facturacion
                                   WHERE serie='".$_POST['serie']."' AND 
                                         folio=".$_POST['folio']."");
-
                 if ($res->row()->t > 0)
                     $e = 1;
+                //valido la fecha que caduca el certificado
+                $this->load->library('cfd');
+                $res = $this->db->query("SELECT Count(id) AS t
+                                  FROM nv_fiscal
+                                  WHERE id='".$this->cfd->default_nv_fiscal."'
+                                   AND cer_caduca > Date(now())");
+                if ($res->row()->t == 0)
+                    $e = 2;
             }
-            echo $e;
         }
+        echo $e;
     }
     
     private function ajax_get_total_tickets(){
@@ -470,8 +479,19 @@ class facturacion extends MY_Controller {
         {
             $this->load->model('facturacion_model');
             $data = $this->facturacion_model->getDataFactura($_GET['id']);
-            $this->load->library('cfd');                    
+            $this->load->library('cfd');
             $this->cfd->generarPDF($data,array('I'));
+        }
+    }
+
+    private function imprimir_pdfm(){
+        if(isset($_GET['ffecha_ini']{0}) && isset($_GET['ffecha_fin']{0}))
+        {
+            $this->load->model('facturacion_model');
+            $data = $this->facturacion_model->getDataFactura(array(), true, 
+                "Date(fecha) BETWEEN '".$_GET['ffecha_ini']."' AND '".$_GET['ffecha_fin']."'");
+            $this->load->library('cfd');
+            $this->cfd->generarMasPDF($data);
         }
     }
     

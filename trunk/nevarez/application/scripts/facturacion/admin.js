@@ -34,7 +34,12 @@ $(function(){
 	});
 		
 	$.superbox();
-	
+
+
+	$("#btn_print_facturas").on('click', function(){
+		var vthis = $(this);
+		vthis.attr('href', vthis.attr('data-href')+'?ffecha_ini='+$('#ffecha_ini').val()+'&ffecha_fin='+$('#ffecha_fin').val() );
+	});
 });
 
 function refresh(){

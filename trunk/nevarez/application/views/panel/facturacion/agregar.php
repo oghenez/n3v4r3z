@@ -7,40 +7,40 @@
 				<input type="hidden" name="hcliente" value="<?php echo set_value('hcliente');?>" id="hcliente">
 			</p>
 			<p class="f-l w50">
-				<label for="frfc">*RFC</label><br>
-				<input type="text" name="frfc" id="frfc" value="<?php echo  set_value('frfc') ?>" class="not" size="35" maxlength="13" readonly>
+				<label for="frfc">*RFC</label> <label for="chpublicogener"><input type="checkbox" id="chpublicogener"></label><br>
+				<input type="text" name="frfc" id="frfc" value="<?php echo  set_value('frfc') ?>" class="not" size="35" maxlength="13">
 			</p>
 			<p class="f-l w50">
 				<label for="fcalle">Calle</label><br>
-				<input type="text" name="fcalle" id="fcalle" value="<?php echo  set_value('fcalle') ?>" class="not" size="45" maxlength="60" readonly >
+				<input type="text" name="fcalle" id="fcalle" value="<?php echo  set_value('fcalle') ?>" class="not" size="45" maxlength="60" >
 			</p>
 			<p class="f-l w25">
 				<label for="fno_exterior">No. Ext.</label><br>
-				<input type="text" name="fno_exterior" id="fno_exterior" value="<?php echo  set_value('fno_exterior') ?>" class="not" size="13" maxlength="7" readonly>
+				<input type="text" name="fno_exterior" id="fno_exterior" value="<?php echo  set_value('fno_exterior') ?>" class="not" size="13" maxlength="7">
 			</p>
 			<p class="f-l w25">
 				<label for=fno_interior>No. Int.</label><br>
-				<input type="text" name="fno_interior" id="fno_interior" value="<?php echo  set_value('fno_interior') ?>" class="not" size="9" maxlength="7" readonly>
+				<input type="text" name="fno_interior" id="fno_interior" value="<?php echo  set_value('fno_interior') ?>" class="not" size="9" maxlength="7">
 			</p>
 			<p class="f-l w50">
 				<label for="fcolonia">Colonia</label><br>
-				<input type="text" name="fcolonia" id="fcolonia" value="<?php echo  set_value('fcolonia') ?>" class="not" size="35" maxlength="60" readonly>
+				<input type="text" name="fcolonia" id="fcolonia" value="<?php echo  set_value('fcolonia') ?>" class="not" size="35" maxlength="60">
 			</p>
 			<p class="f-l w50">
 				<label for="flocalidad">Localidad</label><br>
-				<input type="text" name="flocalidad" id="flocalidad" value="<?php echo  set_value('flocalidad') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="flocalidad" id="flocalidad" value="<?php echo  set_value('flocalidad') ?>" class="not" size="35" maxlength="45">
 			</p>
 			<p class="f-l w50">
 				<label for="fmunicipio">Municipio</label><br>
-				<input type="text" name="fmunicipio" id="fmunicipio" value="<?php echo  set_value('fmunicipio') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="fmunicipio" id="fmunicipio" value="<?php echo  set_value('fmunicipio') ?>" class="not" size="35" maxlength="45">
 			</p>
 			<p class="f-l w50">
 				<label for="festado">Estado</label><br>
-				<input type="text" name="festado" id="festado" value="<?php echo  set_value('festado') ?>" class="not" size="35" maxlength="45" readonly>
+				<input type="text" name="festado" id="festado" value="<?php echo  set_value('festado') ?>" class="not" size="35" maxlength="45">
 			</p>
 			<p class="f-l w50">
 				<label for="fcp">Codigo Postal</label><br>
-				<input type="text" name="fcp" id="fcp" value="<?php echo  set_value('fcp') ?>" class="not" size="35" maxlength="10" readonly>
+				<input type="text" name="fcp" id="fcp" value="<?php echo  set_value('fcp') ?>" class="not" size="35" maxlength="10">
 			</p>
 			<p class="f-l w50">
 				<label for="fpais">País</label><br>

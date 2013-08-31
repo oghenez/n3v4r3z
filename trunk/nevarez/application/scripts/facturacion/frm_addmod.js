@@ -21,28 +21,22 @@ $(function(){
         minLength: 1,
         selectFirst: true,
         select: function( event, ui ) {
-                
-            $("#hcliente").val(ui.item.id);
-            
-            $("#fplazo_credito").val(ui.item.item.dias_credito);
-            $('#frfc').val(ui.item.item.rfc);
-            $('#fcalle').val(ui.item.item.calle);
-            $('#fno_exterior').val(ui.item.item.no_exterior);
-            $('#fno_interior').val(ui.item.item.no_interior);
-            $('#fcolonia').val(ui.item.item.colonia);
-            $('#flocalidad').val(ui.item.item.localidad);
-            $('#fmunicipio').val(ui.item.item.municipio);
-            $('#festado').val(ui.item.item.estado);
-            $('#fcp').val(ui.item.item.cp);
-            $('#fpais').val('México');                      
-            
-            if(ui.item.item.retencion==1){
-                    aux_isr = true;
-            }else aux_isr = false;
-            
-            $("#dcliente").css("background-color", "#B0FFB0");
+            if ($("#chpublicogener").is(":checked") == false){
+                set_data_cliente(ui.item);
+            }
         }
-    });     
+    });
+
+    //publico en general
+    $("#chpublicogener").on('click', function(){
+        var vthis = $(this);
+        if (vthis.is(":checked")){
+            $.getJSON(base_url+'panel/clientes/ajax_get_clientes', "term=XAXX010101000", function(res){
+                set_data_cliente(res[0], false);
+            });
+        }else
+            clean_data_cliente();
+    });
 
     $("#dfiltro-cliente").autocomplete({
         source: base_url+'panel/clientes/ajax_get_clientes',
@@ -65,19 +59,9 @@ $(function(){
 
     $("input[type=text]:not(.not)").on("keydown", function(event){
         if(event.which == 8 || event == 46){
-            $("#hcliente").val('');                 
-            $("#fplazo_credito").val(0);
-            $('#frfc').val('');
-            $('#fcalle').val('');
-            $('#fno_exterior').val('');
-            $('#fno_interior').val('');
-            $('#fcolonia').val('');
-            $('#flocalidad').val('');
-            $('#fmunicipio').val('');
-            $('#festado').val('');
-            $('#fcp').val('');
-            $('#fpais').val('');
-            $("#dcliente").val("").css("background-color", "#FFD9B3");
+            if ($("#chpublicogener").is(":checked") == false){
+                clean_data_cliente();
+            }
         }
     });
 
@@ -104,6 +88,49 @@ $(function(){
 
     $('#submit').on('click',function(){ajax_submit_form();});
 });
+
+
+function set_data_cliente(item, autocom){
+    $("#hcliente").val(item.id);
+
+    if (autocom == false)
+        $("#dcliente").val(item.item.nombre_fiscal);
+
+    $("#fplazo_credito").val(item.item.dias_credito);
+    $('#frfc').val(item.item.rfc);
+    $('#fcalle').val(item.item.calle);
+    $('#fno_exterior').val(item.item.no_exterior);
+    $('#fno_interior').val(item.item.no_interior);
+    $('#fcolonia').val(item.item.colonia);
+    $('#flocalidad').val(item.item.localidad);
+    $('#fmunicipio').val(item.item.municipio);
+    $('#festado').val(item.item.estado);
+    $('#fcp').val(item.item.cp);
+    $('#fpais').val('México');                      
+
+    if(item.item.retencion==1){
+            aux_isr = true;
+    }else aux_isr = false;
+
+    $("#dcliente").css("background-color", "#B0FFB0");
+}
+
+function clean_data_cliente(){
+    $("#hcliente").val('');                 
+    $("#fplazo_credito").val(0);
+    $('#frfc').val('');
+    $('#fcalle').val('');
+    $('#fno_exterior').val('');
+    $('#fno_interior').val('');
+    $('#fcolonia').val('');
+    $('#flocalidad').val('');
+    $('#fmunicipio').val('');
+    $('#festado').val('');
+    $('#fcp').val('');
+    $('#fpais').val('');
+    $("#dcliente").val("").css("background-color", "#FFD9B3");
+}
+
 
 function ajax_get_folio(param){
     loader.create();
@@ -285,7 +312,10 @@ function ajax_submit_form(){
                             loader.close();
                         });
         }
-        else alerta('La serie y folio ya estan en uso.')
+        else if(r == 2) 
+            alerta('El certificado para firmar las facturas ya caduco.')
+        else
+            alerta('La serie y folio ya estan en uso.')
     }, "json").complete(function(){ 
         loader.close();
     });
