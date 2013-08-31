@@ -8,24 +8,24 @@
 					<input type="hidden" name="tiene_sucursales" 
 						value="<?php echo (isset($info['info']->tiene_sucursales)? $info['info']->tiene_sucursales: 'f'); ?>">
 					<p class="w50 f-l">
-						<label for="dnombre_fiscal">*Nombre Fiscal:</label> <br>
+						<label for="dnombre_fiscal">*Nombre Fiscal: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dnombre_fiscal" id="dnombre_fiscal" 
 							value="<?php echo (isset($info['info']->nombre_fiscal)? $info['info']->nombre_fiscal: ''); ?>" size="40" maxlength="130" autofocus>
 					</p>
 					<p class="w30 f-l">
-						<label for="drfc">RFC:</label> <br>
+						<label for="drfc">RFC: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="drfc" id="drfc" 
 							value="<?php echo (isset($info['info']->rfc)? $info['info']->rfc: ''); ?>" size="20" maxlength="13">
 					</p>
 					<div class="clear"></div>
 					
 					<p class="w40 f-l">
-						<label for="dcalle">Calle:</label> <br>
+						<label for="dcalle">Calle: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dcalle" id="dcalle" 
 							value="<?php echo (isset($info['info']->calle)? $info['info']->calle: ''); ?>" size="30" maxlength="60">
 					</p>
 					<p class="w30 f-l">
-						<label for="dno_exterior">No exterior:</label> <br>
+						<label for="dno_exterior">No exterior: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dno_exterior" id="dno_exterior" 
 							value="<?php echo (isset($info['info']->no_exterior)? $info['info']->no_exterior: ''); ?>" size="20" maxlength="7">
 					</p>
@@ -37,31 +37,31 @@
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
-						<label for="dcolonia">Colonia:</label> <br>
+						<label for="dcolonia">Colonia: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dcolonia" id="dcolonia" 
 							value="<?php echo (isset($info['info']->colonia)? $info['info']->colonia: ''); ?>" size="30" maxlength="60">
 					</p>
 					<p class="w50 f-l">
-						<label for="dlocalidad">Localidad:</label> <br>
+						<label for="dlocalidad">Localidad: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dlocalidad" id="dlocalidad" 
 							value="<?php echo (isset($info['info']->localidad)? $info['info']->localidad: ''); ?>" size="30" maxlength="45">
 					</p>
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
-						<label for="dmunicipio">Municipio / Delegación:</label> <br>
+						<label for="dmunicipio">Municipio / Delegación: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dmunicipio" id="dmunicipio" 
 							value="<?php echo (isset($info['info']->municipio)? $info['info']->municipio: ''); ?>" size="30" maxlength="45">
 					</p>
 					<p class="w50 f-l">
-						<label for="destado">Estado:</label> <br>
+						<label for="destado">Estado: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="destado" id="destado" 
 							value="<?php echo (isset($info['info']->estado)? $info['info']->estado: ''); ?>" size="30" maxlength="45">
 					</p>
 					<div class="clear"></div>
 					
 					<p class="w50 f-l">
-						<label for="dcp">CP:</label> <br>
+						<label for="dcp">CP: <span class="label_frm_msg">Requerido para facturar</span></label> <br>
 						<input type="text" name="dcp" id="dcp" 
 							value="<?php echo (isset($info['info']->cp)? $info['info']->cp: ''); ?>" size="20" maxlength="10">
 					</p>
@@ -329,3 +329,10 @@ $(function(){
 <?php }
 }?>
 <!-- Bloque de alertas -->
+
+<style type="text/css">
+	.label_frm_msg{
+		font-size: 9px;
+		color: #FD8A8A;
+	}
+</style>

@@ -4,7 +4,7 @@ class cfd{
 	private $path_certificado_org = '';
 	private $path_certificado = '';
 	private $path_key = '';
-	private $pass_key = 'Pista001';//CHONITA09
+	private $pass_key = 'Piloto01';//CHONITA09
 	
 	public $version = '2.2';
 	
@@ -20,11 +20,13 @@ class cfd{
 	private $estado = 'Michoacán';
 	private $pais = 'México';
 	private $cp = '60800';
+
+	public $default_nv_fiscal = 3; //informacion fiscal guardada en la bd
 	
 	public function __construct(){
-		$this->path_certificado_org = APPPATH.'media/cfd/00001000000102341541.cer';
-		$this->path_certificado = APPPATH.'media/cfd/00001000000102341541.cer.pem';
-		$this->path_key = APPPATH.'media/cfd/nedr620710h76_1012091114s_p.key.pem';
+		$this->path_certificado_org = APPPATH.'media/cfd/nedr620710h76_1302281329s.cer';
+		$this->path_certificado = APPPATH.'media/cfd/nedr620710h76_1302281329s.cer.pem';
+		$this->path_key = APPPATH.'media/cfd/nedr620710h76_1302281329s_p.key.pem';
 	}
 	
 	public function obtenNoCertificado(){
@@ -42,8 +44,11 @@ class cfd{
 	}
 		
 	public function obtenCadenaOriginal($data){
+		$id_nv_fiscal = isset($data['id_nv_fiscal'])? $data['id_nv_fiscal']: $this->default_nv_fiscal;
+		$this->cargaDatosFiscales($id_nv_fiscal);
+
 		$data['cno_interior']= (isset($data['cno_interior'])) ? (($data['cno_interior']!='') ? '|'.$data['cno_interior']: '') : ''; // Numero Interior
-		$data['no_cuenta_pago']	= (isset($data['no_cuenta_pago'])) ? (($data['no_cuenta_pago']!='') ? '|'.$data['no_cuenta_pago']: '') : ''; // Ultimos 4 digitos
+		$data['no_cuenta_pago']	= (isset($data['no_cuenta_pago'])) ? (($data['no_cuenta_pago']!='') ? '|'.$data['no_cuenta_pago']: '|No identificado') : '|No identificado'; // Ultimos 4 digitos
 
 		$cadena = '||'.$this->version.'|'.$data['serie'].'|'.$data['folio'].'|'.$data['fecha_xml'].'|'.$data['no_aprobacion'].'|'.$data['ano_aprobacion'].'|'.$data['tipo_comprobante'].'|'.$data['forma_pago'].'|'.$data['subtotal'].'|0|'.$data['total'].'|'.$data['metodo_pago'].'|'.$this->localidad.', '.$this->estado.$data['no_cuenta_pago'].'|'.$data['moneda'].'|'.$this->rfc.'|'.$this->razon_social.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->calle.'|'.$this->no_exterior.'|'.$this->colonia.'|'.$this->localidad.'|'.$this->municipio.'|'.$this->estado.'|'.$this->pais.'|'.$this->cp.'|'.$this->regimen_fiscal.'|'.$data['crfc'].'|'.$data['cnombre'].'|'.$data['ccalle'].'|'.$data['cno_exterior'].$data['cno_interior'].'|'.$data['ccolonia'].'|'.$data['clocalidad'].'|'.$data['cmunicipio'].'|'.$data['cestado'].'|'.$data['cpais'].'|'.$data['ccp'].'|';
 
@@ -63,15 +68,46 @@ class cfd{
 		$cadena = preg_replace('/ +/', ' ', $cadena);
 		return $cadena;
 	}
+
+	public function cargaDatosFiscales($id_nv_fiscal){
+		$CI =& get_instance();
+		$data = $CI->db->query("SELECT * FROM nv_fiscal WHERE id = ".$id_nv_fiscal)->row();
+		
+		$this->path_certificado_org = APPPATH.'media/cfd/'.$data->cer_org;
+		$this->path_certificado     = APPPATH.'media/cfd/'.$data->cer;
+		$this->path_key             = APPPATH.'media/cfd/'.$data->key;
+		$this->pass_key             = $data->pas;
+		
+		$this->version              = $data->version;
+		
+		$this->rfc                  = $data->rfc;
+		$this->razon_social         = $data->razon_social;
+		$this->regimen_fiscal       = $data->regimen_fiscal;
+		$this->calle                = $data->calle;
+		$this->no_exterior          = $data->no_exterior;
+		$this->no_interior          = $data->no_interior;
+		$this->colonia              = $data->colonia;
+		$this->localidad            = $data->localidad;
+		$this->municipio            = $data->municipio;
+		$this->estado               = $data->estado;
+		$this->pais                 = $data->pais;
+		$this->cp                   = $data->cp;
+	}
 	
 	public function generaArchivos($data){
+		$this->cargaDatosFiscales($data['id_nv_fiscal']);
+
+		$vers = str_replace('.', '_', $this->version);
 		$this->guardarXML($data);
-		$this->generarPDF($data);
+		$this->generarUnPDF($data);
 	}
 	
 	public function actualizarArchivos($data){
+		$this->cargaDatosFiscales($data['id_nv_fiscal']);
+
+		$vers = str_replace('.', '_', $this->version);
 		$this->guardarXML($data,true);
-		$this->generarPDF($data,array('F'),true);
+		$this->generarUnPDF($data,array('F'),true);
 	}
 	/********** REPORTE MENSUAL ************/
 	public function descargaReporte($anio, $mes){
@@ -172,8 +208,14 @@ class cfd{
 		return array($fecha[0],$fecha[1]);
 	}
 	
+
+
+	/**
+	 * FUNCIONES DE LS DISTINTAS VERSIONES DE CFD PARA LOS XML
+	 */
 	private function guardarXML($data,$update=false){
-		$xml = $this->generarXML($data);
+		$vers = str_replace('.', '_', $this->version);
+		$xml = $this->{'generarXML'.$vers}($data);
 		if(!$update){	
 			$dir_anio = $this->validaDir('anio', 'facturasXML/');
 			$dir_mes = $this->validaDir('mes', 'facturasXML/'.$dir_anio.'/');
@@ -196,15 +238,18 @@ class cfd{
 		fwrite($fp, $xml);
 		fclose($fp);
 	}
-	
+
 	public function descargarXML($data){
-		$xml = $this->generarXML($data);
+		$this->cargaDatosFiscales($data['id_nv_fiscal']);
+
+		$vers = str_replace('.', '_', $this->version);
+		$xml = $this->{'generarXML'.$vers}($data);
 		header('Content-type: content-type: text/xml');
 		header('Content-Disposition: attachment; filename="'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.xml"');
 		echo $xml;
 	}
 	
-	public function generarXML($data=array()){
+	public function generarXML2_2($data=array()){
 		$xml = '';
 		$xml .= '<?xml version="1.0" encoding="utf-8"?>';
 		$xml .= '<Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sat.gob.mx/cfd/2" xsi:schemaLocation="http://www.sat.gob.mx/cfd/2 http://www.sat.gob.mx/sitio_internet/cfd/2/cfdv22.xsd" ';
@@ -317,7 +362,16 @@ class cfd{
 		return $xml;
 	}
 	
+
+	/**
+	 * FUNCIONES DE LS DISTINTAS VERSIONES DE CFD PARA LOS PDF
+	 */
 	public function generarPDF($data=array(), $accion=array('F'), $update=false){
+		$this->cargaDatosFiscales($data['id_nv_fiscal']);
+		$this->generarUnPDF($data, $accion, $update);
+	}
+
+	public function generarUnPDF($data=array(), $accion=array('F'), $update=false){
 		if(count($data)>0){
 			$ci =& get_instance();			
 			$ci->load->library('mypdf');
@@ -325,6 +379,75 @@ class cfd{
 			// Creacion del objeto de la clase heredada
 			$pdf = new MYpdf('P', 'mm', 'Letter');
 			$pdf->show_head = false;
+			$vers = str_replace('.', '_', $this->version);
+			$this->{'generarFacturaPDF'.$vers}($pdf, $data);
+			
+			//-----------------------------------------------------------------------------------
+			
+			if(!$update){
+				$dir_anio = $this->validaDir('anio', 'facturasPDF/');
+				$dir_mes = $this->validaDir('mes', 'facturasPDF/'.$dir_anio.'/');
+			}
+			else{
+				$fecha = $this->obtenFechaMes($data['fecha_xml']);
+				$dir_anio = $fecha[0];
+				$dir_mes = $this->mesToString($fecha[1]);
+				
+				if(!file_exists(APPPATH.'/media/cfd/facturasPDF/'.$dir_anio.'/')){
+					$this->crearFolder(APPPATH.'/media/cfd/facturasPDF/', $dir_anio.'/');
+				}
+				if(!file_exists(APPPATH.'/media/cfd/facturasPDF/'.$dir_anio.'/'.$dir_mes.'/')){
+					$this->crearFolder(APPPATH.'/media/cfd/facturasPDF/'.$dir_anio.'/', $dir_mes.'/');
+				}
+			}
+			
+			if(count($accion)>0){
+				foreach($accion as $a){
+					switch (strtolower($a)){
+						case 'v': // VISUALIZA PDF EN WEB
+							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'I');
+						break;
+						case 'f': // GUARDA EN DIRECTORIO facturasPDF
+							$path_guardar = APPPATH.'media/cfd/facturasPDF/'.$dir_anio.'/'.$dir_mes.'/'.
+															$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf';
+							$pdf->Output($path_guardar, 'F');
+						break;
+						case 'd':  // DESCARGA DIRECTA DEL PDF
+							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'D');
+						break;
+						default: // VISUALIZA PDF EN WEB
+							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'I');
+					}
+				}
+			}
+		}				
+	}
+	public function generarMasPDF($data=array(), $accion='I'){
+		if(count($data)>0){
+			$ci =& get_instance();			
+			$ci->load->library('mypdf');
+			
+			// Creacion del objeto de la clase heredada
+			$pdf = new MYpdf('P', 'mm', 'Letter');
+			$pdf->show_head = false;
+
+			foreach ($data as $key => $value) {
+				$this->cargaDatosFiscales($value['id_nv_fiscal']);
+				$vers = str_replace('.', '_', $this->version);
+				$this->{'generarFacturaPDF'.$vers}($pdf, $value);
+			}
+			
+			
+			switch (strtolower($accion)){
+				case 'd':  // DESCARGA DIRECTA DEL PDF
+					$pdf->Output($this->rfc.'_'.date("Y-m-d").'.pdf', 'D');
+				break;
+				default: // VISUALIZA PDF EN WEB
+					$pdf->Output($this->rfc.'_'.date("Y-m-d").'.pdf', 'I');
+			}
+		}			
+	}
+	public function generarFacturaPDF2_2(&$pdf, $data){
 			$pdf->AddPage();
 			$pdf->SetFont('Arial','',8);
 			
@@ -538,8 +661,11 @@ class cfd{
 			$pdf->SetXY(144, ($y+5));
 			$pdf->Cell(31, 6, 'Subtotal' , 1, 0, 'C',1);
 			$pdf->SetXY(144, ($y+11));
-			$pdf->Cell(31, 6, 'IVA' , 1, 0, 'C',1);
-			$pdf->SetXY(144, ($y+17));
+
+			if (strtoupper($data['crfc']) != 'XAXX010101000') {
+				$pdf->Cell(31, 6, 'IVA' , 1, 0, 'C',1);
+				$pdf->SetXY(144, ($y+17));
+			}
 			
 			if (isset($data['total_isr'])) {
 				$pdf->Cell(31, 6, 'Retencion ISR' , 1, 0, 'C',1);
@@ -553,8 +679,11 @@ class cfd{
 			$pdf->SetXY(175, ($y+5));
 			$pdf->Cell(33, 6, String::formatoNumero($data['subtotal'],2) , 1, 0, 'C');
 			$pdf->SetXY(175, ($y+11));
-			$pdf->Cell(33, 6, String::formatoNumero($data['importe_iva'],2) , 1, 0, 'C');
-			$pdf->SetXY(175, ($y+17));
+
+			if (strtoupper($data['crfc']) != 'XAXX010101000') {
+				$pdf->Cell(33, 6, String::formatoNumero($data['importe_iva'],2) , 1, 0, 'C');
+				$pdf->SetXY(175, ($y+17));
+			}
 
 			if (isset($data['total_isr'])) {
 				$pdf->Cell(33, 6, (isset($data['total_isr'])) ? String::formatoNumero($data['total_isr'],2) : '$0.00' , 1, 0, 'C');
@@ -667,39 +796,6 @@ class cfd{
 					$pdf->Image(APPPATH.'/images/cancelado.png',20,40,190,190,"PNG");
 				}
 			}
-			
-			//-----------------------------------------------------------------------------------
-			
-			if(!$update){
-				$dir_anio = $this->validaDir('anio', 'facturasPDF/');
-				$dir_mes = $this->validaDir('mes', 'facturasPDF/'.$dir_anio.'/');
-			}
-			else{
-				$fecha = $this->obtenFechaMes($data['fecha_xml']);
-				$dir_anio = $fecha[0];
-				$dir_mes = $this->mesToString($fecha[1]);
-			}
-			
-			if(count($accion)>0){
-				foreach($accion as $a){
-					switch (strtolower($a)){
-						case 'v': // VISUALIZA PDF EN WEB
-							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'I');
-						break;
-						case 'f': // GUARDA EN DIRECTORIO facturasPDF
-							$path_guardar = APPPATH.'media/cfd/facturasPDF/'.$dir_anio.'/'.$dir_mes.'/'.
-															$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf';
-							$pdf->Output($path_guardar, 'F');
-						break;
-						case 'd':  // DESCARGA DIRECTA DEL PDF
-							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'D');
-						break;
-						default: // VISUALIZA PDF EN WEB
-							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'I');
-					}
-				}
-			}
-		}				
 	}
 
 }

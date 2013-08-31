@@ -223,8 +223,17 @@ class tickets extends MY_Controller {
 			$this->load->model('tickets_model');
 			$params['info'] = $this->tickets_model->getInfoTicket($_GET['id']);
 			$params['seo']['titulo'] = 'Ticket';
-			
-			$this->load->view('panel/tickets/print_ticket',$params);
+
+			// $this->load->library('mypdf_ticket');
+			$pdf = new mypdf_ticket();
+			$pdf->SetFont('Arial','',8);
+			$pdf->AddPage();
+
+			$pdf->printTicket($params['info']);
+
+			$pdf->AutoPrint(true);
+			$pdf->Output();
+			// $this->load->view('panel/tickets/print_ticket',$params);
 		}
 	}
 	

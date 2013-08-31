@@ -138,12 +138,35 @@ class facturacion_model extends privilegios_model{
 		return array(true);
 	}
 
-	public function regeneraFacturas(){
+
+	public function actualizaDatoscliente(){
 		$this->load->library('cfd');
-		$data = $this->db->select("*")->from('facturacion')->order_by("folio", 'asc')->get();
+		$data = $this->db->select("*")->from('clientes')->where("nombre_fiscal <> '' AND rfc <> ''")->get();
 
 		foreach ($data->result() as $value) {
-			$fecha = str_replace(' ', 'T', substr($value->fecha, 0, 19));
+			$this->db->update('facturacion',array(
+					'calle' => $value->calle,
+					'no_exterior' => $value->no_exterior,
+					'no_interior' => $value->no_interior,
+					'colonia' => $value->colonia,
+					'localidad' => $value->localidad,
+					'municipio' => $value->municipio,
+					'estado' => $value->estado,
+					'cp' => $value->cp
+					), 
+					array('id_cliente'=>$value->id_cliente) );
+
+			echo "Factura ".$value->rfc."<br>\n";
+		}
+	}
+
+	public function regeneraFacturas(){
+		$this->load->library('cfd');
+		$data = $this->db->select("*")->from('facturacion')->where("id_nv_fiscal = 1 OR id_nv_fiscal = 2")->order_by("folio", 'asc')->get();
+
+		foreach ($data->result() as $value) {
+			$fecha = $this->getFechaXML(substr($value->fecha, 0, 19));
+			// $fecha = str_replace(' ', 'T', substr($value->fecha, 0, 19));
 			$this->db->update('facturacion', array('fecha_xml'=>$fecha), 
 					array('id_factura'=>$value->id_factura) );
 
@@ -158,13 +181,144 @@ class facturacion_model extends privilegios_model{
 			echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." ".$fecha."<br>\n";
 		}
 	}
+
+	public function regeneraFacturas1(){
+		$this->load->library('cfd');
+		$data = $this->db->select("*")->from('facturacion')->where("folio BETWEEN 245 AND 245")->order_by("folio", 'asc')->get();
+
+		foreach ($data->result() as $value) {
+			$fecha = $this->getFechaXML(substr($value->fecha, 0, 19));
+			// $fecha = str_replace(' ', 'T', substr($value->fecha, 0, 19));
+			$this->db->update('facturacion', array('fecha_xml'=>$fecha), 
+					array('id_factura'=>$value->id_factura) );
+
+			$data_fac = $this->getDataFactura($value->id_factura, true);
+			$cadena = $this->cfd->obtenCadenaOriginal($data_fac);
+			$sello 	= $this->cfd->obtenSello($cadena); // OBTIENE EL SELLO DIGITAL
+
+			$this->db->update('facturacion',array('cadena_original'=>$cadena, 'sello'=>$sello), 
+					array('id_factura'=>$value->id_factura) );
+			$data_fac = $this->getDataFactura($value->id_factura, true);
+			$this->cfd->actualizarArchivos($data_fac);
+			echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." ".$fecha."<br>\n";
+		}
+	}
+
+	public function regeneraFacturas2(){
+		$this->load->library('cfd');
+		$data = $this->db->select("*")->from('facturacion')->where("serie = 'FAC' AND folio BETWEEN 71 AND 249")->order_by("folio", 'asc')->get();
+		$fechas = array('2013-03-01 09:10:03', '2013-03-02 10:02:22', '2013-03-03 11:02:32', '2013-03-04 08:54:34', 
+			'2013-03-05 10:36:20', '2013-03-06 09:03:08', '2013-03-07 09:23:08', '2013-03-08 10:03:08');
+		$incrementos = array(4, 5, 6, 10, 14, 12);
+		$row_x_day = ceil(count($data->result())/count($fechas));
+		$contador = 0;
+		$ifecha_sel = 5;
+		$fechas[$contador] = strtotime($fechas[$contador]);
+		foreach ($data->result() as $key => $value) {
+			if (($key+1) % $row_x_day == 0) {
+				$contador++;
+				$fechas[$contador] = strtotime($fechas[$contador]);
+				// echo "------------------------------------<br>";
+			}
+
+			// if ($contador == $ifecha_sel){
+				$fechas[$contador] = strtotime('+'.$incrementos[rand(0, 5)].' minutes '.$incrementos[rand(0, 5)].' seconds', $fechas[$contador]);
+				// echo "si - ".date('Y-m-d H:i:s', $fechas[$contador])."<br>";
+
+				$fecha = $this->getFechaXML(date('Y-m-d H:i:s', $fechas[$contador]));
+				// $fecha = str_replace(' ', 'T', substr($value->fecha, 0, 19));
+				$this->db->update('facturacion', array('fecha_xml'=>$fecha, 
+							'fecha' => date('Y-m-d H:i:s', $fechas[$contador]),
+							'no_certificado' => '00001000000203144869'), 
+						array('id_factura'=>$value->id_factura) );
+
+				$data_fac = $this->getDataFactura($value->id_factura, true);
+				$cadena = $this->cfd->obtenCadenaOriginal($data_fac);
+				$sello 	= $this->cfd->obtenSello($cadena); // OBTIENE EL SELLO DIGITAL
+
+				$this->db->update('facturacion',array('cadena_original'=>$cadena, 'sello'=>$sello), 
+						array('id_factura'=>$value->id_factura) );
+				$data_fac = $this->getDataFactura($value->id_factura, true);
+				$this->cfd->actualizarArchivos($data_fac);
+				echo "Factura ".$data_fac['serie']."-".$data_fac['folio']." ".$fecha."<br>\n";
+			// }
+		}
+	}
+
+	public function regeneraFacturas3(){
+		$this->load->library('cfd');
+		$res = $this->db->select("*")->from('facturacion')->where("serie = 'FAC' AND folio = 236")->order_by("folio", 'asc')->get();
+		$data_fac = $res->row();
+
+		$folio = 245;
+		$fecha = date('Y-m-d H:i:s');
+		$id_factura = BDUtil::getId(); // ID FACTURA
+		$data = array(
+				'id_factura'          => $id_factura,
+				'id_cliente'          => $data_fac->id_cliente,
+				'id_empleado'         => $data_fac->id_empleado,
+				'serie'               => 'FAC',
+				'folio'               => $folio,
+				'no_aprobacion'       => $data_fac->no_aprobacion,
+				'ano_aprobacion'      => $data_fac->ano_aprobacion,
+				'fecha'               => $fecha,
+				'importe_iva'         => $data_fac->importe_iva,
+				'subtotal'            => $data_fac->subtotal,
+				'total'               => $data_fac->total,
+				'total_letra'         => $data_fac->total_letra,
+				'tipo_comprobante'    => $data_fac->tipo_comprobante,
+				'forma_pago'          => $data_fac->forma_pago,
+				'sello'               => $data_fac->sello,
+				'cadena_original'     => $data_fac->cadena_original,
+				'no_certificado'      => $data_fac->no_certificado,
+				'version'             => $data_fac->version,
+				'fecha_xml'           => $this->getFechaXML($fecha),
+				'metodo_pago'         => $data_fac->metodo_pago,
+				'condicion_pago'      => $data_fac->condicion_pago,
+				'plazo_credito'       => $data_fac->plazo_credito,
+				'status'              => $data_fac->status,
+				'metodo_pago_digitos' => $data_fac->metodo_pago_digitos,
+				'nombre'              => $data_fac->nombre,
+				'rfc'                 => $data_fac->rfc,
+				'calle'               => $data_fac->calle,
+				'no_exterior'         => $data_fac->no_exterior,
+				'no_interior'         => $data_fac->no_interior,
+				'colonia'             => $data_fac->colonia,
+				'localidad'           => $data_fac->localidad,
+				'municipio'           => $data_fac->municipio,
+				'estado'              => $data_fac->estado,
+				'cp'                  => $data_fac->cp,
+				'pais'                => $data_fac->pais,
+				'total_isr'           => $data_fac->total_isr,
+				'observaciones'       => 'Esta factura sustitulle a la factura '.$data_fac->serie.'-'.$data_fac->folio
+		);
+
+		$this->db->insert('facturacion', $data); // INSERTA LA INFORMACION DE FACTURA
+		$this->db->update('facturacion_abonos', array('id_factura' => $id_factura), "id_factura = '".$data_fac->id_factura."'");
+		$this->db->update('facturacion_tickets', array('id_factura' => $id_factura), "id_factura = '".$data_fac->id_factura."'"); // INSERTA LOS TICKETS DE LA FACTURA
+		echo "Factura ".$data_fac->serie."-".$data_fac->folio." ".$fecha."<br>\n";
+	}
+
+	public function getFechaXML($fecha){
+		$partes = explode(' ', $fecha);
+		$part_fecha = explode('-', $partes[0]);
+		$part_horas = explode(':', $partes[1]);
+		$fecha = '';
+		foreach ($part_fecha as $key => $value) {
+			$part_fecha[$key] = (strlen($value)==1? '0'.$value: $value);
+		}
+		foreach ($part_horas as $key => $value) {
+			$part_horas[$key] = (strlen($value)==1? '0'.$value: $value);
+		}
+		return $part_fecha[0].'-'.$part_fecha[1].'-'.$part_fecha[2].'T'.$part_horas[0].':'.$part_horas[1].':'.$part_horas[2];
+	}
 	
 	public function addFactura(){
 // 		Carga la libreria de Facturacion
 		$this->load->library('cfd');
 		$id_factura = BDUtil::getId(); // ID FACTURA
 		
-		$fecha_xml 	= str_replace(' ', 'T', $this->input->post('dfecha'));
+		$fecha_xml 	= $this->getFechaXML($this->input->post('dfecha')); //str_replace(' ', 'T', $this->input->post('dfecha'));
 		$forma_pago	= ($_POST['dforma_pago']==1) ? $this->input->post('dforma_pago_parcialidad') : 'Pago en una sola exhibición';
 		
 		$no_cta_pago = '';
@@ -334,77 +488,90 @@ class facturacion_model extends privilegios_model{
 	 * @param boolean $ivas -- TRUE: Agrega los IVAS al resultado FALSE: No agrega los IVAS
 	 * @return array  
 	 */
-	public function getDataFactura($id_factura=null, $ivas=false){
-		$id_factura = ($id_factura) ? $id_factura : $_GET['id'];
+	public function getDataFactura($id_factura=null, $ivass=false, $sql = ''){
+		$id_factura = ($id_factura) ? $id_factura : $this->input->get('id');
 
-		$res_q1 = $this->db->select("*")->from('facturacion')->where('id_factura',$id_factura)->get()->result();
+		if ($sql == '')
+			$sql = "id_factura = '".$id_factura."'";
+
+		$res_q1 = $this->db->select("*")->from('facturacion')->where($sql)->order_by('serie asc, folio asc')->get();
+		
+		foreach ($res_q1->result() as $key => $value) {
+			$res_q2 = $this->db->query("
+						SELECT tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe,
+							t.folio
+						FROM facturacion as f
+						INNER JOIN facturacion_tickets as ft ON f.id_factura=ft.id_factura
+						INNER JOIN tickets_vuelos_productos as tvp ON ft.id_ticket=tvp.id_ticket
+						INNER JOIN tickets as t ON t.id_ticket=ft.id_ticket
+						WHERE f.id_factura='".$value->id_factura."'
+						GROUP BY tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe, t.folio
+					");
+						
+			$productos = array();
+			foreach($res_q2->result() as $itm)
+				$productos[] = array('folio'=>$itm->folio,'cantidad'=>$itm->cantidad, 'unidad'=>$itm->unidad, 'descripcion'=>$itm->descripcion, 'precio_unit'=>$itm->precio_unitario, 'importe'=>$itm->importe);
 			
-		$res_q2 = $this->db->query("
-					SELECT tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe,
-						t.folio
-					FROM facturacion as f
-					INNER JOIN facturacion_tickets as ft ON f.id_factura=ft.id_factura
-					INNER JOIN tickets_vuelos_productos as tvp ON ft.id_ticket=tvp.id_ticket
-					INNER JOIN tickets as t ON t.id_ticket=ft.id_ticket
-					WHERE f.id_factura='$id_factura'
-					GROUP BY tvp.id_ticket, tvp.id_ticket_producto, tvp.cantidad, tvp.unidad, tvp.descripcion, tvp.precio_unitario, tvp.importe, t.folio
-				");
+			$data = array(
+						'id_nv_fiscal' => $value->id_nv_fiscal,
+
+						'serie' => $value->serie,
+						'folio'	=> $value->folio,
+						'no_aprobacion'		=> $value->no_aprobacion,
+						'ano_aprobacion'	=> $value->ano_aprobacion,
+						'importe_iva'		=> $value->importe_iva,
+						'subtotal'			=> $value->subtotal,
+						'total'				=> $value->total,
+						'total_letra'		=> $value->total_letra,
+						'sello'				=> $value->sello,
+						'cadena_original'	=> $value->cadena_original,
+						'no_certificado'	=> $value->no_certificado,
+						'version'			=> $value->version,
+						'fecha_xml'			=> $value->fecha_xml,
 					
-		$productos = array();
-		foreach($res_q2->result() as $itm)
-			$productos[] = array('folio'=>$itm->folio,'cantidad'=>$itm->cantidad, 'unidad'=>$itm->unidad, 'descripcion'=>$itm->descripcion, 'precio_unit'=>$itm->precio_unitario, 'importe'=>$itm->importe);
-		
-		$data = array(
-					'serie' => $res_q1[0]->serie,
-					'folio'	=> $res_q1[0]->folio,
-					'no_aprobacion'		=> $res_q1[0]->no_aprobacion,
-					'ano_aprobacion'	=> $res_q1[0]->ano_aprobacion,
-					'importe_iva'		=> $res_q1[0]->importe_iva,
-					'subtotal'			=> $res_q1[0]->subtotal,
-					'total'				=> $res_q1[0]->total,
-					'total_letra'		=> $res_q1[0]->total_letra,
-					'sello'				=> $res_q1[0]->sello,
-					'cadena_original'	=> $res_q1[0]->cadena_original,
-					'no_certificado'	=> $res_q1[0]->no_certificado,
-					'version'			=> $res_q1[0]->version,
-					'fecha_xml'			=> $res_q1[0]->fecha_xml,
-				
-					'tipo_comprobante'	=> $res_q1[0]->tipo_comprobante,
-					'forma_pago'		=> $res_q1[0]->forma_pago,
-					'metodo_pago'		=> $res_q1[0]->metodo_pago,
-					'descuento'			=> 0,
-					'moneda'			=> 'pesos',
-					'no_cuenta_pago'	=> $res_q1[0]->metodo_pago_digitos,
-				
-					'cnombre'			=> $res_q1[0]->nombre,
-					'crfc'				=> $res_q1[0]->rfc,
-					'ccalle'				=> $res_q1[0]->calle,
-					'cno_exterior'	=> $res_q1[0]->no_exterior,
-					'cno_interior'	=> $res_q1[0]->no_interior,
-					'ccolonia'		=> $res_q1[0]->colonia,
-					'clocalidad'	=> $res_q1[0]->localidad,
-					'cmunicipio'	=> $res_q1[0]->municipio,
-					'cestado'		=> $res_q1[0]->estado,
-					'ccp'		=> $res_q1[0]->cp,
-					'cpais'		=> $res_q1[0]->pais,
-					'fobservaciones'	=> $res_q1[0]->observaciones,
-					'productos' => $productos,
-				
-					'condicion_pago'=> $res_q1[0]->condicion_pago,
-					'plazo_credito'	=> $res_q1[0]->plazo_credito,
-					'status'		=> $res_q1[0]->status
-		);
-		
-		if(floatval($res_q1[0]->total_isr)>0)
-			$data['total_isr'] = $res_q1[0]->total_isr;
-		
-		if($ivas){
-			$ivas = $this->getIvas($id_factura);
+						'tipo_comprobante'	=> $value->tipo_comprobante,
+						'forma_pago'		=> $value->forma_pago,
+						'metodo_pago'		=> $value->metodo_pago,
+						'descuento'			=> 0,
+						'moneda'			=> 'pesos',
+						'no_cuenta_pago'	=> $value->metodo_pago_digitos,
+					
+						'cnombre'			=> $value->nombre,
+						'crfc'				=> $value->rfc,
+						'ccalle'				=> $value->calle,
+						'cno_exterior'	=> $value->no_exterior,
+						'cno_interior'	=> $value->no_interior,
+						'ccolonia'		=> $value->colonia,
+						'clocalidad'	=> $value->localidad,
+						'cmunicipio'	=> $value->municipio,
+						'cestado'		=> $value->estado,
+						'ccp'		=> $value->cp,
+						'cpais'		=> $value->pais,
+						'fobservaciones'	=> $value->observaciones,
+						'productos' => $productos,
+					
+						'condicion_pago'=> $value->condicion_pago,
+						'plazo_credito'	=> $value->plazo_credito,
+						'status'		=> $value->status
+			);
 			
-			$data['ivas'] = $ivas['ivas'];
-			$data['iva_total'] = $ivas['iva_total'];
+			if(floatval($value->total_isr)>0)
+				$data['total_isr'] = $value->total_isr;
+			
+			if($ivass){
+				$ivas = $this->getIvas($value->id_factura);
+				
+				$data['ivas'] = $ivas['ivas'];
+				$data['iva_total'] = $ivas['iva_total'];
+			}
+
+			$response[] = $data;
 		}
-		return $data;
+
+		if (count($response) == 1)
+			return $response[0];
+		else
+			return $response;
 	}
 	
 	private function getIvas($id_factura){

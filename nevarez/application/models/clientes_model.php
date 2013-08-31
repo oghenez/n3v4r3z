@@ -241,11 +241,15 @@ class clientes_model extends CI_Model{
 	 * Obtiene el listado de clientes para usar ajax
 	 */
 	public function getClientesAjax(){
-		$sql = '';
+		$term = mb_strtolower($this->input->get('term'), 'UTF-8');
+		$sql = "AND lower(nombre_fiscal) LIKE '%".$term."%'";
+		if ($term == 'xaxx010101000') {
+			$sql = "AND lower(rfc) LIKE '%".$term."%'";
+		}
 		$res = $this->db->query("
 				SELECT id_cliente, nombre_fiscal, calle, no_exterior, no_interior, colonia, localidad, municipio, estado, cp, telefono, dias_credito, rfc, retencion
 				FROM clientes
-				WHERE status = 'ac' AND lower(nombre_fiscal) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
+				WHERE status = 'ac' ".$sql."
 				ORDER BY nombre_fiscal ASC
 				LIMIT 20");
 	

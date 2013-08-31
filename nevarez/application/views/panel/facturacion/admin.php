@@ -18,6 +18,8 @@
 		</select>
 		
 		<input type="submit" name="enviar" value="Enviar" class="btn-blue corner-all">
+		<a id="btn_print_facturas" data-href="<?php echo base_url('panel/facturacion/imprimir_pdfm'); ?>" class="btn-green corner-all" 
+			target="_blank">Imprimir</a>
 	</form>
 	
 	<table class="tblListados corner-all8">
